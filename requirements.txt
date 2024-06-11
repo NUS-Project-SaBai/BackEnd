@@ -7,3 +7,6 @@ six==1.16.0
 sqlparse==0.5.0
 tzdata==2024.1
 urllib3==2.2.1
+django-cors-headers
+python-dotenv
+dj_database_url
