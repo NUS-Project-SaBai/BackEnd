@@ -23,19 +23,21 @@ class UserView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=500)
 
+    def post(self, request):
+        try:
+            serializer = UserSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=500)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+
     def delete(self, request, pk):
         try:
             user = User.objects.get(pk=pk)
             user.delete()
             return Response({"message": "Deleted successfully"})
-        except ObjectDoesNotExist as e:
-            return Response({"error": str(e)}, status=404)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
-
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=500)
