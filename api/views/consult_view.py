@@ -53,7 +53,7 @@ class ConsultView(APIView):
                 return Response(serializer.data)
             return Response(serializer.errors)
         except Exception as e:
-            return Response({"error": str(e)})
+            return Response({"error": str(e)}, status=500)
 
     def delete(self, request, pk):
         try:
