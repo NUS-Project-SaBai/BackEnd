@@ -45,7 +45,7 @@ class PatientSerializer(serializers.ModelSerializer):
 
 
 class VisitSerializer(serializers.ModelSerializer):
-    patient = PatientSerializer()
+    patient = serializers.PrimaryKeyRelatedField(queryset=models.Patient.objects.all())
 
     class Meta:
         model = models.Visit
@@ -53,7 +53,7 @@ class VisitSerializer(serializers.ModelSerializer):
 
 
 class VitalsSerializer(serializers.ModelSerializer):
-    visit = VisitSerializer()
+    visit = serializers.PrimaryKeyRelatedField(queryset=models.Visit.objects.all())
 
     class Meta:
         model = models.Vitals

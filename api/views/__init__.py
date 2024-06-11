@@ -1,3 +1,4 @@
 from .medication_view import MedicationView
-from .visit_view import VisitView
 from .patient_view import PatientView 
+from .visit_view import VisitView
+from .vitals_view import VitalsView

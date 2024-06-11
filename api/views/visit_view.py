@@ -19,7 +19,7 @@ class VisitView(APIView):
             serializer = VisitSerializer(visits, many=True)
             return Response(serializer.data)
         except Exception as e:
-            return Response({"error": str(e)})
+            return Response({"error": str(e)}, status=500)
 
     def get_object(self, pk):
         try:
@@ -27,14 +27,14 @@ class VisitView(APIView):
             serializer = VisitSerializer(visit)
             return Response(serializer.data)
         except Exception as e:
-            return Response({"error": str(e)})
+            return Response({"error": str(e)}, status=500)
         
     def post(self, request):
         serializer = VisitSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors)
+        return Response(serializer.errors, status=500)
     
     def delete(self, request, pk):
         try:
@@ -42,4 +42,4 @@ class VisitView(APIView):
             visit.delete()
             return Response({"message": "Deleted successfully"})
         except Exception as e:
-            return Response({"error": str(e)})
+            return Response({"error": str(e)}, status=500)
