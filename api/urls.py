@@ -7,6 +7,8 @@ urlpatterns = [
     path("medications/<int:pk>", views.MedicationView.as_view()),
     path("user", views.UserView.as_view()),
     path("user/<int:pk>", views.UserView.as_view()),
+    path("consult", views.ConsultView.as_view()),
+    path("consult/<int:pk>", views.ConsultView.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

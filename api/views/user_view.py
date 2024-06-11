@@ -1,11 +1,8 @@
-from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from api.serializers import UserSerializer
-import json
 
 class UserView(APIView):
     def get(self, request, pk=None):
@@ -17,6 +14,7 @@ class UserView(APIView):
             return Response(serializer.data)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
     def get_object(self, pk):
         try:
             users = User.objects.get(pk=pk)
@@ -40,4 +38,4 @@ class UserView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors)
+        return Response(serializer.errors, status=500)
