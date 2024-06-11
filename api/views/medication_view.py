@@ -28,7 +28,7 @@ class MedicationView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors)
+        return Response(serializer.errors, status=500)
 
     def patch(self, request, pk):
         try:

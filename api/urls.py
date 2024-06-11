@@ -15,6 +15,8 @@ urlpatterns = [
     path("user/<int:pk>", views.UserView.as_view()),
     path("consults", views.ConsultView.as_view()),
     path("consults/<int:pk>", views.ConsultView.as_view()),
+    path("orders", views.OrderView.as_view()),
+    path("orders/<int:pk>", views.OrderView.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
