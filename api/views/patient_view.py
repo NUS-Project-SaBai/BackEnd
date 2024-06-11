@@ -7,8 +7,12 @@ from api.serializers import PatientSerializer
 
 class PatientView(APIView):
 
-    def get(self, request):
+    def get(self, request, pk=None):
+        if pk is not None:
+            return self.get_object(pk)
+
         patient_name = request.query_params.get("name")
+        
         patients = None
 
         try:
@@ -24,11 +28,19 @@ class PatientView(APIView):
 
             return Response(serializer.data)
         except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def get_object(self, pk):
+        try:
+            patient = Patient.objects.get(pk=pk)
+            serializer = PatientSerializer(patient)
+            return Response(serializer.data)
+        except Exception as e:
             return Response({"error": str(e)})
 
     def post(self, request):
         try:
-            serializer = PatientSerializer(request.data)
+            serializer = PatientSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
