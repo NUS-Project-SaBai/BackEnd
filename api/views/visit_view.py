@@ -11,16 +11,15 @@ class VisitView(APIView):
         if pk is not None:
             return self.get_object(pk)
         
-        visits = Visit.objects.select_related("patient").all()
         try:
+            visits = Visit.objects.select_related("patient").all()
             patient = request.query_params.get('patient', '')
             if patient:
                 visits = visits.filter(patient=patient)
+            serializer = VisitSerializer(visits, many=True)
+            return Response(serializer.data)
         except Exception as e:
             return Response({"error": str(e)})
-
-        serializer = VisitSerializer(visits, many=True)
-        return Response(serializer.data)
 
     def get_object(self, pk):
         try:
