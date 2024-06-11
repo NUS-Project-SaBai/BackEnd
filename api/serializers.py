@@ -1,18 +1,11 @@
 from rest_framework import serializers
 
-from api.models import User
-from api.models import Patient
-from api.models import Visit
-from api.models import Vitals
-from api.models import Consult
-from api.models import Diagnosis
-from api.models import Medication
-from api.models import Order
+from api import models
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = models.User
         fields = ["username"]
 
 
@@ -20,7 +13,7 @@ class PatientSerializer(serializers.ModelSerializer):
     patientEnriched = serializers.SerializerMethodField()
 
     class Meta:
-        model = Patient
+        model = models.Patient
         fields = "__all__"
 
     def get_patientEnriched(self, patient):
@@ -55,7 +48,7 @@ class VisitSerializer(serializers.ModelSerializer):
     patient = PatientSerializer()
 
     class Meta:
-        model = Visit
+        model = models.Visit
         fields = "__all__"
 
 
@@ -63,7 +56,7 @@ class VitalsSerializer(serializers.ModelSerializer):
     visit = VisitSerializer()
 
     class Meta:
-        model = Vitals
+        model = models.Vitals
         fields = "__all__"
 
 
@@ -72,7 +65,7 @@ class ConsultSerializer(serializers.ModelSerializer):
     doctor = UserSerializer()
 
     class Meta:
-        model = Consult
+        model = models.Consult
         fields = "__all__"
 
 
@@ -80,13 +73,13 @@ class DiagnosisSerializer(serializers.ModelSerializer):
     consult = ConsultSerializer()
 
     class Meta:
-        model = Diagnosis
+        model = models.Diagnosis
         fields = "__all__"
 
 
 class MedicationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Medication
+        model = models.Medication
         fields = "__all__"
 
 
@@ -95,5 +88,5 @@ class OrderSerializer(serializers.ModelSerializer):
     consult = ConsultSerializer()
 
     class Meta:
-        model = Order
+        model = models.Order
         fields = "__all__"
