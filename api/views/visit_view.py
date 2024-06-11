@@ -11,12 +11,11 @@ class VisitView(APIView):
         if pk is not None:
             return self.get_object(pk)
         
+        visits = Visit.objects.select_related("patient").all()
         try:
             patient = request.query_params.get('patient', '')
             if patient:
-                visits = Visit.objects.filter(patient=patient).select_related("patient").all()
-            else:
-                visits = Visit.objects.select_related("patient").all()
+                visits = visits.filter(patient=patient)
         except Exception as e:
             return Response({"error": str(e)})
 
