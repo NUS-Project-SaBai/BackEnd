@@ -6,12 +6,10 @@ from rest_framework.response import Response
 
 
 class ConsultView(APIView):
-    def get(self, request, pk=None):
-        pk = request.query_params.get("visit")
-        if pk is not None:
-            return self.get_object(pk)
+    def get(self, request):
         try:
-            consults = Consult.objects.all()
+            visit_key = request.query_params.get("visit")
+            consults = Consult.objects.all() if visit_key is None else Consult.objects.filter(visit=visit_key)
             serializer = ConsultSerializer(consults, many=True)
             return Response(serializer.data)
         except Exception as e:
@@ -19,11 +17,9 @@ class ConsultView(APIView):
 
     def get_object(self, pk):
         try:
-            consult = Consult.objects.filter(visit=pk)
-            serializer = ConsultSerializer(consult, many=True)
+            consult = Consult.objects.filter(pk=pk)
+            serializer = ConsultSerializer(consult)
             return Response(serializer.data)
-        except ObjectDoesNotExist as e:
-            return Response({"message": str(e)}, status=404)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
 
