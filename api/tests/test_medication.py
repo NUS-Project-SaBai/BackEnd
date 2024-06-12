@@ -4,7 +4,7 @@ from api.models import Patient
 import datetime
 
 
-class TestAPI(TestSetup):
+class TestMedicationAPI(TestSetup):
     def test_medicine_list(self):
         response = self.client.get("/medications")
         self.assertEqual(response.status_code, 200)
