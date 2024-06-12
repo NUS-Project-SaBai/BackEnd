@@ -36,7 +36,7 @@ class PatientView(APIView):
             serializer = PatientSerializer(patient)
             return Response(serializer.data)
         except Exception as e:
-            return Response({"error": str(e)})
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
         try:
@@ -46,7 +46,7 @@ class PatientView(APIView):
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({"error": str(e)})
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
         try:
@@ -54,7 +54,7 @@ class PatientView(APIView):
             patient.delete()
             return Response({"message": "Deleted successfully"})
         except Exception as e:
-            return Response({"error": str(e)})
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
     
