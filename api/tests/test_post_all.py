@@ -35,3 +35,4 @@ class TestPostAllAPI(TestSetup):
                 "doctor": 1,
             },
         )
+        print(create_consult.data)
