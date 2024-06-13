@@ -3,10 +3,34 @@ on: [pull_request, push]
 jobs:
   test_project:
     runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:15
+        env:
+          LOCAL_DB_NAME: "postgres"
+          LOCAL_DB_USER: "postgres"
+          LOCAL_DB_PASSWORD: "postgres"
+          LOCAL_DB_HOST: "localhost"
+          LOCAL_DB_PORT: 5432
+        ports:
+          - 5432:5432
+
+
     steps:
       - uses: actions/checkout@v2
+      - name: Set up Python 3.11
       - uses: actions/setup-python@v2
         with:
           python-version: "3.11"
-      - run: pip install -r requirements.txt
-      - run: python manage.py test
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run make migrations and migrate
+        run: |
+          python manage.py makemigrations
+          python manage.py migrate
+      - name: Test with Django Test
+        run: |
+        python manage.py test
