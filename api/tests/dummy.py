@@ -1,4 +1,4 @@
-patients_post_dummy = {
+post_patient_dummy = {
     "village_prefix": "VPF",
     "name": "patient_name",
     "identification_number": "identification_number",
@@ -9,26 +9,26 @@ patients_post_dummy = {
     "picture": "image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
 }
 
-visit_post_dummy = {
+post_visit_dummy = {
     "patient": 1,
     "date": "2021-01-01",
     "status": "status",
 }
 
-vitals_post_dummy = {
+post_vitals_dummy = {
     "visit": 1,
     "doctor": 1,
 }
 
-consult_post_dummy = {}
+post_consult_dummy = {}
 
-diagnosis_post_dummy = {}
+post_diagnosis_dummy = {}
 
-medication_post_dummy = {
+post_medication_dummy = {
     "medicine_name": "medicine_name",
     "quantity": 1,
     "notes": "notes",
     "remarks": "remarks",
 }
 
-order_post_dummy = {}
+post_order_dummy = {}
