@@ -8,36 +8,24 @@ class UserView(APIView):
     def get(self, request, pk=None):
         if pk is not None:
             return self.get_object(pk)
-        try:
-            users = User.objects.all()
-            serializer = UserSerializer(users, many=True)
-            return Response(serializer.data)
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
 
     def get_object(self, pk):
-        try:
-            users = User.objects.get(pk=pk)
-            serializer = UserSerializer(users)
-            return Response(serializer.data)
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
+        users = User.objects.get(pk=pk)
+        serializer = UserSerializer(users)
+        return Response(serializer.data)
 
     def post(self, request):
-        try:
-            serializer = UserSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=500)
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=500)
 
 
     def delete(self, request, pk):
-        try:
-            user = User.objects.get(pk=pk)
-            user.delete()
-            return Response({"message": "Deleted successfully"})
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
+        user = User.objects.get(pk=pk)
+        user.delete()
+        return Response({"message": "Deleted successfully"})

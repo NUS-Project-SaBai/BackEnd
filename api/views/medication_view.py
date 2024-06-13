@@ -16,12 +16,9 @@ class MedicationView(APIView):
         return Response(serializer.data)
 
     def get_object(self, pk):
-        try:
-            medication = Medication.objects.get(pk=pk)
-            serializer = MedicationSerializer(medication)
-            return Response(serializer.data)
-        except Exception as e:
-            return Response({"error": str(e)})
+        medication = Medication.objects.get(pk=pk)
+        serializer = MedicationSerializer(medication)
+        return Response(serializer.data)
 
     def post(self, request):
         serializer = MedicationSerializer(data=request.data)
@@ -31,22 +28,16 @@ class MedicationView(APIView):
         return Response(serializer.errors, status=500)
 
     def patch(self, request, pk):
-        try:
-            medication = Medication.objects.get(pk=pk)
-            quantityChange = request.data.get("quantityChange")
-            data = {"quantity": medication.quantity + quantityChange}
-            serializer = MedicationSerializer(medication, data=data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors)
-        except Exception as e:
-            return Response({"error": str(e)})
+        medication = Medication.objects.get(pk=pk)
+        quantityChange = request.data.get("quantityChange")
+        data = {"quantity": medication.quantity + quantityChange}
+        serializer = MedicationSerializer(medication, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
     def delete(self, request, pk):
-        try:
-            medication = Medication.objects.get(pk=pk)
-            medication.delete()
-            return Response({"message": "Deleted successfully"})
-        except Exception as e:
-            return Response({"error": str(e)})
+        medication = Medication.objects.get(pk=pk)
+        medication.delete()
+        return Response({"message": "Deleted successfully"})

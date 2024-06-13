@@ -83,7 +83,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "sabaibiometrics.wsgi.application"
 
-REST_FRAMEWORK = {"TEST_REQUEST_DEFAULT_FORMAT": "json"}
+REST_FRAMEWORK = {
+    "TEST_REQUEST_DEFAULT_FORMAT": "json",
+    'EXCEPTION_HANDLER': 'sabaibiometrics.custom_exception_handler.custom_exception_handler'
+    }
 
 
 # Database

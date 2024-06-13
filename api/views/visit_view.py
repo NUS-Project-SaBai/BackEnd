@@ -11,23 +11,17 @@ class VisitView(APIView):
         if pk is not None:
             return self.get_object(pk)
 
-        try:
-            visits = Visit.objects.select_related("patient").all()
-            patient = request.query_params.get("patient", "")
-            if patient:
-                visits = visits.filter(patient_id=patient)
-            serializer = VisitSerializer(visits, many=True)
-            return Response(serializer.data)
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
+        visits = Visit.objects.select_related("patient").all()
+        patient = request.query_params.get("patient", "")
+        if patient:
+            visits = visits.filter(patient_id=patient)
+        serializer = VisitSerializer(visits, many=True)
+        return Response(serializer.data)
 
     def get_object(self, pk):
-        try:
-            visit = Visit.objects.get(pk=pk)
-            serializer = VisitSerializer(visit)
-            return Response(serializer.data)
-        except Exception as e:
-            return Response({"error": str(e)})
+        visit = Visit.objects.get(pk=pk)
+        serializer = VisitSerializer(visit)
+        return Response(serializer.data)
 
     def post(self, request):
         serializer = VisitSerializer(data=request.data)
@@ -37,9 +31,6 @@ class VisitView(APIView):
         return Response(serializer.errors)
 
     def delete(self, request, pk):
-        try:
-            visit = Visit.objects.get(pk=pk)
-            visit.delete()
-            return Response({"message": "Deleted successfully"})
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
+        visit = Visit.objects.get(pk=pk)
+        visit.delete()
+        return Response({"message": "Deleted successfully"})

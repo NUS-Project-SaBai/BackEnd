@@ -11,21 +11,15 @@ class VitalsView(APIView):
         if pk is not None:
             return self.get_object(pk)
         
-        try:
-            visit = request.GET.get('visit', '')
-            vitals = Vitals.objects.filter(visit=visit).all()
-            serializer = VitalsSerializer(vitals)
-            return Response(serializer.data)
-        except Exception as e:
-            return Response({"error": str(e)})
+        visit = request.GET.get('visit', '')
+        vitals = Vitals.objects.filter(visit=visit).all()
+        serializer = VitalsSerializer(vitals)
+        return Response(serializer.data)
         
     def get_object(self, pk):
-        try:
-            vitals = Vitals.objects.get(pk=pk)
-            serializer = VitalsSerializer(vitals)
-            return Response(serializer.data)
-        except Exception as e:
-            return Response({"error": str(e)})
+        vitals = Vitals.objects.get(pk=pk)
+        serializer = VitalsSerializer(vitals)
+        return Response(serializer.data)
 
     def post(self, request):
         serializer = VitalsSerializer(data=request.data)
@@ -35,10 +29,7 @@ class VitalsView(APIView):
         return Response(serializer.errors)
     
     def delete(self, request, pk):
-        try:
-            vitals = Vitals.objects.get(pk=pk)
-            vitals.delete()
-            return Response({"message": "Deleted successfully"})
-        except Exception as e:
-            return Response({"error": str(e)})
+        vitals = Vitals.objects.get(pk=pk)
+        vitals.delete()
+        return Response({"message": "Deleted successfully"})
         
