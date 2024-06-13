@@ -1,22 +1,12 @@
+from api.tests.dummy import post_patient_dummy
 from api.tests.test_setup import TestSetup
-from api.tests.utils import general_test_API
 from rest_framework.reverse import reverse
-
 
 class TestPatient(TestSetup):
     def test_API(self):
         list_endpoint = "patients_list"
         detail_endpoint = "patients_detail"
-        dummy = {
-            "village_prefix": "VPF",
-            "name": "patient_name",
-            "identification_number": "identification_number",
-            "contact_no": "contact_no",
-            "gender": "gender",
-            "date_of_birth": "2021-01-01",
-            "drug_allergy": "drug_allergy",
-            "picture": "image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
-        }
+        dummy = post_patient_dummy
         dummy_result = {
             'model': 'clinicmodels.patient',
             'pk': 1,

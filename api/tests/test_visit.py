@@ -1,22 +1,13 @@
-from django.urls import reverse
+from api.tests.dummy import post_visit_dummy, post_patient_dummy
 from api.tests.test_setup import TestSetup
-from api.tests.dummy import post_visit_dummy
+from rest_framework.reverse import reverse
 
 class TestVisitAPI(TestSetup):
     def setUp(self):
         super().setUp()
-        create_patient = self.client.post(
+        self.client.post(
             "/patients",
-            {
-                "village_prefix": "VPF",
-                "name": "patient_name",
-                "identification_number": "identification_number",
-                "contact_no": "contact_no",
-                "gender": "gender",
-                "date_of_birth": "2021-01-01",
-                "drug_allergy": "drug_allergy",
-                "picture": "image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
-            },
+            post_patient_dummy
         )
 
     def test_API(self):
