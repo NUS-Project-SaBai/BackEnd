@@ -7,7 +7,7 @@ class TestConsultAPI(TestSetup):
     def setUp(self):
         super().setUp()
         self.client.post(
-            "/patients",
+            reverse("patients_list"),
             dummy.post_patient_dummy,
         )
         self.client.post("/visits", dummy.post_visit_dummy)
