@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class TestPatient(TestSetup):
     def test_patient_list(self):
-        response = self.client.get(reverse("patients"))
+        response = self.client.get(reverse("patients_list"))
         self.assertEqual(response.status_code, 200)
 
     def test_patient_detail(self):
