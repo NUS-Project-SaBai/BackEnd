@@ -17,12 +17,33 @@ post_visit_dummy = {
 
 post_vitals_dummy = {
     "visit": 1,
+    "height": 100,
+    "weight": 100,
+    "systolic": 100,
+    "diastolic": 100,
+    "temperature": 37,
+    "diabetes_mellitus": "Yes",
+    "heart_rate": 100,
+    "urine_test": "True",
+    "hemocue_count": 100,
+    "blood_glucose": 100,
+    "left_eye_degree": "+4",
+    "right_eye_degree": "+4",
+    "left_eye_pinhole": "+23",
+    "right_eye_pinhole": "+23",
+    "others": "others",
+}
+
+post_consult_dummy = {
+    "visit": 1,
     "doctor": 1,
 }
 
-post_consult_dummy = {}
-
-post_diagnosis_dummy = {}
+post_diagnosis_dummy = {
+    "consult": 1,
+    "details": "consult_details",
+    "category": "consult_category",
+}
 
 post_medication_dummy = {
     "medicine_name": "medicine_name",
@@ -31,4 +52,11 @@ post_medication_dummy = {
     "remarks": "remarks",
 }
 
-post_order_dummy = {}
+post_order_dummy = {
+    "medicine": 1,
+    "quantity": 100,
+    "consult": 1,
+    "notes": "order_notes",
+    "remark": "order_remark",
+    "order_status": "status",
+}

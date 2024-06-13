@@ -3,28 +3,42 @@ import api.tests.dummy as dummy
 
 
 class TestPostAllAPI(TestSetup):
-    def create_all(self):
+    def test_post_all(self):
         create_patient = self.client.post(
             "/patients",
-            dummy.patient_post_dummy,
+            dummy.post_patient_dummy,
         )
         self.assertEqual(create_patient.status_code, 200)
 
-        create_visit = self.client.post(
-            "/visits",
-            {
-                "patient": 1,
-                "date": "2021-01-01",
-                "status": "status",
-            },
-        )
+        create_visit = self.client.post("/visits", dummy.post_visit_dummy)
         self.assertEqual(create_visit.status_code, 200)
+
+        create_vitals = self.client.post(
+            "/vitals",
+            dummy.post_vitals_dummy,
+        )
+        self.assertEqual(create_vitals.status_code, 200)
 
         create_consult = self.client.post(
             "/consults",
-            {
-                "visit": 1,
-                "doctor": 1,
-            },
+            dummy.post_consult_dummy,
         )
-        print(create_consult.data)
+        self.assertEqual(create_consult.status_code, 200)
+
+        create_diagnosis = self.client.post(
+            "/diagnosis",
+            dummy.post_diagnosis_dummy,
+        )
+        self.assertEqual(create_diagnosis.status_code, 200)
+
+        create_medication = self.client.post(
+            "/medications",
+            dummy.post_medication_dummy,
+        )
+        self.assertEqual(create_medication.status_code, 200)
+
+        create_order = self.client.post(
+            "/orders",
+            dummy.post_order_dummy,
+        )
+        self.assertEqual(create_order.status_code, 200)
