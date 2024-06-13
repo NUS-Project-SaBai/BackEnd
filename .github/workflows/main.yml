@@ -16,7 +16,6 @@ jobs:
         ports:
           - 5432:5432
 
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.11
@@ -33,4 +32,4 @@ jobs:
           python manage.py migrate
       - name: Test with Django Test
         run: |
-        python manage.py test
+          python manage.py test
