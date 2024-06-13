@@ -15,7 +15,7 @@ class VitalsView(APIView):
         visit = request.query_params.get("visit", "")
         if visit:
             vitals = Vitals.objects.filter(visit=visit)
-        serializer = VitalsSerializer(vitals)
+        serializer = VitalsSerializer(vitals, many=True)
         return Response(serializer.data)
 
     def get_object(self, pk):

@@ -36,7 +36,14 @@ post_vitals_dummy = {
 
 post_consult_dummy = {
     "visit": 1,
+    "date": "2021-01-01",
     "doctor": 1,
+    "past_medical_history": "past_medical_history",
+    "consultation": "consultation",
+    "plan": "plan",
+    "referred_for": "referred_for",
+    "referral_notes": "referral_notes",
+    "remarks": "remarks",
 }
 
 post_diagnosis_dummy = {
