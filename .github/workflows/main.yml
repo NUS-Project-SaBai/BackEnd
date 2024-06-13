@@ -3,16 +3,26 @@ on: [pull_request, push]
 jobs:
   test_project:
     runs-on: ubuntu-latest
-
+    env:
+      POSTGRES_NAME: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
     services:
       postgres:
-        image: postgres
+        image: postgres:15
         env:
-          POSTGRES_DB: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ${{ env.POSTGRES_NAME}}
+          POSTGRES_USER: ${{ env.POSTGRES_USER}}
+          POSTGRES_PASSWORD: ${{env.POSTGRES_PASSWORD}}
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd pg_isready 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v4
@@ -31,8 +41,8 @@ jobs:
         run: |
           python manage.py test
         env:
-          POSTGRES_NAME: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_HOST: postgres
-          POSTGRES_PORT: 5432
+          POSTGRES_NAME: ${{env.POSTGRES_NAME}}
+          POSTGRES_USER: ${{ env.POSTGRES_USER}}
+          POSTGRES_PASSWORD: ${{env.POSTGRES_PASSWORD}}
+          POSTGRES_HOST: ${{env.POSTGRES_HOST}}
+          POSTGRES_PORT: ${{env.POSTGRES_PORT}}
