@@ -5,3 +5,4 @@ from .vitals_view import VitalsView
 from .user_view import UserView
 from .consult_view import ConsultView
 from .orders_view import OrderView
+from .diagnosis_view import DiagnosisView
