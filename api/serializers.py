@@ -66,25 +66,36 @@ class VitalsSerializer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['visit'] = PatientSerializer(instance.visit).data
+        representation['visit'] = VisitSerializer(instance.visit).data
         return representation
 
 
 class ConsultSerializer(serializers.ModelSerializer):
-    visit = VisitSerializer()
-    doctor = UserSerializer()
+    visit = serializers.PrimaryKeyRelatedField(queryset=models.Visit.objects.all())
+    doctor = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
 
     class Meta:
         model = models.Consult
         fields = "__all__"
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['visit'] = VisitSerializer(instance.visit).data
+        representation['doctor'] = UserSerializer(instance.doctor).data
+        return representation
 
 
 class DiagnosisSerializer(serializers.ModelSerializer):
-    consult = ConsultSerializer()
+    consult = serializers.PrimaryKeyRelatedField(queryset=models.Consult.objects.all())
 
     class Meta:
         model = models.Diagnosis
         fields = "__all__"
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['consult'] = ConsultSerializer(instance.consult).data
+        return representation
 
 
 class MedicationSerializer(serializers.ModelSerializer):
@@ -94,9 +105,15 @@ class MedicationSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    medicine = MedicationSerializer()
-    consult = ConsultSerializer()
+    medicine = serializers.PrimaryKeyRelatedField(queryset=models.Medication.objects.all())
+    consult = serializers.PrimaryKeyRelatedField(queryset=models.Consult.objects.all())
 
     class Meta:
         model = models.Order
         fields = "__all__"
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['medicine'] = MedicationSerializer(instance.medicine).data
+        representation['consult'] = ConsultSerializer(instance.consult).data
+        return representation
