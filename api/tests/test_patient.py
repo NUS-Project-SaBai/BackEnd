@@ -1,7 +1,6 @@
 from api.tests.test_setup import TestSetup
 from django.urls import reverse
 from api.models import Patient
-from django.utils import timezone
 
 
 class TestPatient(TestSetup):

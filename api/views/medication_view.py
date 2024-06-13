@@ -27,7 +27,7 @@ class MedicationView(APIView):
 
     def patch(self, request, pk):
         medication = Medication.objects.get(pk=pk)
-        quantityChange = request.data.get("quantityChange")
+        quantityChange = request.data.get("quantityChange", 0)
         data = {"quantity": medication.quantity + quantityChange}
         serializer = MedicationSerializer(medication, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
