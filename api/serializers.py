@@ -70,7 +70,7 @@ class ConsultSerializer(serializers.ModelSerializer):
 
 
 class DiagnosisSerializer(serializers.ModelSerializer):
-    consult = ConsultSerializer()
+    consult = serializers.PrimaryKeyRelatedField(queryset=models.Consult.objects.all())
 
     class Meta:
         model = models.Diagnosis
