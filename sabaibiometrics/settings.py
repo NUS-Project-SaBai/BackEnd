@@ -49,13 +49,13 @@ INSTALLED_APPS = [
     "rest_framework",
     "api",
     "sabaibiometrics",
-    "cloudinary"
+    "cloudinary",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -85,17 +85,25 @@ WSGI_APPLICATION = "sabaibiometrics.wsgi.application"
 
 REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
-    'EXCEPTION_HANDLER': 'sabaibiometrics.custom_exception_handler.custom_exception_handler'
-    }
+    "EXCEPTION_HANDLER": "sabaibiometrics.custom_exception_handler.custom_exception_handler",
+}
 
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
+    # "default": dj_database_url.config(
+    #     default="postgres://sabai_gnfs_user:MGbRjWK9fMrnSB5PYsHvcZ9BIMReXok1@dpg-clntdu4jtl8s73ah3tug-a.singapore-postgres.render.com/sabai_gnfs",
+    #     conn_max_age=600,
+    # )
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.getenv("LOCAL_DB_NAME"),
+        "USER": os.getenv("LOCAL_DB_USER"),
+        "PASSWORD": os.getenv("LOCAL_DB_PASSWORD"),
+        "HOST": os.getenv("LOCAL_DB_HOST"),
+        "PORT": os.getenv("LOCAL_DB_PORT"),
     }
 }
 
@@ -155,3 +163,8 @@ cloudinary.config(
     api_secret=os.getenv("CLOUDINARY_API_SECRET"),
     secure=True,
 )
+
+# Access AWS credentials from environment variables
+# AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+# AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+# AWS_REGION = os.getenv("AWS_REGION")
