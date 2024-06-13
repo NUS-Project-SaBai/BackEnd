@@ -45,7 +45,7 @@ class PatientSerializer(serializers.ModelSerializer):
 
 
 class VisitSerializer(serializers.ModelSerializer):
-    patient = serializers.PrimaryKeyRelatedField(queryset=models.Patient.objects.all())
+    patient = PatientSerializer()
 
     class Meta:
         model = models.Visit
@@ -53,7 +53,7 @@ class VisitSerializer(serializers.ModelSerializer):
 
 
 class VitalsSerializer(serializers.ModelSerializer):
-    visit = serializers.PrimaryKeyRelatedField(queryset=models.Visit.objects.all())
+    visit = VisitSerializer()
 
     class Meta:
         model = models.Vitals
@@ -61,8 +61,8 @@ class VitalsSerializer(serializers.ModelSerializer):
 
 
 class ConsultSerializer(serializers.ModelSerializer):
-    visit = serializers.PrimaryKeyRelatedField(queryset=models.Visit.objects.all())
-    doctor = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
+    visit = VisitSerializer()
+    doctor = UserSerializer()
 
     class Meta:
         model = models.Consult
@@ -70,7 +70,7 @@ class ConsultSerializer(serializers.ModelSerializer):
 
 
 class DiagnosisSerializer(serializers.ModelSerializer):
-    consult = serializers.PrimaryKeyRelatedField(queryset=models.Consult.objects.all())
+    consult = ConsultSerializer()
 
     class Meta:
         model = models.Diagnosis
@@ -84,8 +84,8 @@ class MedicationSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    medicine = serializers.PrimaryKeyRelatedField(queryset=models.Medication.objects.all())
-    consult = serializers.PrimaryKeyRelatedField(queryset=models.Consult.objects.all())
+    medicine = MedicationSerializer()
+    consult = ConsultSerializer()
 
     class Meta:
         model = models.Order
