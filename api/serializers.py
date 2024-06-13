@@ -45,19 +45,29 @@ class PatientSerializer(serializers.ModelSerializer):
 
 
 class VisitSerializer(serializers.ModelSerializer):
-    patient = PatientSerializer()
+    patient = serializers.PrimaryKeyRelatedField(queryset=models.Patient.objects.all())
 
     class Meta:
         model = models.Visit
         fields = "__all__"
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['patient'] = PatientSerializer(instance.patient).data
+        return representation
 
 
 class VitalsSerializer(serializers.ModelSerializer):
-    visit = VisitSerializer()
+    visit = serializers.PrimaryKeyRelatedField(queryset=models.Visit.objects.all())
 
     class Meta:
         model = models.Vitals
         fields = "__all__"
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['visit'] = PatientSerializer(instance.visit).data
+        return representation
 
 
 class ConsultSerializer(serializers.ModelSerializer):
