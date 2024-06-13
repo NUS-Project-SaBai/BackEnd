@@ -10,12 +10,12 @@ class VisitView(APIView):
     def get(self, request, pk=None):
         if pk is not None:
             return self.get_object(pk)
-        
+
         try:
             visits = Visit.objects.select_related("patient").all()
-            patient = request.query_params.get('patient', '')
+            patient = request.query_params.get("patient", "")
             if patient:
-                visits = visits.filter(patient=patient)
+                visits = visits.filter(patient_id=patient)
             serializer = VisitSerializer(visits, many=True)
             return Response(serializer.data)
         except Exception as e:
@@ -27,15 +27,15 @@ class VisitView(APIView):
             serializer = VisitSerializer(visit)
             return Response(serializer.data)
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
-        
+            return Response({"error": str(e)})
+
     def post(self, request):
         serializer = VisitSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=500)
-    
+        return Response(serializer.errors)
+
     def delete(self, request, pk):
         try:
             visit = Visit.objects.get(pk=pk)

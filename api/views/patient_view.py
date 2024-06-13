@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from api.models import Patient
 from api.serializers import PatientSerializer
 
+
 class PatientView(APIView):
 
     def get(self, request, pk=None):
@@ -12,15 +13,13 @@ class PatientView(APIView):
             return self.get_object(pk)
 
         patient_name = request.query_params.get("name")
-        
-        patients = None
 
         try:
-            if patient_name is None:
-                patients = Patient.objects.all()
-            else:
+            patients = Patient.objects.all()
+
+            if patient_name:
                 patients = Patient.objects.filter(name=patient_name)
-            
+
             if patients is None:
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -28,7 +27,9 @@ class PatientView(APIView):
 
             return Response(serializer.data)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def get_object(self, pk):
         try:
@@ -55,11 +56,3 @@ class PatientView(APIView):
             return Response({"message": "Deleted successfully"})
         except Exception as e:
             return Response({"error": str(e)})
-
-
-    
-
-
-        
-    
-        
