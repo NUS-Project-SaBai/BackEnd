@@ -31,7 +31,6 @@ class TestVisitAPI(TestSetup):
             "date": "2021-01-01T00:00:00Z",
             "status": "status",
         }
-        # typeOf(reverse(list_endpoint))
         post_response = self.client.post(reverse(list_endpoint), dummy)
         self.assertEqual(post_response.status_code, 200)
         self.assertEqual(
