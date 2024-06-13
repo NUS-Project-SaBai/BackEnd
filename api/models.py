@@ -16,7 +16,7 @@ class Patient(models.Model):
     date_of_birth = models.DateTimeField(default=timezone.now)
     drug_allergy = models.TextField(default="None")
     face_encodings = models.CharField(max_length=3000, blank=True, null=True)
-    # picture = CloudinaryField("image")
+    picture = CloudinaryField("image")
 
 
 class Visit(models.Model):
