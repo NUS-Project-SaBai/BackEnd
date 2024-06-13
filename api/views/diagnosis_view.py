@@ -19,7 +19,7 @@ class DiagnosisView(APIView):
 
     def get_object(self, pk):
         diagnosis = Diagnosis.objects.get(pk=pk)
-        serializer = DiagnosisSerializer(diagnosis, many=True)
+        serializer = DiagnosisSerializer(diagnosis)
         return Response(serializer.data)
 
     def post(self, request):
