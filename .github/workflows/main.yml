@@ -5,14 +5,10 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      db:
-        image: postgres:15
+      postgres:
+        image: postgres
         env:
-          LOCAL_DB_NAME: "postgres"
-          LOCAL_DB_USER: "postgres"
-          LOCAL_DB_PASSWORD: "postgres"
-          LOCAL_DB_HOST: "localhost"
-          LOCAL_DB_PORT: 5432
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
 
@@ -33,3 +29,9 @@ jobs:
       - name: Test with Django Test
         run: |
           python manage.py test
+        env:
+          LOCAL_DB_NAME: "postgres"
+          LOCAL_DB_USER: "postgres"
+          LOCAL_DB_PASSWORD: "postgres"
+          LOCAL_DB_HOST: "postgres"
+          LOCAL_DB_PORT: 5432
