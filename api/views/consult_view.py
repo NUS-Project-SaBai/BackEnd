@@ -11,14 +11,14 @@ class ConsultView(APIView):
             return self.get_object(pk)
 
         consults = Consult.objects.all()
-        visit_key = request.query_params.get("visit")
+        visit_key = request.query_params.get("visit", "")
         if visit_key:
             consults = consults.filter(visit=visit_key)
         serializer = ConsultSerializer(consults, many=True)
         return Response(serializer.data)
 
     def get_object(self, pk):
-        consult = Consult.objects.filter(pk=pk)
+        consult = Consult.objects.filter(pk=pk).first()
         serializer = ConsultSerializer(consult)
         return Response(serializer.data)
 

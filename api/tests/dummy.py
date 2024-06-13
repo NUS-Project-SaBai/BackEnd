@@ -9,11 +9,7 @@ post_patient_dummy = {
     "picture": "image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
 }
 
-post_visit_dummy = {
-    "patient": 1,
-    "date": "2021-01-01",
-    "status": "status",
-}
+post_visit_dummy = {"patient": 1, "date": "2021-01-01", "status": "status"}
 
 post_vitals_dummy = {
     "visit": 1,
