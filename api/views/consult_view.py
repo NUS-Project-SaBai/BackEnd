@@ -1,14 +1,19 @@
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
-from api.serializers import *
-from api.models import *
 from rest_framework.response import Response
+
+from api.models import Consult
+from api.serializers import ConsultSerializer
 
 
 class ConsultView(APIView):
-    def get(self, request):
+    def get(self, request, pk=None):
+        if pk is not None:
+            return self.get_object(pk)
+
+        consults = Consult.objects.all()
         visit_key = request.query_params.get("visit")
-        consults = Consult.objects.all() if visit_key is None else Consult.objects.filter(visit=visit_key)
+        if visit_key:
+            consults = consults.filter(visit=visit_key)
         serializer = ConsultSerializer(consults, many=True)
         return Response(serializer.data)
 
@@ -19,18 +24,16 @@ class ConsultView(APIView):
 
     def post(self, request):
         serializer = ConsultSerializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=500)
 
-    def put(self, request, pk):
+    def patch(self, request, pk):
         consult = Consult.objects.get(pk=pk)
         serializer = ConsultSerializer(consult, data=request.data, partial=True)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=500)
 
     def delete(self, request, pk):
         consult = Consult.objects.get(pk=pk)

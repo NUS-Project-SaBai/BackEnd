@@ -1,6 +1,5 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
 from api.models import Medication
 from api.serializers import MedicationSerializer
 
@@ -22,20 +21,18 @@ class MedicationView(APIView):
 
     def post(self, request):
         serializer = MedicationSerializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=500)
 
     def patch(self, request, pk):
         medication = Medication.objects.get(pk=pk)
         quantityChange = request.data.get("quantityChange")
         data = {"quantity": medication.quantity + quantityChange}
         serializer = MedicationSerializer(medication, data=data, partial=True)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors)
 
     def delete(self, request, pk):
         medication = Medication.objects.get(pk=pk)
