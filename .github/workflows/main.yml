@@ -8,6 +8,8 @@ jobs:
       postgres:
         image: postgres
         env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
@@ -33,5 +35,5 @@ jobs:
           LOCAL_DB_NAME: "postgres"
           LOCAL_DB_USER: "postgres"
           LOCAL_DB_PASSWORD: "postgres"
-          LOCAL_DB_HOST: "postgres"
+          LOCAL_DB_HOST: "localhost"
           LOCAL_DB_PORT: 5432
