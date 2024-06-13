@@ -21,7 +21,7 @@ class TestPostAllAPI(TestSetup):
         self.assertEqual(create_vitals.status_code, 200)
 
         create_consult = self.client.post(
-            reverse("consult_list"),
+            reverse("consults_list"),
             dummy.post_consult_dummy,
         )
         self.assertEqual(create_consult.status_code, 200)
