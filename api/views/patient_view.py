@@ -19,10 +19,7 @@ class PatientView(APIView):
         if patient_name:
             patients = Patient.objects.filter(name=patient_name)
 
-        if patients is None:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        serializer = PatientSerializer(patients, many=True)
+            serializer = PatientSerializer(patients, many=True)
 
         return Response(serializer.data)
 
