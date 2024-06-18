@@ -11,3 +11,8 @@ class TestSetup(TestCase):
             username="test_user",
             email=f"{str(uuid.uuid4())}@email.com",
         )
+        return super().setUp()
+
+    def tearDown(self):
+        self.user.delete()
+        return super().tearDown()
