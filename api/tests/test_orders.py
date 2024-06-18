@@ -35,7 +35,6 @@ class TestOrdersAPI(TestSetup):
                 "medicine_name": "medicine_name",
                 "quantity": 1,
                 "notes": "notes",
-                "remarks": "remarks",
             },
             "consult": {
                 "id": 1,
