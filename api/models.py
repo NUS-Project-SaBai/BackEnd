@@ -95,7 +95,6 @@ class Medication(models.Model):
     medicine_name = models.CharField(max_length=255)
     quantity = models.IntegerField(default=0)
     notes = models.TextField(blank=True, null=True)
-    remarks = models.TextField(blank=True, null=True)
 
 
 class Order(models.Model):

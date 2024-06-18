@@ -52,7 +52,6 @@ post_medication_dummy = {
     "medicine_name": "medicine_name",
     "quantity": 1,
     "notes": "notes",
-    "remarks": "remarks",
 }
 
 post_order_dummy = {
