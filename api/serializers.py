@@ -10,20 +10,22 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PatientSerializer(serializers.ModelSerializer):
-    patientEnriched = serializers.SerializerMethodField()
+    patient_enriched = serializers.SerializerMethodField()
+    patient_id = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Patient
         fields = "__all__"
 
-    def get_patientEnriched(self, patient):
-        # Perform any enrichment logic here
-        # For example, concatenating patient name and id
+    def get_patient_enriched(self, patient):
         return (
             f"{patient.village_prefix}"
             + f"{patient.pk}".zfill(3)
             + f"{patient.village_prefix}{patient.pk} {patient.contact_no} {patient.name}"
         )
+
+    def get_patient_id(self, patient):
+        return f"{patient.village_prefix}" + f"{patient.pk}".zfill(3)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -39,7 +41,8 @@ class PatientSerializer(serializers.ModelSerializer):
             "drug_allergy": data["drug_allergy"],
             "face_encodings": data["face_encodings"],
             "picture": data["picture"],
-            "filterString": self.get_patientEnriched(instance),
+            "filter_string": self.get_patient_enriched(instance),
+            "patient_id": self.get_patient_id(instance),
         }
         return output
 
