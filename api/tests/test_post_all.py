@@ -9,6 +9,7 @@ class TestPostAllAPI(TestSetup):
             reverse("patients_list"),
             dummy.post_patient_dummy,
         )
+
         self.assertEqual(create_patient.status_code, 200)
 
         create_visit = self.client.post("/visits", dummy.post_visit_dummy)

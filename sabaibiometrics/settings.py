@@ -17,6 +17,7 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 import os
+import sys
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -99,13 +100,23 @@ DATABASES = {
     # )
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.getenv("LOCAL_DB_NAME"),
-        "USER": os.getenv("LOCAL_DB_USER"),
-        "PASSWORD": os.getenv("LOCAL_DB_PASSWORD"),
-        "HOST": os.getenv("LOCAL_DB_HOST"),
-        "PORT": os.getenv("LOCAL_DB_PORT"),
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST"),
+        "PORT": os.getenv("POSTGRES_PORT"),
+        "TEST": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        },
     }
 }
+
+if "test" in sys.argv:
+    DATABASES["default"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+    }
 
 
 # Password validation
