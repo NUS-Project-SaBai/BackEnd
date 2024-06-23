@@ -77,10 +77,14 @@ class OrderSerializer(serializers.ModelSerializer):
         queryset=models.Medication.objects.all()
     )
     consult = serializers.PrimaryKeyRelatedField(queryset=models.Consult.objects.all())
+    visit = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Order
         fields = "__all__"
+
+    def get_visit(self, obj):
+        return VisitSerializer(obj.consult.visit).data
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
