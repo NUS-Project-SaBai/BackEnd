@@ -1,4 +1,3 @@
-from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -12,7 +11,7 @@ class PatientView(APIView):
         if pk is not None:
             return self.get_object(pk)
 
-        patients = Patient.objects.all()
+        patients = Patient.objects.order_by("-pk").all()
         patient_name = request.query_params.get("name", "")
         if patient_name:
             patients = Patient.objects.filter(name=patient_name)

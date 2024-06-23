@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from api import models
 
 
@@ -10,20 +9,22 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PatientSerializer(serializers.ModelSerializer):
-    patientEnriched = serializers.SerializerMethodField()
+    patient_enriched = serializers.SerializerMethodField()
+    patient_id = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Patient
         fields = "__all__"
 
-    def get_patientEnriched(self, patient):
-        # Perform any enrichment logic here
-        # For example, concatenating patient name and id
+    def get_patient_enriched(self, patient):
         return (
             f"{patient.village_prefix}"
             + f"{patient.pk}".zfill(3)
             + f"{patient.village_prefix}{patient.pk} {patient.contact_no} {patient.name}"
         )
+
+    def get_patient_id(self, patient):
+        return f"{patient.village_prefix}" + f"{patient.pk}".zfill(3)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -39,7 +40,8 @@ class PatientSerializer(serializers.ModelSerializer):
             "drug_allergy": data["drug_allergy"],
             "face_encodings": data["face_encodings"],
             "picture": data["picture"],
-            "filterString": self.get_patientEnriched(instance),
+            "filter_string": self.get_patient_enriched(instance),
+            "patient_id": self.get_patient_id(instance),
         }
         return output
 
@@ -70,9 +72,27 @@ class VitalsSerializer(serializers.ModelSerializer):
         return representation
 
 
+class OrderSerializer(serializers.ModelSerializer):
+    medicine = serializers.PrimaryKeyRelatedField(
+        queryset=models.Medication.objects.all()
+    )
+    consult = serializers.PrimaryKeyRelatedField(queryset=models.Consult.objects.all())
+
+    class Meta:
+        model = models.Order
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["medicine"] = MedicationSerializer(instance.medicine).data
+        representation["consult"] = instance.consult.id
+        return representation
+
+
 class ConsultSerializer(serializers.ModelSerializer):
     visit = serializers.PrimaryKeyRelatedField(queryset=models.Visit.objects.all())
     doctor = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
+    prescriptions = OrderSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Consult
@@ -102,20 +122,3 @@ class MedicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Medication
         fields = "__all__"
-
-
-class OrderSerializer(serializers.ModelSerializer):
-    medicine = serializers.PrimaryKeyRelatedField(
-        queryset=models.Medication.objects.all()
-    )
-    consult = serializers.PrimaryKeyRelatedField(queryset=models.Consult.objects.all())
-
-    class Meta:
-        model = models.Order
-        fields = "__all__"
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation["medicine"] = MedicationSerializer(instance.medicine).data
-        representation["consult"] = ConsultSerializer(instance.consult).data
-        return representation
