@@ -29,9 +29,7 @@ class MedicationView(APIView):
         medication = Medication.objects.get(pk=pk)
         quantityChange = request.data.get("quantityChange", 0)
         data = {
-            "medicine_name": request.data.get("medicine_name"),
             "quantity": medication.quantity + quantityChange,
-            "notes": request.data.get("notes"),
         }
         serializer = MedicationSerializer(medication, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
