@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from api import models
 
 
@@ -73,9 +72,27 @@ class VitalsSerializer(serializers.ModelSerializer):
         return representation
 
 
+class OrderSerializer(serializers.ModelSerializer):
+    medicine = serializers.PrimaryKeyRelatedField(
+        queryset=models.Medication.objects.all()
+    )
+    consult = serializers.PrimaryKeyRelatedField(queryset=models.Consult.objects.all())
+
+    class Meta:
+        model = models.Order
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["medicine"] = MedicationSerializer(instance.medicine).data
+        representation["consult"] = instance.consult.id
+        return representation
+
+
 class ConsultSerializer(serializers.ModelSerializer):
     visit = serializers.PrimaryKeyRelatedField(queryset=models.Visit.objects.all())
     doctor = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
+    prescriptions = OrderSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Consult
@@ -105,20 +122,3 @@ class MedicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Medication
         fields = "__all__"
-
-
-class OrderSerializer(serializers.ModelSerializer):
-    medicine = serializers.PrimaryKeyRelatedField(
-        queryset=models.Medication.objects.all()
-    )
-    consult = serializers.PrimaryKeyRelatedField(queryset=models.Consult.objects.all())
-
-    class Meta:
-        model = models.Order
-        fields = "__all__"
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation["medicine"] = MedicationSerializer(instance.medicine).data
-        representation["consult"] = ConsultSerializer(instance.consult).data
-        return representation

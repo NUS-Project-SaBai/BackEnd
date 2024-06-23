@@ -45,6 +45,7 @@ class TestDiagnosisAPI(TestSetup):
                     "status": "status",
                 },
                 "doctor": {"username": "test_user"},
+                "prescriptions": [],
                 "date": "2021-01-01T00:00:00Z",
                 "past_medical_history": "past_medical_history",
                 "consultation": "consultation",
