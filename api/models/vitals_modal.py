@@ -19,8 +19,12 @@ class Vitals(models.Model):
     )
     heart_rate = models.IntegerField(null=True)
     urine_test = models.TextField(blank=True, null=True)
-    hemocue_count = models.DecimalField(decimal_places=2, max_digits=5)
-    blood_glucose = models.DecimalField(decimal_places=2, max_digits=5)
+    hemocue_count = models.DecimalField(
+        decimal_places=2, max_digits=5, blank=True, null=True
+    )
+    blood_glucose = models.DecimalField(
+        decimal_places=2, max_digits=5, blank=True, null=True
+    )
     left_eye_degree = models.TextField(blank=True, null=True)
     right_eye_degree = models.TextField(blank=True, null=True)
     left_eye_pinhole = models.TextField(blank=True, null=True)
