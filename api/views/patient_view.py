@@ -1,9 +1,10 @@
-from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 from api.models import Patient
 from api.serializers import PatientSerializer
+from api.utils import facial_recognition
 
 
 class PatientView(APIView):
@@ -26,8 +27,9 @@ class PatientView(APIView):
 
     def post(self, request):
         serializer = PatientSerializer(data=request.data)
+        face_encoding = facial_recognition.generate_faceprint(request.data['picture'])
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            serializer.save(face_encoding=face_encoding)
             return Response(serializer.data)
 
     def patch(self, request, pk):
@@ -41,3 +43,8 @@ class PatientView(APIView):
         patient = Patient.objects.get(pk=pk)
         patient.delete()
         return Response({"message": "Deleted successfully"})
+
+@api_view(['POST'])
+def indexFace(request):
+    face_encoding = facial_recognition.generate_faceprint(request.data['picture'])
+    return Response(face_encoding)

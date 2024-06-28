@@ -1,4 +1,3 @@
-import io
 import os
 import boto3
 from botocore.exceptions import NoCredentialsError, ClientError
@@ -21,7 +20,7 @@ try:
 except NoCredentialsError:
     print("Credentials not available or invalid. Check your AWS credentials file.")
 
-def generate_faceprint(file) -> str:
+def generate_faceprint(file): 
     '''
     Uploads an image to AWS Rekognition API, returns the faceprint generated. Faceprint will be stored with
     patient details in database, under face encoding
@@ -29,22 +28,20 @@ def generate_faceprint(file) -> str:
     Note to self: This method is to be called just before serializer saves the patient details.
     '''
     try:
-        with file.open(mode="rb") as image:
-            stream = io.BytesIO()
-            image.save(stream, format='jpg')
-            image_binary = stream.getValue()
+        with file.open(mode='rb') as image:
+            image_binary = getattr(image, 'file').getvalue()
 
             response = rekognition_client.index_faces(
                 CollectionId='patients',
                 Image={
-                    'Bytes': image_binary 
+                    'Bytes': image_binary
                 },
                 MaxFaces=3
             )
 
             if response['ResponseMetadata']['HTTPStatusCode'] != 200:
                 # to find a better way to handle network errors here
-                return None
+                return ''
 
             # Gets faceprint of most prominent face
             faceprint =  response['FaceRecords'][0]['Face']['FaceId']
@@ -52,7 +49,10 @@ def generate_faceprint(file) -> str:
 
     except ClientError as e:
         print(f"Error indexing image: {e}")
-        return False
+        return '' 
+    except Exception as e:
+        print(e)
+        return ''
 
 def search_faceprint(file):
     '''
@@ -62,9 +62,7 @@ def search_faceprint(file):
     '''
     try:
         with file.open(mode="rb") as image:
-            stream = io.BytesIO()
-            image.save(stream, format='jpg')
-            image_binary = stream.getValue()
+            image_binary = getattr(image, 'file').getvalue()
 
             response = rekognition_client.search_faces_by_image(
                 CollectionId='patients',
