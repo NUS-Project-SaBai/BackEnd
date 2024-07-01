@@ -23,7 +23,7 @@ class ConsultView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        if request.headers["Authorization"]:
+        if "Authorization" in request.headers:
             token = request.headers["Authorization"].split(" ")[1]
             payload = jwt_decode_token(token)
             request.data["doctor"] = payload["sub"]

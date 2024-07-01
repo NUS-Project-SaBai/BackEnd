@@ -44,7 +44,13 @@ class TestDiagnosisAPI(TestSetup):
                     "date": "2021-01-01T00:00:00Z",
                     "status": "status",
                 },
-                "doctor": {"username": "test_user"},
+                "doctor": {
+                    "user_id": "1",
+                    "username": "test_user",
+                    "email": f"{self.user.email}",
+                    "picture": "",
+                    "nickname": ""
+                },
                 "prescriptions": [],
                 "date": "2021-01-01T00:00:00Z",
                 "past_medical_history": "past_medical_history",
@@ -95,9 +101,11 @@ class TestDiagnosisAPI(TestSetup):
 
         # DELETE
 
-        delete_response = self.client.delete(reverse(detail_endpoint, args=["1"]))
+        delete_response = self.client.delete(
+            reverse(detail_endpoint, args=["1"]))
         self.assertEqual(delete_response.status_code, 200)
-        self.assertEqual(delete_response.data, {"message": "Deleted successfully"})
+        self.assertEqual(delete_response.data, {
+                         "message": "Deleted successfully"})
 
         # GET
         get_response = self.client.get(reverse(list_endpoint))
