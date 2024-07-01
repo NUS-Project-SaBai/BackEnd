@@ -4,8 +4,8 @@ from api import models
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.User
-        fields = ["username"]
+        model = models.CustomUser
+        fields = ["user_id", "username", "email", "picture", "nickname"]
 
 
 class PatientSerializer(serializers.ModelSerializer):
@@ -47,7 +47,8 @@ class PatientSerializer(serializers.ModelSerializer):
 
 
 class VisitSerializer(serializers.ModelSerializer):
-    patient = serializers.PrimaryKeyRelatedField(queryset=models.Patient.objects.all())
+    patient = serializers.PrimaryKeyRelatedField(
+        queryset=models.Patient.objects.all())
 
     class Meta:
         model = models.Visit
@@ -60,7 +61,8 @@ class VisitSerializer(serializers.ModelSerializer):
 
 
 class VitalsSerializer(serializers.ModelSerializer):
-    visit = serializers.PrimaryKeyRelatedField(queryset=models.Visit.objects.all())
+    visit = serializers.PrimaryKeyRelatedField(
+        queryset=models.Visit.objects.all())
 
     class Meta:
         model = models.Vitals
@@ -76,7 +78,8 @@ class OrderSerializer(serializers.ModelSerializer):
     medicine = serializers.PrimaryKeyRelatedField(
         queryset=models.Medication.objects.all()
     )
-    consult = serializers.PrimaryKeyRelatedField(queryset=models.Consult.objects.all())
+    consult = serializers.PrimaryKeyRelatedField(
+        queryset=models.Consult.objects.all())
     visit = serializers.SerializerMethodField()
 
     class Meta:
@@ -88,14 +91,17 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation["medicine"] = MedicationSerializer(instance.medicine).data
+        representation["medicine"] = MedicationSerializer(
+            instance.medicine).data
         representation["consult"] = instance.consult.id
         return representation
 
 
 class ConsultSerializer(serializers.ModelSerializer):
-    visit = serializers.PrimaryKeyRelatedField(queryset=models.Visit.objects.all())
-    doctor = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
+    visit = serializers.PrimaryKeyRelatedField(
+        queryset=models.Visit.objects.all())
+    doctor = serializers.PrimaryKeyRelatedField(
+        queryset=models.CustomUser.objects.all())
     prescriptions = OrderSerializer(many=True, read_only=True)
 
     class Meta:
@@ -110,7 +116,8 @@ class ConsultSerializer(serializers.ModelSerializer):
 
 
 class DiagnosisSerializer(serializers.ModelSerializer):
-    consult = serializers.PrimaryKeyRelatedField(queryset=models.Consult.objects.all())
+    consult = serializers.PrimaryKeyRelatedField(
+        queryset=models.Consult.objects.all())
 
     class Meta:
         model = models.Diagnosis

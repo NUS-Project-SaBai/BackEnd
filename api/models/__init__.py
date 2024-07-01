@@ -6,3 +6,4 @@ from .diagnosis_model import Diagnosis
 from .medication_model import Medication
 from .order_model import Order
 from django.contrib.auth.models import User
+from .user_model import CustomUser

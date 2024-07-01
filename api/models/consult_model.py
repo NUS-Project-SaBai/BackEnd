@@ -1,17 +1,18 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
 from api.models import Visit
+from django.apps import apps
 
 
 class Consult(models.Model):
     class Meta:
         db_table = "consults"
 
-    visit = models.ForeignKey(Visit, on_delete=models.SET_NULL, blank=True, null=True)
+    visit = models.ForeignKey(
+        Visit, on_delete=models.SET_NULL, blank=True, null=True)
     date = models.DateTimeField(default=timezone.now)
     doctor = models.ForeignKey(
-        User,
+        'api.CustomUser',
         related_name="doctor_create",
         on_delete=models.SET_NULL,
         blank=True,
