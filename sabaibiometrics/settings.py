@@ -94,10 +94,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ),
 }
-disable_default_permissions = os.getenv(
-    'DISABLE_DEFAULT_PERMISSIONS') == 'True'
+require_auth = os.getenv(
+    'REQUIRE_AUTH') == 'True'
 
-if not disable_default_permissions:
+if require_auth:
     REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
         'rest_framework.permissions.IsAuthenticated',
     )
