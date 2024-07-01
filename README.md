@@ -3,80 +3,69 @@
 1. Prerequisities
 
    Before proceeding with the installation, ensure that the following prerequisites are met:
+
    - PostgreSQL 15 is installed on your system.
-   - Python version 3.8.0 or higher is available in your environment.
+   - Python version 3.8 or higher max 3.11 is available in your environment.
 
    ```bash
    git clone https://github.com/NUS-Project-SaBai/BackEnd/
    ```
 
 2. Set up postgreSQL Database
+
    - Install PostgreSQL 15 if not already installed.
    - Create a new PostgreSQL database for Project SaBai.
 
 3. Configure Database Settings
-   Navigate to the Backend directory and create a .env file if it is not present. Copy the content from .env.example and update the database configuration settings to match your PostgreSQL database credentials. Cloudinary credentials is in the Key Credentials doc.
-
-   ```bash
-   CLOUDINARY_CLOUD_NAME=
-   CLOUDINARY_API_KEY=
-   CLOUDINARY_API_SECRET=
-
-
-   POSTGRES_NAME=
-   POSTGRES_USER=
-   POSTGRES_PASSWORD=
-   POSTGRES_HOST=
-   POSTGRES_PORT=
-   ```
+   Navigate to the Backend directory and create a .env file if it is not present. Copy the content from `.env.example` and update the database configuration settings to match your PostgreSQL database credentials. Cloudinary credentials is in the Key Credentials doc.
 
 ## Activating the virtual environment
 
-   Assuming that you have successfully cloned the repository into your system and are inside the directory, the very first step is to activate your python virtual environment. This is a highly important step so as to clearly separate the dependencies of this project from those that already exist in your own system. Mixing them up can lead to some of your system dependencies to malfunction.
+Assuming that you have successfully cloned the repository into your system and are inside the directory, the very first step is to activate your python virtual environment. This is a highly important step so as to clearly separate the dependencies of this project from those that already exist in your own system. Mixing them up can lead to some of your system dependencies to malfunction.
 
 ### Windows
 
-   We will be using virtualenv to set up our virtual environment. <https://python-guide-ru.readthedocs.io/en/latest/dev/virtualenvs.html>
+We will be using virtualenv to set up our virtual environment. <https://python-guide-ru.readthedocs.io/en/latest/dev/virtualenvs.html>
 
-   Run this command if you have yet to install it:
+Run this command if you have yet to install it:
 
-   ```bash
-   pip install virtualenv 
-   ```
+```bash
+pip install virtualenv
+```
 
-   For setting up the virtual environment for the first time:
+For setting up the virtual environment for the first time:
 
-   ```bash
-   virtualenv venv 
-   ```
+```bash
+virtualenv venv
+```
 
-   This creates a /venv folder in your directory. Optimally, you will never need to touch this folder.
+This creates a /venv folder in your directory. Optimally, you will never need to touch this folder.
 
-   Starting the virtual environment (for Windows, using powershell):
+Starting the virtual environment (for Windows, using powershell):
 
-   ```bash
-   .\venv\Scripts\activate
-   ```
+```bash
+.\venv\Scripts\activate
+```
 
-   Activate virtual environment (You should see the following):
+Activate virtual environment (You should see the following):
 
-   ```bash
-   (venv) PS C:\Users\angpe\Desktop\work\New folder>
-   ```
+```bash
+(venv) PS C:\Users\angpe\Desktop\work\New folder>
+```
 
-   Now that your environment is activated, you can install Python packages using pip. Packages installed while the environment is activated will only be available within this environment.
+Now that your environment is activated, you can install Python packages using pip. Packages installed while the environment is activated will only be available within this environment.
 
-   Deactivating the virtual environment
+Deactivating the virtual environment
 
-   ```bash
-   deactivate
-   ```
+```bash
+deactivate
+```
 
-   Deactivated virtual environment (You should see the following):
+Deactivated virtual environment (You should see the following):
 
-   ```bash
-   PS C:\Users\angpe\Desktop\work\New folder>
-   ```
+```bash
+PS C:\Users\angpe\Desktop\work\New folder>
+```
 
 ### MacOS
 
@@ -91,7 +80,7 @@ pip install virtualenv
 For setting up the virtual environment for the first time:
 
 ```bash
-virtualenv venv 
+virtualenv venv
 ```
 
 If your Python environment is managed externally, likely by Homebrew (on MacOS), you might get an error message. An alternative step to set up virtual environment (recommended by ChatGPT) is:
@@ -138,7 +127,7 @@ Angelico-MBP:sabai_2019 angelico$
 pip install -r requirements.txt
 ```
 
-*Do this in the virtual environment
+\*Do this in the virtual environment
 
 ### Making migrations
 
@@ -193,11 +182,11 @@ python manage.py create_default_users
 
 ## pgAdmin4
 
-   This can be used as a tool to view your database and check if the data is correct.
+This can be used as a tool to view your database and check if the data is correct.
 
-   To view data tables:
+To view data tables:
 
-   1. Launch pgAdmin4
-   2. Navigate to your database
-   3. Schemas => public => table
-   4. Right click table and view/edit data
+1.  Launch pgAdmin4
+2.  Navigate to your database
+3.  Schemas => public => table
+4.  Right click table and view/edit data
