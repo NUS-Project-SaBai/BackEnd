@@ -43,11 +43,9 @@ class TestConsultAPI(TestSetup):
                     "status": "status"
                 },
                 "doctor": {
-                    "user_id": "1",
+                    "auth0_id": "1",
                     "username": "test_user",
                     "email": f"{self.user.email}",
-                    "picture": "",
-                    "nickname": ""
                 },
                 "prescriptions": [],
                 "date": "2021-01-01T00:00:00Z",
@@ -88,11 +86,9 @@ class TestConsultAPI(TestSetup):
                     "status": "status",
                 },
                 "doctor": {
-                    "user_id": "1",
+                    "auth0_id": "1",
                     "username": "test_user",
                     "email": f"{self.user.email}",
-                    "picture": "",
-                    "nickname": ""
                 },
                 "prescriptions": [],
                 "date": "2021-01-01T00:00:00Z",
@@ -136,11 +132,9 @@ class TestConsultAPI(TestSetup):
                     "status": "status",
                 },
                 "doctor": {
-                    "user_id": "1",
+                    "auth0_id": "1",
                     "username": "test_user",
                     "email": f"{self.user.email}",
-                    "picture": "",
-                    "nickname": ""
                 },
                 "prescriptions": [],
                 "date": "2021-01-01T00:00:00Z",
@@ -181,11 +175,9 @@ class TestConsultAPI(TestSetup):
                     "status": "status",
                 },
                 "doctor": {
-                    "user_id": "1",
+                    "auth0_id": "1",
                     "username": "test_user",
                     "email": f"{self.user.email}",
-                    "picture": "",
-                    "nickname": ""
                 },
                 "prescriptions": [],
                 "date": "2021-01-01T00:00:00Z",

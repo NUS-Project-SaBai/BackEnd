@@ -5,7 +5,7 @@ from api import models
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomUser
-        fields = ["user_id", "username", "email", "picture", "nickname"]
+        fields = ["auth0_id", "username", "email"]
 
 
 class PatientSerializer(serializers.ModelSerializer):
@@ -100,8 +100,10 @@ class OrderSerializer(serializers.ModelSerializer):
 class ConsultSerializer(serializers.ModelSerializer):
     visit = serializers.PrimaryKeyRelatedField(
         queryset=models.Visit.objects.all())
-    doctor = serializers.PrimaryKeyRelatedField(
-        queryset=models.CustomUser.objects.all())
+    doctor = serializers.SlugRelatedField(
+        slug_field='auth0_id',
+        queryset=models.CustomUser.objects.all()
+    )
     prescriptions = OrderSerializer(many=True, read_only=True)
 
     class Meta:

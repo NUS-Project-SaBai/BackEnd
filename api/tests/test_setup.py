@@ -10,9 +10,10 @@ class TestSetup(TestCase):
         self.user = CustomUser.objects.create_user(
             username="test_user",
             email=f"{str(uuid.uuid4())}@email.com",
-            user_id=1,
+            auth0_id=1,
 
         )
+        self.client.force_authenticate(user=self.user)
         return super().setUp()
 
     def tearDown(self):

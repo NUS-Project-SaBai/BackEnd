@@ -87,6 +87,9 @@ WSGI_APPLICATION = "sabaibiometrics.wsgi.application"
 REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "EXCEPTION_HANDLER": "sabaibiometrics.custom_exception_handler.custom_exception_handler",
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
@@ -94,13 +97,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ),
 }
-require_auth = os.getenv(
-    'REQUIRE_AUTH') == 'True'
-
-if require_auth:
-    REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
-        'rest_framework.permissions.IsAuthenticated',
-    )
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -208,6 +204,8 @@ JWT_AUTH = {
     'JWT_ISSUER': os.getenv("AUTH0_ISSUER"),
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
 }
+
+AUTH_USER_MODEL = 'api.CustomUser'
 
 # Access AWS credentials from environment variables
 # AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
