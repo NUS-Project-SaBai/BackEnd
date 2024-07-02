@@ -28,24 +28,23 @@ def generate_faceprint(file):
     Note to self: This method is to be called just before serializer saves the patient details.
     '''
     try:
-        with file.open(mode='rb') as image:
-            image_binary = getattr(image, 'file').getvalue()
+        image_binary = getattr(file, 'file').getvalue()
 
-            response = rekognition_client.index_faces(
-                CollectionId='patients',
-                Image={
-                    'Bytes': image_binary
-                },
-                MaxFaces=3
-            )
+        response = rekognition_client.index_faces(
+            CollectionId='patients',
+            Image={
+                'Bytes': image_binary
+            },
+            MaxFaces=3
+        )
 
-            if response['ResponseMetadata']['HTTPStatusCode'] != 200:
-                # to find a better way to handle network errors here
-                return ''
+        if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+            # to find a better way to handle network errors here
+            return ''
 
-            # Gets faceprint of most prominent face
-            faceprint =  response['FaceRecords'][0]['Face']['FaceId']
-            return faceprint
+        # Gets faceprint of most prominent face
+        faceprint =  response['FaceRecords'][0]['Face']['FaceId']
+        return faceprint
 
     except ClientError as e:
         print(f"Error indexing image: {e}")
@@ -61,27 +60,27 @@ def search_faceprint(file):
         (matched_faceprint, confidence_of_match)
     '''
     try:
-        with file.open(mode="rb") as image:
-            image_binary = getattr(image, 'file').getvalue()
+        image_binary = getattr(file, 'file').getvalue()
 
-            response = rekognition_client.search_faces_by_image(
-                CollectionId='patients',
-                Image={
-                    'Bytes': image_binary
-                },
-                MaxFaces=3
-            )
+        response = rekognition_client.search_faces_by_image(
+            CollectionId='patients',
+            Image={
+                'Bytes': image_binary
+            },
+            MaxFaces=3
+        )
 
-            if response['ResponseMetadata']['HTTPStatusCode'] != 200:
-                # to find a better way to handle network errors here
-                return None
+        if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+            # to find a better way to handle network errors here
+            return [] 
 
-            matched_faceprints = []
-            for match in response['FaceMatches']:
-                matched_faceprints.append((match['Face']['FaceId'], match['Face']['Confidence']))    
+        matched_faceprints = []
+        for match in response['FaceMatches']:
+            matched_faceprints.append((match['Face']['FaceId'], match['Face']['Confidence']))    
 
-            return matched_faceprints
+        return matched_faceprints
 
     except ClientError as e:
         print(f"Error finding image, client error: {e}")
+        return [] 
 
