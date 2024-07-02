@@ -190,3 +190,11 @@ To view data tables:
 2.  Navigate to your database
 3.  Schemas => public => table
 4.  Right click table and view/edit data
+
+### Authentication
+
+Running the following command in Backend folder will pull all the users from auth0 into Django database before starting the server
+
+```bash
+./start-server.sh
+```
