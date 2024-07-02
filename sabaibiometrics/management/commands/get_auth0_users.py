@@ -4,7 +4,7 @@ from django.db.utils import IntegrityError
 import requests
 from dotenv import load_dotenv
 import os
-from api.models import CustomUser
+from api.models import CustomUser, JWKS
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -26,6 +26,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         try:
+            jwks_url = f'https://{os.getenv("AUTH0_DOMAIN")}/.well-known/jwks.json'
+            jwks_data = requests.get(jwks_url).json()
+            JWKS.objects.create(jwks=jwks_data)
+
             response = requests.post(
                 token_url, headers=token_headers, data=token_data)
             token = response.json()['access_token']

@@ -3,6 +3,7 @@ import os
 import jwt
 import requests
 from dotenv import load_dotenv
+from api.models import JWKS
 
 from django.contrib.auth import authenticate
 
@@ -11,16 +12,13 @@ load_dotenv()
 
 
 def jwt_get_username_from_payload_handler(payload):
-    username = payload.get('sub').replace('|', '.')
-    print(username)
-    authenticate(remote_user=username)
+    username = payload.get('sub')
     return username
 
 
 def jwt_decode_token(token):
     header = jwt.get_unverified_header(token)
-    jwks = requests.get(
-        'https://{}/.well-known/jwks.json'.format(os.getenv("AUTH0_DOMAIN"))).json()
+    jwks = JWKS.objects.latest('updated_at').jwks
     public_key = None
     for jwk in jwks['keys']:
         if jwk['kid'] == header['kid']:
@@ -29,5 +27,5 @@ def jwt_decode_token(token):
     if public_key is None:
         raise Exception('Public key not found.')
 
-    issuer = 'https://{}/'.format(os.getenv("AUTH0_DOMAIN"))
+    issuer = f'https://{os.getenv("AUTH0_DOMAIN")}/'
     return jwt.decode(token, public_key, audience=os.getenv("AUTH0_AUDIENCE"), issuer=issuer, algorithms=['RS256'])

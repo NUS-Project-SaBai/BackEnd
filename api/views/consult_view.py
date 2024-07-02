@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 from api.models import Consult
 from api.serializers import ConsultSerializer
-from sabaibiometrics.utils import jwt_decode_token
+from sabaibiometrics.utils import jwt_decode_token, jwt_get_username_from_payload_handler
 
 
 class ConsultView(APIView):
@@ -26,7 +26,8 @@ class ConsultView(APIView):
         if "Authorization" in request.headers:
             token = request.headers["Authorization"].split(" ")[1]
             payload = jwt_decode_token(token)
-            request.data["doctor"] = payload["sub"]
+            request.data["doctor"] = jwt_get_username_from_payload_handler(
+                payload)
         serializer = ConsultSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
