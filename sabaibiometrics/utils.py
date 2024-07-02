@@ -13,6 +13,8 @@ load_dotenv()
 
 def jwt_get_username_from_payload_handler(payload):
     username = payload.get('sub')
+    # DO NOT REMOVE, this authenticate magic is important
+    authenticate(remote_user=username)
     return username
 
 
