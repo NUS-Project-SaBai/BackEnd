@@ -34,13 +34,25 @@ pip install --user pipenv
 To initialise a new `pipenv` environment for python 3.11 (note you must already have the python version):
 
 ```bash
-pipenv --python 3.8
+pipenv --python 3.11
 ```
 
 To use the virtual environment, run:
 
 ```bash
 pipenv shell
+```
+
+To install the dependencies, run:
+
+```bash
+pipenv install
+```
+
+To exit from the virtual environment, run:
+
+```bash
+exit
 ```
 
 ### Windows
