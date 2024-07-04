@@ -79,10 +79,11 @@ Note: Above commands from installing requirements to migrating models only need 
 
 ### Authentication (obtainin user accounts from auth0)
 
-Running the following command in Backend folder will pull all the users from auth0 into Django database before starting the server
+Running the following command in Backend folder will pull all the users from auth0 into Django database before starting the server.
+This needs to be done anytime a new user is added to auth0.
 
 ```bash
-python manage.py get_auth0_users
+python manage.py set_auth0_users
 ```
 
 ### Running the server
