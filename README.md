@@ -23,6 +23,26 @@
 
 Assuming that you have successfully cloned the repository into your system and are inside the directory, the very first step is to activate your python virtual environment. This is a highly important step so as to clearly separate the dependencies of this project from those that already exist in your own system. Mixing them up can lead to some of your system dependencies to malfunction.
 
+We will be using Pipenv. <https://pipenv.pypa.io/en/latest/>
+
+Run this command if you have yet to install it:
+
+```bash
+pip install --user pipenv
+```
+
+To initialise a new `pipenv` environment for python 3.11 (note you must already have the python version):
+
+```bash
+pipenv --python 3.8
+```
+
+To use the virtual environment, run:
+
+```bash
+pipenv shell
+```
+
 ### Windows
 
 We will be using virtualenv to set up our virtual environment. <https://python-guide-ru.readthedocs.io/en/latest/dev/virtualenvs.html>
