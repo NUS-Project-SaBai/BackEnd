@@ -1,11 +1,7 @@
 {
     "_meta": {
         "hash": {
-<<<<<<< HEAD
-            "sha256": "2b807e5c17f07d65f7d9b971816fc882a8a8daa2e504083c6b13f6e87f867460"
-=======
             "sha256": "804b5ecc344a47bc07897ff87fa462429411e8b23d3ab469728161f68d0ff15f"
->>>>>>> dcb9d4e (Update pipfile to include boto3)
         },
         "pipfile-spec": 6,
         "requires": {},

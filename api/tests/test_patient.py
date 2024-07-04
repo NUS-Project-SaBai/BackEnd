@@ -22,15 +22,15 @@ class TestPatient(TestSetup):
             "date_of_birth": "2021-01-01T00:00:00Z",
             "drug_allergy": "drug_allergy",
             "face_encodings": "88e4a97a-10d0-4e63-abe0-bd36808974b4",
-            "filterString": "VPF001VPF1 contact_no patient_name",
+            "filter_string": "VPF001VPF1 contact_no patient_name",
+            "patient_id" : 'VPF001'
         }
 
-        picture = None
-        with open("api/tests/tom_holland_learn.jpeg", 'rb') as file:
-            picture = file.read()
-
         # The value of picture must be set to the file handle of the Bytes object of the image
-        dummy['picture'] = picture
+        dummy['picture'] = SimpleUploadedFile(
+            "tom_holland_learn.jpeg",
+            open("api/tests/tom_holland_learn.jpeg", 'rb').read(), 
+            content_type='image/jpeg')
 
         post_response = self.client.post(
             reverse(list_endpoint),
@@ -41,7 +41,6 @@ class TestPatient(TestSetup):
         # The image is stored in a Cloudinary field, and is represented as a url to the image on Cloudinary.
         # After every upload, a new url is generated for that image, thus the expected url string in 'picture'
         # must be updated with the generated url.
-        print(post_response.data)
         dummy_result['picture'] = post_response.data['picture']
 
         self.assertEqual(post_response.status_code, 200)
@@ -61,14 +60,18 @@ class TestPatient(TestSetup):
         # File pointer needs to be reset to the start before it can be used again.
         # picture.seek(0)
 
+        dummy['picture'] = SimpleUploadedFile(
+            "tom_holland_learn.jpeg",
+            open("api/tests/tom_holland_learn.jpeg", 'rb').read(), 
+            content_type='image/jpeg')
+
         # PATCH
-        print(f'Dummy picture before patch: {dummy["picture"]}')
         put_response = self.client.patch(
             reverse(detail_endpoint, args=["1"]),
             dummy,
             format='multipart'
         )
-        print(f'Response data after patch{put_response.data}')
+
         self.assertEqual(put_response.status_code, 200)
         dummy_result['picture'] = put_response.data['picture']
         self.assertEqual(
