@@ -29,12 +29,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure--^*1&+ae2anj0^hnr6a7!u#ur48w3sc-@3fa=(h+0_1560gas0"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
 
 
 # Application definition
@@ -59,7 +59,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    'django.contrib.auth.middleware.RemoteUserMiddleware',
+    "django.contrib.auth.middleware.RemoteUserMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -87,14 +87,11 @@ WSGI_APPLICATION = "sabaibiometrics.wsgi.application"
 REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "EXCEPTION_HANDLER": "sabaibiometrics.custom_exception_handler.custom_exception_handler",
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
     ),
 }
 
@@ -161,7 +158,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -177,9 +176,9 @@ CORS_ALLOWED_ORIGINS = [
 ]
 # If you have specific headers being sent by your frontend, add them here
 CORS_ALLOW_HEADERS = [
-    'headers',
-    'content-type',
-    'authorization',
+    "headers",
+    "content-type",
+    "authorization",
 ]
 
 cloudinary.config(
@@ -190,22 +189,20 @@ cloudinary.config(
 )
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'django.contrib.auth.backends.RemoteUserBackend',
+    "django.contrib.auth.backends.ModelBackend",
+    "django.contrib.auth.backends.RemoteUserBackend",
 ]
 
 JWT_AUTH = {
-    'JWT_PAYLOAD_GET_USERNAME_HANDLER':
-        'sabaibiometrics.utils.jwt_get_username_from_payload_handler',
-    'JWT_DECODE_HANDLER':
-        'sabaibiometrics.utils.jwt_decode_token',
-    'JWT_ALGORITHM': 'RS256',
-    'JWT_AUDIENCE': os.getenv("AUTH0_AUDIENCE"),
-    'JWT_ISSUER': os.getenv("AUTH0_ISSUER"),
-    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    "JWT_PAYLOAD_GET_USERNAME_HANDLER": "sabaibiometrics.utils.jwt_get_username_from_payload_handler",
+    "JWT_DECODE_HANDLER": "sabaibiometrics.utils.jwt_decode_token",
+    "JWT_ALGORITHM": "RS256",
+    "JWT_AUDIENCE": os.getenv("AUTH0_AUDIENCE"),
+    "JWT_ISSUER": os.getenv("AUTH0_ISSUER"),
+    "JWT_AUTH_HEADER_PREFIX": "Bearer",
 }
 
-AUTH_USER_MODEL = 'api.CustomUser'
+AUTH_USER_MODEL = "api.CustomUser"
 
 # Access AWS credentials from environment variables
 # AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
