@@ -29,3 +29,7 @@ django = "==5.0.6"
 
 [requires]
 python_version = "3.11"
+
+[scripts]
+test = "python manage.py test"
+start = "python manage.py start"

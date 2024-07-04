@@ -69,5 +69,3 @@ static/
 
 .env
 db.sqlite3
-
-start-server.sh
