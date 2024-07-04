@@ -2,6 +2,7 @@ from api.tests.dummy import post_patient_dummy
 from api.tests.test_setup import TestSetup
 from rest_framework.reverse import reverse
 
+
 class TestPatient(TestSetup):
     def test_API(self):
         list_endpoint = "patients_list"
@@ -19,7 +20,8 @@ class TestPatient(TestSetup):
             "drug_allergy": "drug_allergy",
             "face_encodings": None,
             "picture": "image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
-            "filterString": "VPF001VPF1 contact_no patient_name",
+            "filter_string": "VPF001VPF1 contact_no patient_name",
+            "patient_id": "VPF001",
         }
 
         post_response = self.client.post(

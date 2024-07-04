@@ -118,3 +118,4 @@ class OrderSerializer(serializers.ModelSerializer):
         representation["medicine"] = MedicationSerializer(instance.medicine).data
         representation["consult"] = ConsultSerializer(instance.consult).data
         return representation
+

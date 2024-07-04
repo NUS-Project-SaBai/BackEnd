@@ -7,53 +7,52 @@ class TestVitalsAPI(TestSetup):
     def setUp(self):
         super().setUp()
         self.post_patient_dummy = self.client.post(
-            reverse("patients_list"),
-            post_patient_dummy
+            reverse("patients_list"), post_patient_dummy
         )
         self.post_visit_dummy = self.client.post(
-            reverse("visits_list"),
-            post_visit_dummy
+            reverse("visits_list"), post_visit_dummy
         )
 
     def test_API(self):
         list_endpoint = "vitals_list"
         detail_endpoint = "vitals_detail"
         dummy_response = {
-            'id': 1,
-            'visit': {
-                'id': 1,
-                'patient': {
-                    'model': 'clinicmodels.patient',
-                    'pk': 1,
-                    'village_prefix': 'VPF',
-                    'name': 'patient_name',
-                    'identification_number': 'identification_number',
-                    'contact_no': 'contact_no',
-                    'gender': 'gender',
-                    'date_of_birth': '2021-01-01T00:00:00Z',
-                    'drug_allergy': 'drug_allergy',
-                    'face_encodings': None,
-                    'picture': 'image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg',
-                    'filterString': 'VPF001VPF1 contact_no patient_name'
+            "id": 1,
+            "visit": {
+                "id": 1,
+                "patient": {
+                    "model": "clinicmodels.patient",
+                    "pk": 1,
+                    "village_prefix": "VPF",
+                    "name": "patient_name",
+                    "identification_number": "identification_number",
+                    "contact_no": "contact_no",
+                    "gender": "gender",
+                    "date_of_birth": "2021-01-01T00:00:00Z",
+                    "drug_allergy": "drug_allergy",
+                    "face_encodings": None,
+                    "picture": "image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
+                    "filter_string": "VPF001VPF1 contact_no patient_name",
+                    "patient_id": "VPF001",
                 },
-                'date': '2021-01-01T00:00:00Z',
-                'status': 'status'
+                "date": "2021-01-01T00:00:00Z",
+                "status": "status",
             },
-            'height': '100.00',
-            'weight': '100.00',
-            'systolic': 100,
-            'diastolic': 100,
-            'temperature': '37.00',
-            'diabetes_mellitus': 'Yes',
-            'heart_rate': 100,
-            'urine_test': 'True',
-            'hemocue_count': '100.00',
-            'blood_glucose': '100.00',
-            'left_eye_degree': '+4',
-            'right_eye_degree': '+4',
-            'left_eye_pinhole': '+23',
-            'right_eye_pinhole': '+23',
-            'others': 'others'
+            "height": "100.00",
+            "weight": "100.00",
+            "systolic": "100",
+            "diastolic": "100",
+            "temperature": "37.00",
+            "diabetes_mellitus": "Yes",
+            "heart_rate": "100",
+            "urine_test": "True",
+            "hemocue_count": "100.00",
+            "blood_glucose": "100.00",
+            "left_eye_degree": "+4",
+            "right_eye_degree": "+4",
+            "left_eye_pinhole": "+23",
+            "right_eye_pinhole": "+23",
+            "others": "others",
         }
 
         post_response = self.client.post(

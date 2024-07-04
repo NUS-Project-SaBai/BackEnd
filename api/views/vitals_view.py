@@ -29,7 +29,20 @@ class VitalsView(APIView):
             serializer.save()
             return Response(serializer.data)
 
-    def patch(self, request, pk):
+    def patch(self, request, pk=None):
+        if pk is not None:
+            return self.patch_object(request, pk)
+
+        vital = Vitals.objects.all()
+        visit = request.query_params.get("visit", "")
+        if visit:
+            vital = vital.filter(visit=visit).first()
+        serializer = VitalsSerializer(vital, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
+
+    def patch_object(self, request, pk):
         vital = Vitals.objects.get(pk=pk)
         serializer = VitalsSerializer(vital, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):

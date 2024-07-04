@@ -12,7 +12,11 @@ class VisitView(APIView):
         visits = Visit.objects.all()
         patient = request.query_params.get("patient", "")
         if patient:
-            visits = visits.select_related("patient").filter(patient_id=patient)
+            visits = (
+                visits.select_related("patient")
+                .filter(patient_id=patient)
+                .order_by("-id")
+            )
         serializer = VisitSerializer(visits, many=True)
         return Response(serializer.data)
 

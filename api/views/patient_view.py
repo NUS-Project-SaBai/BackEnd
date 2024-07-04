@@ -13,7 +13,7 @@ class PatientView(APIView):
         if pk is not None:
             return self.get_object(pk)
 
-        patients = Patient.objects.all()
+        patients = Patient.objects.order_by("-pk").all()
         patient_name = request.query_params.get("name", "")
         if patient_name:
             patients = Patient.objects.filter(name=patient_name)
@@ -34,7 +34,8 @@ class PatientView(APIView):
 
     def patch(self, request, pk):
         patient = Patient.objects.get(pk=pk)
-        serializer = PatientSerializer(patient, data=request.data, partial=True)
+        serializer = PatientSerializer(
+            patient, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
