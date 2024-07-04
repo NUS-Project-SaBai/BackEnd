@@ -33,8 +33,8 @@ class PatientSerializer(serializers.ModelSerializer):
             "date_of_birth": data["date_of_birth"],
             "drug_allergy": data["drug_allergy"],
             "face_encodings": data["face_encodings"],
-            "picture": data["picture"],
             "filter_string": self.get_patient_enriched(instance),
             "patient_id": self.get_patient_id(instance),
+            "picture": data["picture"],
         }
         return output
