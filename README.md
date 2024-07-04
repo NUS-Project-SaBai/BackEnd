@@ -23,108 +23,38 @@
 
 Assuming that you have successfully cloned the repository into your system and are inside the directory, the very first step is to activate your python virtual environment. This is a highly important step so as to clearly separate the dependencies of this project from those that already exist in your own system. Mixing them up can lead to some of your system dependencies to malfunction.
 
-### Windows
-
-We will be using virtualenv to set up our virtual environment. <https://python-guide-ru.readthedocs.io/en/latest/dev/virtualenvs.html>
+We will be using Pipenv. <https://pipenv.pypa.io/en/latest/>
 
 Run this command if you have yet to install it:
 
 ```bash
-pip install virtualenv
+pip install pipenv
 ```
 
-For setting up the virtual environment for the first time:
+To initialise a new `pipenv` environment for python 3.11 (note you must already have this python version installed):
 
 ```bash
-virtualenv venv
+pipenv --python 3.11
 ```
 
-This creates a /venv folder in your directory. Optimally, you will never need to touch this folder.
-
-Starting the virtual environment (for Windows, using powershell):
+To use the virtual environment, run:
 
 ```bash
-.\venv\Scripts\activate
+pipenv shell
 ```
 
-Activate virtual environment (You should see the following):
+To exit from the virtual environment, run:
 
 ```bash
-(venv) PS C:\Users\angpe\Desktop\work\New folder>
+exit
 ```
 
-Now that your environment is activated, you can install Python packages using pip. Packages installed while the environment is activated will only be available within this environment.
+### Install dependencies
 
-Deactivating the virtual environment
-
-```bash
-deactivate
-```
-
-Deactivated virtual environment (You should see the following):
+To install the dependencies, run:
 
 ```bash
-PS C:\Users\angpe\Desktop\work\New folder>
-```
-
-### MacOS
-
-We will be using virtualenv to set up our virtual environment. <https://python-guide-ru.readthedocs.io/en/latest/dev/virtualenvs.html>
-
-Run this command if you have yet to install it:
-
-```bash
-pip install virtualenv
-```
-
-For setting up the virtual environment for the first time:
-
-```bash
-virtualenv venv
-```
-
-If your Python environment is managed externally, likely by Homebrew (on MacOS), you might get an error message. An alternative step to set up virtual environment (recommended by ChatGPT) is:
-
-Navigate into your backend directory.
-
-Run the following code:
-
-```bash
-python3 -m venv myenv
-```
-
-You've created a virtual environment called myenv using venv module
-
-Starting the virtual environment (for MacOS)
-
-```bash
-source venv/bin/activate
-```
-
-Active virtual environment (You should see the following):
-
-```bash
-(venv) Angelico-MBP:sabai_2019 angelico$
-```
-
-Now that your environment is activated, you can install Python packages using pip. Packages installed while the environment is activated will only be available within this environment.
-
-Deactivating the virtual environment:
-
-```bash
-deactivate
-```
-
-Deactivated virtual environment (You should see the following):
-
-```bash
-Angelico-MBP:sabai_2019 angelico$
-```
-
-### Installing requirements (ensure you are in venv!)
-
-```bash
-pip install -r requirements.txt
+pipenv install
 ```
 
 \*Do this in the virtual environment
@@ -146,6 +76,15 @@ python manage.py migrate
 ```
 
 Note: Above commands from installing requirements to migrating models only need to be done once during setup.
+
+### Authentication (obtainin user accounts from auth0)
+
+Running the following command in Backend folder will pull all the users from auth0 into Django database before starting the server.
+This needs to be done anytime a new user is added to auth0.
+
+```bash
+python manage.py set_auth0_users
+```
 
 ### Running the server
 

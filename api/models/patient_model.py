@@ -9,7 +9,8 @@ class Patient(models.Model):
 
     village_prefix = models.CharField(max_length=5)
     name = models.CharField(max_length=255)
-    identification_number = models.CharField(max_length=255, blank=True, null=True)
+    identification_number = models.CharField(
+        max_length=255, blank=True, null=True)
     contact_no = models.CharField(max_length=255)
     gender = models.CharField(max_length=6)
     date_of_birth = models.DateTimeField(default=timezone.now)
