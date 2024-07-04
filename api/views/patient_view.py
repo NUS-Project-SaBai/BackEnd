@@ -28,18 +28,12 @@ class PatientView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-<<<<<<< HEAD
         patient_data = request.data
         if OFFLINE:
             offline_picture = patient_data.pop("picture", None)
             patient_data["offline_picture"] = offline_picture
         serializer = PatientSerializer(data=patient_data)
         face_encoding = facial_recognition.generate_faceprint(patient_data['picture']) if not OFFLINE else ''
-=======
-        serializer = PatientSerializer(data=request.data)
-        print(f"picture type: {type(request.data['picture'])} to string: {str(request.data['picture'])}")
-        face_encoding = facial_recognition.generate_faceprint(request.FILES['picture'])
->>>>>>> 1458a84 (Merge tests)
         if serializer.is_valid(raise_exception=True):
             serializer.save(face_encodings=face_encoding)
             return Response(serializer.data)

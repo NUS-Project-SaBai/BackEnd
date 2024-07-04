@@ -8,11 +8,7 @@ def custom_exception_handler(exc, context):
     # Call REST framework's default exception handler first,
     # to get the standard error response.
     response = drf_exception_handler(exc, context)
-<<<<<<< HEAD
     print(exc, context)
-=======
-    print(exc)
->>>>>>> dd12ed0 (Implement facial recognition)
 
     # Now add the HTTP status code to the response.
     if isinstance(exc, ObjectDoesNotExist):
