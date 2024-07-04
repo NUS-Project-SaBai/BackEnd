@@ -28,7 +28,7 @@ We will be using Pipenv. <https://pipenv.pypa.io/en/latest/>
 Run this command if you have yet to install it:
 
 ```bash
-pip install --user pipenv
+pip install pipenv
 ```
 
 To initialise a new `pipenv` environment for python 3.11 (note you must already have the python version):
