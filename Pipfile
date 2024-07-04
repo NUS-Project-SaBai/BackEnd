@@ -30,4 +30,4 @@ python_version = "3.11"
 
 [scripts]
 test = "python manage.py test"
-start = "./start-server.sh"
+start = "python manage.py start"
