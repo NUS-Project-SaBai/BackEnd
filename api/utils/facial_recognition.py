@@ -24,9 +24,8 @@ def generate_faceprint(file):
     '''
     Uploads an image to AWS Rekognition API, returns the faceprint generated. Faceprint will be stored with
     patient details in database, under face encoding
-
-    Note to self: This method is to be called just before serializer saves the patient details.
     '''
+
     try:
         image_binary = getattr(file, 'file').getvalue()
 
