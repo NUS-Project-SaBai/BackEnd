@@ -59,6 +59,45 @@ pipenv install
 
 \*Do this in the virtual environment
 
+### Start the server
+
+This command will makemigrations, migrate the database, pull auth0 users, and start the server. The commands used are explained [here](#commands-used-when-running-the-following).
+
+```bash
+pipenv run start
+```
+
+A localhost link will be provided for you to access the service. It will look in the command line as such:
+
+```bash
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+August 21, 2019 - 00:22:30
+Django version 2.2.4, using settings 'sabaibiometrics.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+```
+
+### Creating a superuser account in Django
+
+```bash
+python manage.py createsuperuser
+```
+
+### Creating the dummy users
+
+```bash
+python manage.py create_default_users
+```
+
+## Commands used when running the following
+
+```bash
+pipenv run start
+```
+
 ### Making migrations
 
 This command checks the changes done and sets up the migrations to be done to the database
@@ -92,31 +131,6 @@ Running this command runs the service locally
 
 ```bash
 python manage.py runserver
-```
-
-A localhost link will be provided for you to access the service. It will look in the command line as such:
-
-```bash
-Watching for file changes with StatReloader
-Performing system checks...
-
-System check identified no issues (0 silenced).
-August 21, 2019 - 00:22:30
-Django version 2.2.4, using settings 'sabaibiometrics.settings'
-Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C.
-```
-
-### Creating a superuser account in Django
-
-```bash
-python manage.py createsuperuser
-```
-
-### Creating the dummy users
-
-```bash
-python manage.py create_default_users
 ```
 
 ## pgAdmin4
