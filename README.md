@@ -77,6 +77,14 @@ python manage.py migrate
 
 Note: Above commands from installing requirements to migrating models only need to be done once during setup.
 
+### Authentication (obtainin user accounts from auth0)
+
+Running the following command in Backend folder will pull all the users from auth0 into Django database before starting the server
+
+```bash
+python manage.py get_auth0_users
+```
+
 ### Running the server
 
 Running this command runs the service locally
@@ -120,11 +128,3 @@ To view data tables:
 2.  Navigate to your database
 3.  Schemas => public => table
 4.  Right click table and view/edit data
-
-### Authentication
-
-Running the following command in Backend folder will pull all the users from auth0 into Django database before starting the server
-
-```bash
-./start-server.sh
-```
