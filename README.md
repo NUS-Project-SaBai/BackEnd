@@ -31,7 +31,7 @@ Run this command if you have yet to install it:
 pip install pipenv
 ```
 
-To initialise a new `pipenv` environment for python 3.11 (note you must already have the python version):
+To initialise a new `pipenv` environment for python 3.11 (note you must already have this python version installed):
 
 ```bash
 pipenv --python 3.11
@@ -43,120 +43,18 @@ To use the virtual environment, run:
 pipenv shell
 ```
 
-To install the dependencies, run:
-
-```bash
-pipenv install
-```
-
 To exit from the virtual environment, run:
 
 ```bash
 exit
 ```
 
-### Windows
+### Install dependencies
 
-We will be using virtualenv to set up our virtual environment. <https://python-guide-ru.readthedocs.io/en/latest/dev/virtualenvs.html>
-
-Run this command if you have yet to install it:
+To install the dependencies, run:
 
 ```bash
-pip install virtualenv
-```
-
-For setting up the virtual environment for the first time:
-
-```bash
-virtualenv venv
-```
-
-This creates a /venv folder in your directory. Optimally, you will never need to touch this folder.
-
-Starting the virtual environment (for Windows, using powershell):
-
-```bash
-.\venv\Scripts\activate
-```
-
-Activate virtual environment (You should see the following):
-
-```bash
-(venv) PS C:\Users\angpe\Desktop\work\New folder>
-```
-
-Now that your environment is activated, you can install Python packages using pip. Packages installed while the environment is activated will only be available within this environment.
-
-Deactivating the virtual environment
-
-```bash
-deactivate
-```
-
-Deactivated virtual environment (You should see the following):
-
-```bash
-PS C:\Users\angpe\Desktop\work\New folder>
-```
-
-### MacOS
-
-We will be using virtualenv to set up our virtual environment. <https://python-guide-ru.readthedocs.io/en/latest/dev/virtualenvs.html>
-
-Run this command if you have yet to install it:
-
-```bash
-pip install virtualenv
-```
-
-For setting up the virtual environment for the first time:
-
-```bash
-virtualenv venv
-```
-
-If your Python environment is managed externally, likely by Homebrew (on MacOS), you might get an error message. An alternative step to set up virtual environment (recommended by ChatGPT) is:
-
-Navigate into your backend directory.
-
-Run the following code:
-
-```bash
-python3 -m venv myenv
-```
-
-You've created a virtual environment called myenv using venv module
-
-Starting the virtual environment (for MacOS)
-
-```bash
-source venv/bin/activate
-```
-
-Active virtual environment (You should see the following):
-
-```bash
-(venv) Angelico-MBP:sabai_2019 angelico$
-```
-
-Now that your environment is activated, you can install Python packages using pip. Packages installed while the environment is activated will only be available within this environment.
-
-Deactivating the virtual environment:
-
-```bash
-deactivate
-```
-
-Deactivated virtual environment (You should see the following):
-
-```bash
-Angelico-MBP:sabai_2019 angelico$
-```
-
-### Installing requirements (ensure you are in venv!)
-
-```bash
-pip install -r requirements.txt
+pipenv install
 ```
 
 \*Do this in the virtual environment
