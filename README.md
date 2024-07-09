@@ -143,3 +143,8 @@ To view data tables:
 2.  Navigate to your database
 3.  Schemas => public => table
 4.  Right click table and view/edit data
+
+## Troubleshooting 
+
+1. If you have other virtual environments active (e.g. anaconda will show up as (base) ). Remeber to deactivate it using the `conda deactivate` command, to prevent any intereference caused by nested virtual environments.
+2. Use `pipenv run start` instead of `python manage.py runserver`
