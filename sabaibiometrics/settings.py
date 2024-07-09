@@ -87,16 +87,17 @@ WSGI_APPLICATION = "sabaibiometrics.wsgi.application"
 REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "EXCEPTION_HANDLER": "sabaibiometrics.custom_exception_handler.custom_exception_handler",
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
 }
+
+if os.getenv('USE_DEFAULT_PERMISSION_CLASSES') != 'False':
+    REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
