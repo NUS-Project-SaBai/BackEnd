@@ -31,7 +31,8 @@ class PatientView(APIView):
 
     def patch(self, request, pk):
         patient = Patient.objects.get(pk=pk)
-        serializer = PatientSerializer(patient, data=request.data, partial=True)
+        serializer = PatientSerializer(
+            patient, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
