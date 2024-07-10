@@ -1,8 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from django.db import transaction
 from api.models import Order
 from api.serializers import OrderSerializer
+from api.views import MedicationView, MedicationHistoryView
 
 
 class OrderView(APIView):
@@ -30,9 +31,23 @@ class OrderView(APIView):
 
     def patch(self, request, pk):
         order = Order.objects.get(pk=pk)
+        order_status = request.data.get("order_status")
         form = OrderSerializer(order, data=request.data, partial=True)
         if form.is_valid(raise_exception=True):
-            form.save()
+            with transaction.atomic():
+                form.save()
+                if order_status == "APPROVED":
+                    MedicationView().update_quantity(
+                        quantityChange=-order.quantity, pk=order.medicine.pk)
+
+                medication_history_data = {
+                    "doctor": order.consult.doctor.auth0_id,
+                    "patient": order.consult.visit.patient.pk,
+                    "quantity_changed": -order.quantity,
+                    "quantity_remaining": order.medicine.quantity - order.quantity,
+                    "medicine": order.medicine.pk,
+                }
+                MedicationHistoryView.new_entry(medication_history_data)
             return Response(form.data)
 
     def delete(self, request, pk):

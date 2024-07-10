@@ -6,3 +6,4 @@ from .vitals_serializer import VitalsSerializer
 from .order_serializer import OrderSerializer
 from .consult_serializer import ConsultSerializer
 from .diagnosis_serializer import DiagnosisSerializer
+from .medication_history_serializer import MedicationHistorySerializer

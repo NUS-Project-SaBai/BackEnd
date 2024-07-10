@@ -1,7 +1,6 @@
 import json
 import os
 import jwt
-import requests
 from dotenv import load_dotenv
 from api.models import JWKS
 
@@ -31,3 +30,11 @@ def jwt_decode_token(token):
 
     issuer = f'https://{os.getenv("AUTH0_DOMAIN")}/'
     return jwt.decode(token, public_key, audience=os.getenv("AUTH0_AUDIENCE"), issuer=issuer, algorithms=['RS256'])
+
+
+def get_doctor_id(request):
+    if "Authorization" in request.headers:
+        token = request.headers["Authorization"].split(" ")[1]
+        payload = jwt_decode_token(token)
+        doctor_id = payload.get("sub")
+        return doctor_id
