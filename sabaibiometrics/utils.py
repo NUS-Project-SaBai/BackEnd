@@ -1,13 +1,8 @@
 import json
-import os
 import jwt
-from dotenv import load_dotenv
 from api.models import JWKS
-
 from django.contrib.auth import authenticate
-
-# Load environment variables from the .env file
-load_dotenv()
+from sabaibiometrics.settings import AUTH0_ISSUER, AUTH0_AUDIENCE
 
 
 def jwt_get_username_from_payload_handler(payload):
@@ -27,8 +22,7 @@ def jwt_decode_token(token):
     if public_key is None:
         raise Exception('Public key not found.')
 
-    issuer = f'https://{os.getenv("AUTH0_DOMAIN")}/'
-    return jwt.decode(token, public_key, audience=os.getenv("AUTH0_AUDIENCE"), issuer=issuer, algorithms=['RS256'])
+    return jwt.decode(token, public_key, audience=AUTH0_AUDIENCE, issuer=AUTH0_ISSUER, algorithms=['RS256'])
 
 
 def get_doctor_id(request):
