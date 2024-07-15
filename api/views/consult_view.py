@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 from api.models import Consult
 from api.serializers import ConsultSerializer
-from sabaibiometrics.utils import get_doctor_id
+from api.views.utils import get_doctor_id
 
 
 class ConsultView(APIView):
