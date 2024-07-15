@@ -23,11 +23,3 @@ def jwt_decode_token(token):
         raise Exception('Public key not found.')
 
     return jwt.decode(token, public_key, audience=AUTH0_AUDIENCE, issuer=AUTH0_ISSUER, algorithms=['RS256'])
-
-
-def get_doctor_id(request):
-    if "Authorization" in request.headers:
-        token = request.headers["Authorization"].split(" ")[1]
-        payload = jwt_decode_token(token)
-        doctor_id = payload.get("sub")
-        return doctor_id
