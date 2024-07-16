@@ -5,7 +5,7 @@
    Before proceeding with the installation, ensure that the following prerequisites are met:
 
    - PostgreSQL 15 is installed on your system.
-   - Python version 3.8 or higher max 3.11 is available in your environment.
+   - Python version 3.8 or higher max 3.12 is available in your environment.
 
    ```bash
    git clone https://github.com/NUS-Project-SaBai/BackEnd/
