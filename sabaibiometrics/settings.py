@@ -217,6 +217,8 @@ JWT_AUTH = {
 
 AUTH_USER_MODEL = 'api.CustomUser'
 
+ALLOWED_HOSTS = ['*']
+
 # Access AWS credentials from environment variables
 # AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 # AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
