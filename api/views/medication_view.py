@@ -27,7 +27,7 @@ class MedicationView(APIView):
         if serializer.is_valid(raise_exception=True):
             with transaction.atomic():
                 medication = serializer.save()
-                doctor_id = get_doctor_id(request)
+                doctor_id = get_doctor_id(request.headers)
                 medication_history_data = {
                     "doctor": doctor_id,
                     "quantity_changed": medication.quantity,

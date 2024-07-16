@@ -23,7 +23,7 @@ class ConsultView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        request.data["doctor"] = get_doctor_id(request)
+        request.data["doctor"] = get_doctor_id(request.headers)
         serializer = ConsultSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
