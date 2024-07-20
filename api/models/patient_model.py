@@ -19,7 +19,3 @@ class Patient(models.Model):
     drug_allergy = models.TextField(default="None")
     face_encodings = models.CharField(max_length=3000, blank=True, null=True)
     picture = CloudinaryField("image", blank=True, null=True) 
-
-    # fix picture field accept no response
-    # poor = models.BooleanField()
-    # bs2 = models.BooleanField()
