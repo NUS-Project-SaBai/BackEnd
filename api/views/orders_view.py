@@ -60,8 +60,15 @@ class OrderView(APIView):
         if order.medication_updates.order_status == "APPROVED":
             return Response({"message": "Order already approved"})
         order_status = request.data.get("order_status")
+
         medication_update = MedicationUpdates.objects.get(
             pk=order.medication_updates.pk)
+        if order_status == "CANCELLED":
+            medication_update_form = MedicationUpdatesSerializer(
+                medication_update, data=request.data, partial=True)
+            if medication_update_form.is_valid(raise_exception=True):
+                medication_update_form.save()
+            return Response(medication_update_form.data)
         medication_update_data = {
             "approval": get_doctor_id(request.headers),
             "quantity_remaining": order.medication_updates.medicine.quantity + order.medication_updates.quantity_changed,
