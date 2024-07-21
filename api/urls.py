@@ -24,13 +24,10 @@ urlpatterns = [
          name="diagnosis_detail"),
     path("orders", views.OrderView.as_view(), name="orders_list"),
     path("orders/<int:pk>", views.OrderView.as_view(), name="orders_detail"),
-    path(
-        "medication_history",
-        views.MedicationHistoryView.as_view(),
-        name="medication_history_list",
-    ),
-    path("medication_history/<int:pk>", views.MedicationHistoryView.as_view(),
-         name="medication_history_detail"),
+    path("medication_updates", views.MedicationUpdatesView.as_view(),
+         name="medication_updates_list"),
+    path("medication_updates/<int:pk>", views.MedicationUpdatesView.as_view(),
+         name="medication_updates_detail"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from api.models import Medication
 from api.serializers import MedicationSerializer
 from api.views.utils import get_doctor_id
-from api.views import MedicationHistoryView
+from api.views import MedicationUpdatesView
 from django.db import transaction
 
 
@@ -28,19 +28,21 @@ class MedicationView(APIView):
             with transaction.atomic():
                 medication = serializer.save()
                 doctor_id = get_doctor_id(request.headers)
-                medication_history_data = {
-                    "doctor": doctor_id,
+                medication_update_data = {
+                    "approval": doctor_id,
                     "quantity_changed": medication.quantity,
                     "quantity_remaining": medication.quantity,
                     "medicine": medication.pk,
+                    "order_status": "APPROVED",
                 }
-                MedicationHistoryView.new_entry(medication_history_data)
+                MedicationUpdatesView.new_entry(medication_update_data)
             return Response(serializer.data)
 
     def patch(self, request, pk):
         print(request, pk)
         medication = Medication.objects.get(pk=pk)
         quantityChange = request.data.get("quantityChange", 0)
+        print(quantityChange)
         data = {
             "medicine_name": request.data.get(
                 "medicine_name", medication.medicine_name
@@ -50,17 +52,20 @@ class MedicationView(APIView):
         }
         serializer = MedicationSerializer(medication, data=data, partial=True)
 
-        doctor_id = get_doctor_id(request)
-        medication_history_data = {
-            "doctor": doctor_id,
+        doctor_id = get_doctor_id(request.headers)
+
+        medication_update_data = {
+            "approval": doctor_id,
             "quantity_changed": quantityChange,
             "quantity_remaining": medication.quantity + quantityChange,
             "medicine": medication.pk,
+            "order_status": "APPROVED",
+
         }
 
         if serializer.is_valid(raise_exception=True):
             with transaction.atomic():
-                MedicationHistoryView.new_entry(medication_history_data)
+                MedicationUpdatesView.new_entry(medication_update_data)
                 serializer.save()
             return Response(serializer.data)
 

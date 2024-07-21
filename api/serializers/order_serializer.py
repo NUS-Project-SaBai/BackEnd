@@ -4,11 +4,12 @@ from api import serializers as APISerializer
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    medicine = serializers.PrimaryKeyRelatedField(
-        queryset=models.Medication.objects.all()
-    )
-    consult = serializers.PrimaryKeyRelatedField(queryset=models.Consult.objects.all())
+    consult = serializers.PrimaryKeyRelatedField(
+        queryset=models.Consult.objects.all())
     visit = serializers.SerializerMethodField()
+    medication_updates = serializers.PrimaryKeyRelatedField(
+        queryset=models.MedicationUpdates.objects.all(), required=False
+    )
 
     class Meta:
         model = models.Order
@@ -19,8 +20,9 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation["medicine"] = APISerializer.MedicationSerializer(
-            instance.medicine
+        representation["medication_updates"] = APISerializer.MedicationUpdatesSerializer(
+            instance.medication_updates
         ).data
-        representation["consult"] = instance.consult.id
+        representation["consult"] = APISerializer.ConsultWithoutPrescriptionsSerializer(
+            instance.consult).data
         return representation
