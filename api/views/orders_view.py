@@ -27,32 +27,7 @@ class OrderView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        order_data = request.data
-        print(order_data)
-        # order_data["medication_update"] = {
-        #     "approval": get_doctor_id(request.headers),
-        #     "quantity_change": -order_data["quantity"],
-        #     "quantity_remaining": order_data["medicine"].quantity - order_data["quantity"],
-        #     "medicine": order_data["medicine"].pk,
-        #     "order_status": "PENDING",
-        # }
-        # order_data["doctor"] = get_doctor_id(request.headers)
-        quantity = int(order_data['quantity'])
-        medicine = Medication.objects.get(pk=order_data['medicine'])
-        print(medicine)
-        medication_update_data = {
-            "quantity_changed": -quantity,
-            "quantity_remaining": medicine.quantity - quantity,
-            "medicine": medicine,
-            "order_status": "PENDING",
-        }
-        medication_update = MedicationUpdates.objects.create(
-            **medication_update_data)
-        order_data['medication_updates'] = medication_update.pk
-        serializer = OrderSerializer(data=order_data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        return OrderView.create(request.data)
 
     # WARNING not updating orders
     def patch(self, request, pk):
@@ -89,3 +64,22 @@ class OrderView(APIView):
         order = Order.objects.get(pk=pk)
         order.delete()
         return Response({"message": "Deleted successfully"})
+
+    @staticmethod
+    def create(order_data):
+        quantity = int(order_data['quantity'])
+        medicine = Medication.objects.get(pk=order_data['medicine'])
+        print(medicine)
+        medication_update_data = {
+            "quantity_changed": -quantity,
+            "quantity_remaining": medicine.quantity - quantity,
+            "medicine": medicine,
+            "order_status": "PENDING",
+        }
+        medication_update = MedicationUpdates.objects.create(
+            **medication_update_data)
+        order_data['medication_updates'] = medication_update.pk
+        serializer = OrderSerializer(data=order_data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
