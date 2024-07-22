@@ -39,10 +39,8 @@ class MedicationView(APIView):
             return Response(serializer.data)
 
     def patch(self, request, pk):
-        print(request, pk)
         medication = Medication.objects.get(pk=pk)
         quantityChange = request.data.get("quantityChange", 0)
-        print(quantityChange)
         data = {
             "medicine_name": request.data.get(
                 "medicine_name", medication.medicine_name

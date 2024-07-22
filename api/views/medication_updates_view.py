@@ -9,29 +9,27 @@ class MedicationUpdatesView(APIView):
     def get(self, request, pk=None):
         if pk is not None:
             return self.get_object(pk)
+
         medication_updates = MedicationUpdates.objects.all()
+
         medication_pk = request.query_params.get("medication_pk", "")
         if medication_pk:
             medication_updates = medication_updates.filter(
                 medicine_id=medication_pk,
                 order_status='APPROVED'
             )
-        # Prefetch all orders related to medication updates
+
         orders = Order.objects.prefetch_related('medication_updates')
 
-        # Serialize the medication updates
         medication_updates_data = []
+
         for medication_update in medication_updates:
             medication_update_data = MedicationUpdatesSerializer(
                 medication_update).data
-            # medication_update_data['order'] = OrderSerializer(order_map.get(
-            #     medication_update.pk)).data if medication_update.pk in order_map else None
-            # medication_updates_data.append(medication_update_data)
             order = orders.filter(medication_updates=medication_update).first()
             if order:
                 order_data = OrderSerializer(order).data
-                # Extract order fields into medication_update_data
-                medication_update_data.update(order_data)  # Merge order fields
+                medication_update_data.update(order_data)
             else:
                 medication_update_data['order'] = None
 

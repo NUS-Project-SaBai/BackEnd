@@ -57,50 +57,33 @@ class OrderView(APIView):
     # WARNING not updating orders
     def patch(self, request, pk):
         order = Order.objects.get(pk=pk)
-        if order.medication_updates.order_status == "APPROVED":
-            return Response({"message": "Order already approved"})
+        if order.medication_updates.order_status == "APPROVED" or order.medication_updates.order_status == "CANCELLED":
+            return Response({f"message": "Order already is already {order.medication_updates.order_status}"})
         order_status = request.data.get("order_status")
 
-        medication_update = MedicationUpdates.objects.get(
-            pk=order.medication_updates.pk)
-        if order_status == "CANCELLED":
-            medication_update_form = MedicationUpdatesSerializer(
-                medication_update, data=request.data, partial=True)
-            if medication_update_form.is_valid(raise_exception=True):
-                medication_update_form.save()
-            return Response(medication_update_form.data)
-        medication_update_data = {
-            "approval": get_doctor_id(request.headers),
-            "quantity_remaining": order.medication_updates.medicine.quantity + order.medication_updates.quantity_changed,
-            "order_status": order_status,
-            "date": datetime.now(),
-        }
-        medication_update_form = MedicationUpdatesSerializer(
-            medication_update, data=medication_update_data, partial=True)
-        if medication_update_form.is_valid(raise_exception=True) and order_status == "APPROVED":
+        if order_status == "PENDING":
+            serializer = OrderSerializer(
+                order, data=request.data, partial=True)
+        elif order_status == "CANCELLED":
+            serializer = MedicationUpdatesSerializer(
+                order.medication_updates, data=request.data, partial=True)
+        else:
+            medication_update_data = {
+                "approval": get_doctor_id(request.headers),
+                "quantity_remaining": order.medication_updates.medicine.quantity + order.medication_updates.quantity_changed,
+                "order_status": order_status,
+                "date": datetime.now(),
+            }
+            serializer = MedicationUpdatesSerializer(
+                order.medication_updates, data=medication_update_data, partial=True)
+
+        if serializer.is_valid(raise_exception=True):
             with transaction.atomic():
-                MedicationView().update_quantity(
-                    quantityChange=order.medication_updates.quantity_changed, pk=order.medication_updates.medicine.pk)
-                medication_update_form.save()
-            return Response(medication_update_form.data)
-
-        # form = OrderSerializer(order, data=request.data, partial=True)
-        # if form.is_valid(raise_exception=True):
-        #     with transaction.atomic():
-        #         form.save()
-        #         if order_status == "APPROVED":
-        #             MedicationView().update_quantity(
-        #                 quantityChange=-order.quantity, pk=order.medicine.pk)
-
-        #         # medication_history_data = {
-        #         #     "doctor": order.consult.doctor.auth0_id,
-        #         #     "patient": order.consult.visit.patient.pk,
-        #         #     "quantity_changed": -order.quantity,
-        #         #     "quantity_remaining": order.medicine.quantity - order.quantity,
-        #         #     "medicine": order.medicine.pk,
-        #         # }
-        #         # MedicationHistoryView.new_entry(medication_history_data)
-        #     return Response(form.data)
+                if order_status == "APPROVED":
+                    MedicationView().update_quantity(quantityChange=order.medication_updates.quantity_changed,
+                                                     pk=order.medication_updates.medicine.pk)
+                serializer.save()
+            return Response(serializer.data)
 
     def delete(self, request, pk):
         order = Order.objects.get(pk=pk)
