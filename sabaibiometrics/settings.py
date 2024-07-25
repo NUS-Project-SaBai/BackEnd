@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
-import dj_database_url
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
@@ -60,6 +59,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    'django.contrib.auth.middleware.RemoteUserMiddleware',
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -87,8 +87,17 @@ WSGI_APPLICATION = "sabaibiometrics.wsgi.application"
 REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "EXCEPTION_HANDLER": "sabaibiometrics.custom_exception_handler.custom_exception_handler",
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
 }
 
+if os.getenv('USE_DEFAULT_PERMISSION_CLASSES') != 'False':
+    REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -167,6 +176,12 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
+# If you have specific headers being sent by your frontend, add them here
+CORS_ALLOW_HEADERS = [
+    'headers',
+    'content-type',
+    'authorization',
+]
 
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
@@ -174,6 +189,24 @@ cloudinary.config(
     api_secret=os.getenv("CLOUDINARY_API_SECRET"),
     secure=True,
 )
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.RemoteUserBackend',
+]
+
+JWT_AUTH = {
+    'JWT_PAYLOAD_GET_USERNAME_HANDLER':
+        'sabaibiometrics.utils.jwt_get_username_from_payload_handler',
+    'JWT_DECODE_HANDLER':
+        'sabaibiometrics.utils.jwt_decode_token',
+    'JWT_ALGORITHM': 'RS256',
+    'JWT_AUDIENCE': os.getenv("AUTH0_AUDIENCE"),
+    'JWT_ISSUER': os.getenv("AUTH0_ISSUER"),
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+}
+
+AUTH_USER_MODEL = 'api.CustomUser'
 
 # Access AWS credentials from environment variables
 # AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")

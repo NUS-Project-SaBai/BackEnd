@@ -9,15 +9,21 @@ class Vitals(models.Model):
     visit = models.OneToOneField(
         Visit, on_delete=models.SET_NULL, blank=True, null=True
     )
-    height = models.DecimalField(decimal_places=2, max_digits=5, null=True)
-    weight = models.DecimalField(decimal_places=2, max_digits=5, null=True)
-    systolic = models.IntegerField(null=True)
-    diastolic = models.IntegerField(null=True)
+    height = models.DecimalField(decimal_places=2, max_digits=5, blank=True, null=True)
+    weight = models.DecimalField(decimal_places=2, max_digits=5, blank=True, null=True)
+    systolic = models.DecimalField(
+        decimal_places=0, max_digits=3, blank=True, null=True
+    )
+    diastolic = models.DecimalField(
+        decimal_places=0, max_digits=3, blank=True, null=True
+    )
     temperature = models.DecimalField(decimal_places=2, max_digits=5, null=True)
     diabetes_mellitus = models.TextField(
         blank=True, null=True, default="Haven't Asked / Not Applicable"
     )
-    heart_rate = models.IntegerField(null=True)
+    heart_rate = models.DecimalField(
+        decimal_places=0, max_digits=3, blank=True, null=True
+    )
     urine_test = models.TextField(blank=True, null=True)
     hemocue_count = models.DecimalField(
         decimal_places=2, max_digits=5, blank=True, null=True
