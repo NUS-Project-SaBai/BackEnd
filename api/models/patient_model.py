@@ -7,7 +7,7 @@ class Patient(models.Model):
     class Meta:
         db_table = "patients"
 
-    village_prefix = models.CharField(max_length=11)
+    village_prefix = models.CharField(max_length=5)
     name = models.CharField(max_length=255)
     identification_number = models.CharField(
         max_length=255, blank=True, null=True)

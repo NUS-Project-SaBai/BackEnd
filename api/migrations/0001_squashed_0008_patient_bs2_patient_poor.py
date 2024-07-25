@@ -11,8 +11,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    replaces = [('api', '0001_initial'), ('api', '0002_alter_patient_contact_no_alter_patient_name_and_more'), ('api', '0003_alter_patient_name_alter_patient_picture'), ('api', '0004_alter_patient_contact_no_alter_patient_picture_and_more'), ('api', '0005_alter_patient_contact_no'), ('api', '0006_alter_patient_gender_alter_patient_village_prefix'), ('api', '0007_alter_patient_picture'), ('api', '0008_patient_bs2_patient_poor')]
-
     initial = True
 
     dependencies = [
