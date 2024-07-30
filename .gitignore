@@ -69,3 +69,9 @@ static/
 
 .env
 db.sqlite3
+
+# sst
+.sst
+
+# node
+node_modules/
