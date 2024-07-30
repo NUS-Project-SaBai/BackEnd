@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 ARG PYTHON_VERSION=3.12
-FROM python:${PYTHON_VERSION}-alpine3.20 as base
+FROM python:${PYTHON_VERSION}-alpine3.20
 
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -10,9 +10,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # the application crashes without emitting any logs due to buffering.
 ENV PYTHONUNBUFFERED=1
 
-# ENV TEMP=1
-
-WORKDIR /app
+ENV TEMP=1
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
@@ -20,9 +18,7 @@ ARG UID=10001
 RUN adduser \
     --disabled-password \
     --gecos "" \
-    --home "/nonexistent" \
     --shell "/sbin/nologin" \
-    --no-create-home \
     --uid "${UID}" \
     appuser
 
@@ -35,12 +31,21 @@ RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev
 RUN pip install --upgrade pip && \
     pip install pipenv
 
-# Copy the source code into the container.
-COPY . .
-
-RUN pipenv install --system --deploy --dev
-
 EXPOSE 8000 5432
 
 # Switch to the non-privileged user to run the application.
+
 USER appuser
+
+# Placed after user is changed to allow changes to the app's root folder by the user
+WORKDIR /app
+
+COPY "./Pipfile.lock" .
+COPY "./Pipfile" .
+
+RUN pipenv install --dev --ignore-pipfile --deploy
+
+# Copy the source code into the container.
+COPY . .
+
+CMD ["pipenv", "run", "start"]
