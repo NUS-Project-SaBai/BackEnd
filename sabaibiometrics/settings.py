@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+
 from dotenv import load_dotenv
 import cloudinary
 import cloudinary.uploader
@@ -24,17 +25,16 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure--^*1&+ae2anj0^hnr6a7!u#ur48w3sc-@3fa=(h+0_1560gas0"
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = int(os.getenv('DEBUG'))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',') 
 
 
 # Application definition
@@ -121,12 +121,11 @@ DATABASES = {
     }
 }
 
-if "test" in sys.argv:
+if "test" in sys.argv or int(os.getenv("TEMP")): 
     DATABASES["default"] = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -170,12 +169,11 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Allow all:
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = int(os.getenv('CORS_ALLOW_ALL_ORIGINS'))
 
 # Or specify the allowed origins:
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS').split(',')
+
 # If you have specific headers being sent by your frontend, add them here
 CORS_ALLOW_HEADERS = [
     'headers',
@@ -207,8 +205,3 @@ JWT_AUTH = {
 }
 
 AUTH_USER_MODEL = 'api.CustomUser'
-
-# Access AWS credentials from environment variables
-# AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-# AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-# AWS_REGION = os.getenv("AWS_REGION")
