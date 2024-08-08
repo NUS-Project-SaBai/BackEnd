@@ -94,7 +94,9 @@ REST_FRAMEWORK = {
     ),
 }
 
-if os.getenv('USE_DEFAULT_PERMISSION_CLASSES') != 'False':
+USE_DEFAULT_PERMISSION_CLASSES = os.getenv(
+    'USE_DEFAULT_PERMISSION_CLASSES') != 'False'
+if USE_DEFAULT_PERMISSION_CLASSES:
     REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
         'rest_framework.permissions.IsAuthenticated',
     )
