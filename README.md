@@ -5,7 +5,7 @@
    Before proceeding with the installation, ensure that the following prerequisites are met:
 
    - PostgreSQL 15 is installed on your system.
-   - Python version 3.8 or higher max 3.11 is available in your environment.
+   - Python version 3.8 or higher max 3.12 is available in your environment.
 
    ```bash
    git clone https://github.com/NUS-Project-SaBai/BackEnd/
@@ -31,10 +31,10 @@ Run this command if you have yet to install it:
 pip install pipenv
 ```
 
-To initialise a new `pipenv` environment for python 3.11 (note you must already have this python version installed):
+To initialise a new `pipenv` environment for python 3.12 (note you must already have this python version installed):
 
 ```bash
-pipenv --python 3.11
+pipenv --python 3.12
 ```
 
 To use the virtual environment, run:
@@ -144,7 +144,7 @@ To view data tables:
 3.  Schemas => public => table
 4.  Right click table and view/edit data
 
-## Troubleshooting 
+## Troubleshooting
 
 1. If you have other virtual environments active (e.g. anaconda will show up as (base) ). Remeber to deactivate it using the `conda deactivate` command, to prevent any intereference caused by nested virtual environments.
 2. Use `pipenv run start` instead of `python manage.py runserver`
