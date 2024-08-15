@@ -14,6 +14,6 @@ class Order(models.Model):
     )
     notes = models.TextField(blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
-    medication_updates = models.ForeignKey(
+    medication_review = models.ForeignKey(
         MedicationReview, on_delete=models.SET_NULL, blank=True, null=True, related_name="order"
     )
