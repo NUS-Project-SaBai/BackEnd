@@ -1,5 +1,5 @@
 from django.db import models
-from api.models import Consult, MedicationUpdates
+from api.models import Consult, MedicationReview
 
 
 class Order(models.Model):
@@ -15,5 +15,5 @@ class Order(models.Model):
     notes = models.TextField(blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
     medication_updates = models.ForeignKey(
-        MedicationUpdates, on_delete=models.SET_NULL, blank=True, null=True, related_name="order"
+        MedicationReview, on_delete=models.SET_NULL, blank=True, null=True, related_name="order"
     )

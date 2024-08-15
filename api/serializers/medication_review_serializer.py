@@ -3,7 +3,7 @@ from api import models
 from api import serializers as APISerializer
 
 
-class MedicationUpdatesSerializer(serializers.ModelSerializer):
+class MedicationReviewSerializer(serializers.ModelSerializer):
     approval = serializers.SlugRelatedField(
         slug_field='auth0_id',
         queryset=models.CustomUser.objects.all()
@@ -13,7 +13,7 @@ class MedicationUpdatesSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = models.MedicationUpdates
+        model = models.MedicationReview
         fields = "__all__"
 
     def to_representation(self, instance):

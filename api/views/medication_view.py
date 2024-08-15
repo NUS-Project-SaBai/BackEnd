@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from api.models import Medication
 from api.serializers import MedicationSerializer
 from api.views.utils import get_doctor_id
-from api.views import MedicationUpdatesView
+from api.views import MedicationReviewView
 from django.db import transaction
 
 
@@ -28,14 +28,14 @@ class MedicationView(APIView):
             with transaction.atomic():
                 medication = serializer.save()
                 doctor_id = get_doctor_id(request.headers)
-                medication_update_data = {
+                medication_review_data = {
                     "approval": doctor_id,
                     "quantity_changed": medication.quantity,
                     "quantity_remaining": medication.quantity,
                     "medicine": medication.pk,
                     "order_status": "APPROVED",
                 }
-                MedicationUpdatesView.new_entry(medication_update_data)
+                MedicationReviewView.new_entry(medication_review_data)
             return Response(serializer.data)
 
     def patch(self, request, pk):
@@ -52,7 +52,7 @@ class MedicationView(APIView):
 
         doctor_id = get_doctor_id(request.headers)
 
-        medication_update_data = {
+        medication_review_data = {
             "approval": doctor_id,
             "quantity_changed": quantityChange,
             "quantity_remaining": medication.quantity + quantityChange,
@@ -63,7 +63,7 @@ class MedicationView(APIView):
 
         if serializer.is_valid(raise_exception=True):
             with transaction.atomic():
-                MedicationUpdatesView.new_entry(medication_update_data)
+                MedicationReviewView.new_entry(medication_review_data)
                 serializer.save()
             return Response(serializer.data)
 

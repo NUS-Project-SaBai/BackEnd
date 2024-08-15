@@ -7,8 +7,8 @@ class OrderSerializer(serializers.ModelSerializer):
     consult = serializers.PrimaryKeyRelatedField(
         queryset=models.Consult.objects.all())
     visit = serializers.SerializerMethodField()
-    medication_updates = serializers.PrimaryKeyRelatedField(
-        queryset=models.MedicationUpdates.objects.all(), required=False
+    medication_review = serializers.PrimaryKeyRelatedField(
+        queryset=models.MedicationReview.objects.all(), required=False
     )
 
     class Meta:
@@ -22,8 +22,8 @@ class OrderSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation["consult"] = APISerializer.ConsultWithoutPrescriptionsSerializer(
             instance.consult, context={'include_prescriptions': False, 'include_diagnosis': False}).data
-        if self.context.get("include_medication_updates", False):
-            representation["medication_updates"] = APISerializer.MedicationUpdatesSerializer(
-                instance.medication_updates
+        if self.context.get("include_medication_review", False):
+            representation["medication_review"] = APISerializer.MedicationReviewSerializer(
+                instance.medication_review
             ).data
         return representation

@@ -2,13 +2,13 @@ from django.db import models
 from django.utils import timezone
 
 
-class MedicationUpdates(models.Model):
+class MedicationReview(models.Model):
     class Meta:
-        db_table = "medication_updates"
+        db_table = "medication_review"
 
     approval = models.ForeignKey(
         'api.CustomUser',
-        related_name="approval_create_medication_updates",
+        related_name="approval_create_medication_review",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,

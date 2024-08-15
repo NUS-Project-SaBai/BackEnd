@@ -1,4 +1,4 @@
-from .medication_updates_view import MedicationUpdatesView
+from .medication_review_view import MedicationReviewView
 from .medication_view import MedicationView
 from .consult_view import ConsultView
 from .patient_view import PatientView
