@@ -26,4 +26,5 @@ class OrderSerializer(serializers.ModelSerializer):
             representation["medication_review"] = APISerializer.MedicationReviewSerializer(
                 instance.medication_review
             ).data
+        # print(representation)
         return representation
