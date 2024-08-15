@@ -2,10 +2,9 @@ from .user_serializer import UserSerializer
 from .diagnosis_serializer import DiagnosisSerializer
 from .order_serializer import OrderSerializer
 from .medication_updates_serializer import MedicationUpdatesSerializer
-from . consult_without_prescriptions_serializer import ConsultWithoutPrescriptionsSerializer
+from .consult_without_prescriptions_serializer import ConsultWithoutPrescriptionsSerializer
 from .medication_serializer import MedicationSerializer
 from .patient_serializer import PatientSerializer
 from .visit_serializer import VisitSerializer
 from .vitals_serializer import VitalsSerializer
-
 from .consult_serializer import ConsultSerializer

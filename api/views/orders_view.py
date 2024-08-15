@@ -18,12 +18,14 @@ class OrderView(APIView):
         if order_status:
             orders = orders.filter(
                 medication_updates__order_status=order_status)
-        serializer = OrderSerializer(orders, many=True)
+        serializer = OrderSerializer(orders, many=True, context={
+                                     "include_medication_updates": True})
         return Response(serializer.data)
 
     def get_object(self, pk):
         order = Order.objects.get(pk=pk)
-        serializer = OrderSerializer(order)
+        serializer = OrderSerializer(order, context={
+                                     "include_medication_updates": True})
         return Response(serializer.data)
 
     def post(self, request):
@@ -38,7 +40,8 @@ class OrderView(APIView):
 
         if order_status == "PENDING":
             serializer = OrderSerializer(
-                order, data=request.data, partial=True)
+                order, data=request.data, partial=True, context={
+                    "include_medication_updates": True})
         elif order_status == "CANCELLED":
             serializer = MedicationUpdatesSerializer(
                 order.medication_updates, data=request.data, partial=True)
@@ -79,7 +82,8 @@ class OrderView(APIView):
         medication_update = MedicationUpdates.objects.create(
             **medication_update_data)
         order_data['medication_updates'] = medication_update.pk
-        serializer = OrderSerializer(data=order_data)
+        serializer = OrderSerializer(data=order_data, context={
+                                     "include_medication_updates": True})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)

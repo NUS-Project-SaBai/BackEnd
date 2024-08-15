@@ -22,4 +22,6 @@ class MedicationUpdatesSerializer(serializers.ModelSerializer):
             instance.approval).data
         representation["medicine"] = APISerializer.MedicationSerializer(
             instance.medicine).data
+        representation["order"] = APISerializer.OrderSerializer(
+            instance.order.first()).data
         return representation

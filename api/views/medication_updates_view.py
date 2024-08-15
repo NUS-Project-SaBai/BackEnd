@@ -1,8 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.db.models import Prefetch
 
 from api.models import MedicationUpdates, Order
-from api.serializers import MedicationUpdatesSerializer, OrderSerializer
+from api.serializers import MedicationUpdatesSerializer
 
 
 class MedicationUpdatesView(APIView):
@@ -10,32 +11,19 @@ class MedicationUpdatesView(APIView):
         if pk is not None:
             return self.get_object(pk)
 
-        medication_updates = MedicationUpdates.objects.all()
+        medication_reviews = MedicationUpdates.objects.all()
 
         medication_pk = request.query_params.get("medication_pk", "")
         if medication_pk:
-            medication_updates = medication_updates.filter(
+            medication_reviews = medication_reviews.filter(
                 medicine_id=medication_pk,
                 order_status='APPROVED'
             )
 
-        orders = Order.objects.prefetch_related('medication_updates')
-
-        medication_updates_data = []
-
-        for medication_update in medication_updates:
-            medication_update_data = MedicationUpdatesSerializer(
-                medication_update).data
-            order = orders.filter(medication_updates=medication_update).first()
-            if order:
-                order_data = OrderSerializer(order).data
-                medication_update_data.update(order_data)
-            else:
-                medication_update_data['order'] = None
-
-            medication_updates_data.append(medication_update_data)
-
-        return Response(medication_updates_data)
+        medication_reviews.prefetch_related(
+            Prefetch('order', queryset=Order.objects.all())
+        )
+        return Response(MedicationUpdatesSerializer(medication_reviews, many=True).data)
 
     def get_object(self, pk):
         medication_history = MedicationUpdates.objects.filter(pk=pk).first()
