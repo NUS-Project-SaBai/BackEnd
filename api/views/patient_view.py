@@ -1,8 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 from api.models import Patient
 from api.serializers import PatientSerializer
+from api.utils import facial_recognition
 
 
 class PatientView(APIView):
@@ -25,8 +27,10 @@ class PatientView(APIView):
 
     def post(self, request):
         serializer = PatientSerializer(data=request.data)
+        print(f"picture type: {type(request.data['picture'])} to string: {str(request.data['picture'])}")
+        face_encoding = facial_recognition.generate_faceprint(request.FILES['picture'])
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            serializer.save(face_encodings=face_encoding)
             return Response(serializer.data)
 
     def patch(self, request, pk):
