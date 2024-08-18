@@ -22,6 +22,7 @@ class MedicationReviewSerializer(serializers.ModelSerializer):
             instance.approval).data
         representation["medicine"] = APISerializer.MedicationSerializer(
             instance.medicine).data
-        representation["order"] = APISerializer.OrderSerializer(
-            instance.order.first()).data
+        if self.context.get("include_order", False):
+            representation["order"] = APISerializer.OrderSerializer(
+                instance.order.first()).data
         return representation

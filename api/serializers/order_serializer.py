@@ -21,10 +21,8 @@ class OrderSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation["consult"] = APISerializer.ConsultWithoutPrescriptionsSerializer(
-            instance.consult, context={'include_prescriptions': False, 'include_diagnosis': False}).data
-        if self.context.get("include_medication_review", False):
-            representation["medication_review"] = APISerializer.MedicationReviewSerializer(
-                instance.medication_review
-            ).data
-        # print(representation)
+            instance.consult).data
+        representation["medication_review"] = APISerializer.MedicationReviewSerializer(
+            instance.medication_review
+        ).data
         return representation

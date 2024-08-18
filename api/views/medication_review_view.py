@@ -23,7 +23,8 @@ class MedicationReviewView(APIView):
         medication_reviews.prefetch_related(
             Prefetch('order', queryset=Order.objects.all())
         )
-        return Response(MedicationReviewSerializer(medication_reviews, many=True).data)
+        return Response(MedicationReviewSerializer(medication_reviews, many=True, context={
+            "include_order": True}).data)
 
     def get_object(self, pk):
         medication_history = MedicationReview.objects.filter(pk=pk).first()
