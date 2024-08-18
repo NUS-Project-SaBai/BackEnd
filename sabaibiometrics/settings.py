@@ -183,7 +183,6 @@ CORS_ALLOW_HEADERS = [
     'headers',
     'content-type',
     'authorization',
-    'doctor',
 ]
 
 cloudinary.config(
