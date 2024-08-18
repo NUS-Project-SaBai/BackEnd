@@ -5,6 +5,11 @@ from django.utils import timezone
 class MedicationReview(models.Model):
     class Meta:
         db_table = "medication_review"
+    ORDER_STATUS_CHOICES = [
+        ('APPROVED', 'Approved'),
+        ('PENDING', 'Pending'),
+        ('CANCELLED', 'Cancelled'),
+    ]
 
     approval = models.ForeignKey(
         'api.CustomUser',
@@ -18,4 +23,5 @@ class MedicationReview(models.Model):
     medicine = models.ForeignKey(
         'api.Medication', on_delete=models.SET_NULL, null=True)
     date = models.DateTimeField(default=timezone.now)
-    order_status = models.CharField(max_length=255)
+    order_status = models.CharField(
+        max_length=255, choices=ORDER_STATUS_CHOICES, default='PENDING')

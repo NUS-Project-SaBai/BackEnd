@@ -42,7 +42,7 @@ class OrderView(APIView):
         elif order_status == "CANCELLED":
             serializer = MedicationReviewSerializer(
                 order.medication_review, data=request.data, partial=True)
-        else:
+        elif order_status == "APPROVED":
             medication_review_data = {
                 "approval": get_doctor_id(request.headers),
                 "quantity_remaining": order.medication_review.medicine.quantity + order.medication_review.quantity_changed,
