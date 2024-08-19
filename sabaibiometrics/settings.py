@@ -104,8 +104,6 @@ if USE_DEFAULT_PERMISSION_CLASSES:
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-print(os.getenv("POSTGRES_NAME"))
-
 DATABASES = {
     # "default": dj_database_url.config(
     #     default="postgres://sabai_gnfs_user:MGbRjWK9fMrnSB5PYsHvcZ9BIMReXok1@dpg-clntdu4jtl8s73ah3tug-a.singapore-postgres.render.com/sabai_gnfs",
