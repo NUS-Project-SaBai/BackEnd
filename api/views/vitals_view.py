@@ -37,14 +37,14 @@ class VitalsView(APIView):
         visit = request.query_params.get("visit", "")
         if visit:
             vital = vital.filter(visit=visit).first()
-        serializer = VitalsSerializer(vital, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        return self.patch_object(request, vital.pk)
 
     def patch_object(self, request, pk):
         vital = Vitals.objects.get(pk=pk)
-        serializer = VitalsSerializer(vital, data=request.data, partial=True)
+        filtered_request_data = dict(
+            filter(lambda item: item[1] != "", request.data.items()))
+        serializer = VitalsSerializer(
+            vital, data=filtered_request_data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
