@@ -7,7 +7,7 @@ class Command(BaseCommand):
   help = 'Update stock from google sheets'
 
   def handle(self, *args, **kwargs):
-        # Create a default SSL context
+        # SSL Security Stuff
         ssl_context = ssl.create_default_context(cafile=certifi.where())
         urllib.request.install_opener(urllib.request.build_opener(urllib.request.HTTPSHandler(context=ssl_context)))
 
