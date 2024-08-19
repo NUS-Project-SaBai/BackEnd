@@ -16,15 +16,17 @@ class MedicationReviewView(APIView):
         medication_pk = request.query_params.get("medication_pk", "")
         if medication_pk:
             medication_reviews = medication_reviews.filter(
-                medicine_id=medication_pk,
-                order_status='APPROVED'
+                medicine_id=medication_pk, order_status="APPROVED"
             )
 
         medication_reviews.prefetch_related(
-            Prefetch('order', queryset=Order.objects.all())
+            Prefetch("order", queryset=Order.objects.all())
         )
-        return Response(MedicationReviewSerializer(medication_reviews, many=True, context={
-            "include_order": True}).data)
+        return Response(
+            MedicationReviewSerializer(
+                medication_reviews, many=True, context={"include_order": True}
+            ).data
+        )
 
     def get_object(self, pk):
         medication_history = MedicationReview.objects.filter(pk=pk).first()
@@ -37,7 +39,8 @@ class MedicationReviewView(APIView):
     def patch(self, request, pk):
         medication_history = MedicationReview.objects.get(pk=pk)
         serializer = MedicationReviewSerializer(
-            medication_history, data=request.data, partial=True)
+            medication_history, data=request.data, partial=True
+        )
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
@@ -48,8 +51,7 @@ class MedicationReviewView(APIView):
         return Response({"message": "Deleted successfully"})
 
     @staticmethod
-    def new_entry(data):
-        print(data)
+    def add_entry(data):
         serializer = MedicationReviewSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
