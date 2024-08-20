@@ -34,6 +34,7 @@ Assuming that you have successfully cloned the repository into your system and a
 We will be using Pipenv. <https://pipenv.pypa.io/en/latest/>
 
 Note: For Mac users, in the following commands you may have to use `python3` instead of `python`.
+
 Run this command if you have yet to install it:
 
 ```bash
@@ -76,7 +77,7 @@ This command will makemigrations, migrate the database, pull auth0 users, and st
 pipenv run start
 ```
 
-\*Make sure you set up both the Frontend AND Backend before logging into localhost.
+
 
 A localhost link will be provided for you to access the service. It will look in the command line as such:
 
@@ -90,6 +91,8 @@ Django version 2.2.4, using settings 'sabaibiometrics.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 ```
+
+Make sure you set up both the Frontend AND Backend before logging into localhost.
 
 ### Creating a superuser account in Django
 
