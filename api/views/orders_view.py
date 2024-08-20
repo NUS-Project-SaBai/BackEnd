@@ -29,7 +29,6 @@ class OrderView(APIView):
     def post(self, request):
         return OrderView.create(request.data)
 
-    # WARNING not updating orders
     def patch(self, request, pk):
         order = Order.objects.get(pk=pk)
         if order.medication_review.order_status == "APPROVED" or order.medication_review.order_status == "CANCELLED":
