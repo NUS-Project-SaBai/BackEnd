@@ -26,9 +26,9 @@ class DiagnosisView(APIView):
         return DiagnosisView.create(request.data)
 
     def patch(self, request, pk):
-        consult = Diagnosis.objects.get(pk=pk)
+        diagnosis = Diagnosis.objects.get(pk=pk)
         serializer = DiagnosisSerializer(
-            consult, data=request.data, partial=True)
+            diagnosis, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
@@ -41,6 +41,15 @@ class DiagnosisView(APIView):
     @staticmethod
     def create(data):
         serializer = DiagnosisSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
+
+    @staticmethod
+    def update(data, pk):
+        diagnosis = Diagnosis.objects.get(pk=pk)
+        serializer = DiagnosisSerializer(
+            diagnosis, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)

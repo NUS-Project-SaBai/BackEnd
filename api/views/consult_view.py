@@ -35,18 +35,33 @@ class ConsultView(APIView):
                 for order_data in orders_data:
                     order_data["consult"] = consult.pk
                     views.OrderView.create(order_data)
-                for diagnosis_data in diagnosis_data:
-                    diagnosis_data["consult"] = consult.pk
-                    views.DiagnosisView.create(diagnosis_data)
+                for data in diagnosis_data:
+                    data["consult"] = consult.pk
+                    views.DiagnosisView.create(data)
                 return Response(consult_serializer.data)
 
     def patch(self, request, pk):
         consult = Consult.objects.get(pk=pk)
-        serializer = ConsultSerializer(
-            consult, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        updated_consult_data = request.data.get("consult")
+        # this updates the doctor id to the current doctor, not sure if intended??
+        updated_consult_data["doctor"] = views.utils.get_doctor_id(
+            request.headers)
+        print(updated_consult_data)
+        consult_serializer = ConsultSerializer(
+            consult, data=request.data.get("consult"), partial=True)
+        if consult_serializer.is_valid(raise_exception=True):
+            with transaction.atomic():
+                consult_serializer.save()
+                diagnosis_data = request.data.get("diagnoses", [])
+                for data in diagnosis_data:
+                    print(data)
+                    data_filtered = {
+                        "category": data.get("category"),
+                        "details": data.get("details"),
+                    }
+                    views.DiagnosisView.update(
+                        data_filtered, data.get("id"))
+                return Response(consult_serializer.data)
 
     def delete(self, request, pk):
         consult = Consult.objects.get(pk=pk)
