@@ -35,7 +35,7 @@ class MedicationView(APIView):
                     "medicine": medication.pk,
                     "order_status": "APPROVED",
                 }
-                MedicationReviewView.new_entry(medication_review_data)
+                MedicationReviewView.add_entry(medication_review_data)
             return Response(serializer.data)
 
     def patch(self, request, pk):
@@ -58,12 +58,11 @@ class MedicationView(APIView):
             "quantity_remaining": medication.quantity + quantityChange,
             "medicine": medication.pk,
             "order_status": "APPROVED",
-
         }
 
         if serializer.is_valid(raise_exception=True):
             with transaction.atomic():
-                MedicationReviewView.new_entry(medication_review_data)
+                MedicationReviewView.add_entry(medication_review_data)
                 serializer.save()
             return Response(serializer.data)
 
