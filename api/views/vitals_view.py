@@ -31,16 +31,16 @@ class VitalsView(APIView):
 
     def patch(self, request, pk=None):
         if pk is not None:
-            return self.patch_object(request, pk)
+            vital = Vitals.objects.get(pk=pk)
+            return self.patch_object(request, vital)
 
         vital = Vitals.objects.all()
         visit = request.query_params.get("visit", "")
         if visit:
             vital = vital.filter(visit=visit).first()
-        return self.patch_object(request, vital.pk)
+        return self.patch_object(request, vital)
 
-    def patch_object(self, request, pk):
-        vital = Vitals.objects.get(pk=pk)
+    def patch_object(self, request, vital):
         filtered_request_data = dict(
             filter(lambda item: item[1] != "", request.data.items()))
         serializer = VitalsSerializer(

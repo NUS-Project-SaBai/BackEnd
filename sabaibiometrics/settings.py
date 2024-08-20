@@ -34,7 +34,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',') 
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
 
 # Application definition
@@ -94,7 +94,9 @@ REST_FRAMEWORK = {
     ),
 }
 
-if os.getenv('USE_DEFAULT_PERMISSION_CLASSES') != 'False':
+USE_DEFAULT_PERMISSION_CLASSES = os.getenv(
+    'USE_DEFAULT_PERMISSION_CLASSES') != 'False'
+if USE_DEFAULT_PERMISSION_CLASSES:
     REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
         'rest_framework.permissions.IsAuthenticated',
     )
@@ -121,7 +123,7 @@ DATABASES = {
     }
 }
 
-if "test" in sys.argv or os.getenv('TEMP_DB') == 'True': 
+if "test" in sys.argv or os.getenv('TEMP_DB') == 'True':
     DATABASES["default"] = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
@@ -193,14 +195,17 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.RemoteUserBackend',
 ]
 
+AUTH0_AUDIENCE = os.getenv("AUTH0_AUDIENCE")
+AUTH0_ISSUER = os.getenv("AUTH0_ISSUER")
+
 JWT_AUTH = {
     'JWT_PAYLOAD_GET_USERNAME_HANDLER':
         'sabaibiometrics.utils.jwt_get_username_from_payload_handler',
     'JWT_DECODE_HANDLER':
         'sabaibiometrics.utils.jwt_decode_token',
     'JWT_ALGORITHM': 'RS256',
-    'JWT_AUDIENCE': os.getenv("AUTH0_AUDIENCE"),
-    'JWT_ISSUER': os.getenv("AUTH0_ISSUER"),
+    'JWT_AUDIENCE': AUTH0_AUDIENCE,
+    'JWT_ISSUER': AUTH0_ISSUER,
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
 }
 

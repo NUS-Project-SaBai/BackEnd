@@ -20,9 +20,14 @@ urlpatterns = [
     path("consults", views.ConsultView.as_view(), name="consults_list"),
     path("consults/<int:pk>", views.ConsultView.as_view(), name="consults_detail"),
     path("diagnosis", views.DiagnosisView.as_view(), name="diagnosis_list"),
-    path("diagnosis/<int:pk>", views.DiagnosisView.as_view(), name="diagnosis_detail"),
+    path("diagnosis/<int:pk>", views.DiagnosisView.as_view(),
+         name="diagnosis_detail"),
     path("orders", views.OrderView.as_view(), name="orders_list"),
     path("orders/<int:pk>", views.OrderView.as_view(), name="orders_detail"),
+    path("medication_review", views.MedicationReviewView.as_view(),
+         name="medication_review_list"),
+    path("medication_review/<int:pk>", views.MedicationReviewView.as_view(),
+         name="medication_review_detail"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -3,7 +3,8 @@ from rest_framework.response import Response
 
 from api.models import Consult
 from api.serializers import ConsultSerializer
-from sabaibiometrics.utils import jwt_decode_token, jwt_get_username_from_payload_handler
+from api import views
+from django.db import transaction
 
 
 class ConsultView(APIView):
@@ -23,15 +24,21 @@ class ConsultView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        if "Authorization" in request.headers:
-            token = request.headers["Authorization"].split(" ")[1]
-            payload = jwt_decode_token(token)
-            request.data["doctor"] = jwt_get_username_from_payload_handler(
-                payload)
-        serializer = ConsultSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        consult_data = request.data.get("consult")
+        consult_data["doctor"] = views.utils.get_doctor_id(request.headers)
+        consult_serializer = ConsultSerializer(data=consult_data)
+        if consult_serializer.is_valid(raise_exception=True):
+            with transaction.atomic():
+                consult = consult_serializer.save()
+                orders_data = request.data.get("orders", [])
+                diagnosis_data = request.data.get("diagnoses", [])
+                for order_data in orders_data:
+                    order_data["consult"] = consult.pk
+                    views.OrderView.create(order_data)
+                for diagnosis_data in diagnosis_data:
+                    diagnosis_data["consult"] = consult.pk
+                    views.DiagnosisView.create(diagnosis_data)
+                return Response(consult_serializer.data)
 
     def patch(self, request, pk):
         consult = Consult.objects.get(pk=pk)
