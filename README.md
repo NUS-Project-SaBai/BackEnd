@@ -24,6 +24,7 @@
       - Enter "Sabai" as the database name and press "Save" to successfully create the local database.
 
 3. Configure Database Settings
+
    Navigate to the Backend directory and create a .env file if it is not present. Copy the content from `.env.example` and update the database configuration settings to match your PostgreSQL database credentials. Cloudinary credentials is in the Key Credentials doc.
 
 ## Activating the virtual environment
@@ -75,7 +76,7 @@ This command will makemigrations, migrate the database, pull auth0 users, and st
 pipenv run start
 ```
 
-\* Make sure you set up both the Frontend AND Backend before logging into localhost.
+\*Make sure you set up both the Frontend AND Backend before logging into localhost.
 
 A localhost link will be provided for you to access the service. It will look in the command line as such:
 
