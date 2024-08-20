@@ -92,7 +92,7 @@ Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 ```
 
-Make sure you set up both the Frontend AND Backend before logging into localhost.
+\*Make sure you set up both the Frontend AND Backend before logging into localhost.
 
 ### Creating a superuser account in Django
 
