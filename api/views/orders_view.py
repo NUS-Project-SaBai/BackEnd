@@ -69,7 +69,6 @@ class OrderView(APIView):
     def create(order_data):
         quantity = int(order_data['quantity'])
         medicine = Medication.objects.get(pk=order_data['medicine'])
-        print(medicine)
         medication_review_data = {
             "quantity_changed": -quantity,
             "quantity_remaining": medicine.quantity - quantity,
