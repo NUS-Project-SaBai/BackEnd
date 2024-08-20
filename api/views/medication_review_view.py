@@ -49,7 +49,6 @@ class MedicationReviewView(APIView):
 
     @staticmethod
     def new_entry(data):
-        print(data)
         serializer = MedicationReviewSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
