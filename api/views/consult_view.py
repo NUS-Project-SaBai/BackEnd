@@ -24,9 +24,10 @@ class ConsultView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        consult_data = request.data.get("consult")
+        consult_data = request.data
         consult_data["doctor"] = views.utils.get_doctor_id(request.headers)
-        consult_serializer = ConsultSerializer(data=consult_data)
+        consult_serializer = ConsultSerializer(data=request.data)
+
         if consult_serializer.is_valid(raise_exception=True):
             with transaction.atomic():
                 consult = consult_serializer.save()
@@ -42,8 +43,7 @@ class ConsultView(APIView):
 
     def patch(self, request, pk):
         consult = Consult.objects.get(pk=pk)
-        serializer = ConsultSerializer(
-            consult, data=request.data, partial=True)
+        serializer = ConsultSerializer(consult, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
