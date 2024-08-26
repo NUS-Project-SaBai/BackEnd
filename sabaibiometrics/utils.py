@@ -1,21 +1,14 @@
 import json
-import os
 import jwt
-import requests
-from dotenv import load_dotenv
 from api.models import JWKS
-
 from django.contrib.auth import authenticate
-
-# Load environment variables from the .env file
-load_dotenv()
+from sabaibiometrics.settings import AUTH0_ISSUER, AUTH0_AUDIENCE
 
 
 def jwt_get_username_from_payload_handler(payload):
-    username = payload.get('sub')
-    # DO NOT REMOVE, this authenticate magic is important
-    authenticate(remote_user=username)
-    return username
+    auth0_id = payload.get('sub')
+    authenticate(remote_user=auth0_id)
+    return auth0_id
 
 
 def jwt_decode_token(token):
@@ -29,5 +22,4 @@ def jwt_decode_token(token):
     if public_key is None:
         raise Exception('Public key not found.')
 
-    issuer = f'https://{os.getenv("AUTH0_DOMAIN")}/'
-    return jwt.decode(token, public_key, audience=os.getenv("AUTH0_AUDIENCE"), issuer=issuer, algorithms=['RS256'])
+    return jwt.decode(token, public_key, audience=AUTH0_AUDIENCE, issuer=AUTH0_ISSUER, algorithms=['RS256'])
