@@ -1,4 +1,6 @@
 from sabaibiometrics.utils import jwt_decode_token
+from api.models import CustomUser
+from sabaibiometrics.settings import OFFLINE
 
 
 def get_doctor_id(headers):
@@ -7,3 +9,6 @@ def get_doctor_id(headers):
         payload = jwt_decode_token(token)
         doctor_id = payload.get("sub")
         return doctor_id
+    elif "doctor" in headers and OFFLINE:
+        auth0_id = CustomUser.objects.get(email=headers["doctor"]).auth0_id
+        return auth0_id

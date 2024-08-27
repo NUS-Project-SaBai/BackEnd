@@ -34,7 +34,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
 
 # Application definition
@@ -94,10 +94,12 @@ REST_FRAMEWORK = {
     ),
 }
 
-USE_DEFAULT_PERMISSION_CLASSES = os.getenv("USE_DEFAULT_PERMISSION_CLASSES") != "False"
-if USE_DEFAULT_PERMISSION_CLASSES:
-    REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"] = (
-        "rest_framework.permissions.IsAuthenticated",
+OFFLINE = os.getenv('OFFLINE', 'False') == 'True'
+USE_DEFAULT_PERMISSION_CLASSES = os.getenv(
+    'USE_DEFAULT_PERMISSION_CLASSES') != 'False'
+if USE_DEFAULT_PERMISSION_CLASSES and not OFFLINE:
+    REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
+        'rest_framework.permissions.IsAuthenticated',
     )
 
 # Database
@@ -122,7 +124,7 @@ DATABASES = {
     }
 }
 
-if "test" in sys.argv or os.getenv("TEMP_DB") == "True":
+if "test" in sys.argv or os.getenv('TEMP_DB') == 'True':
     DATABASES["default"] = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
@@ -182,6 +184,9 @@ CORS_ALLOW_HEADERS = [
     "authorization",
 ]
 
+if OFFLINE:
+    CORS_ALLOW_HEADERS.append('doctor')
+
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
     api_key=os.getenv("CLOUDINARY_API_KEY"),
@@ -206,4 +211,4 @@ JWT_AUTH = {
     "JWT_AUTH_HEADER_PREFIX": "Bearer",
 }
 
-AUTH_USER_MODEL = "api.CustomUser"
+AUTH_USER_MODEL = 'api.CustomUser'
