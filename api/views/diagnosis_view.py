@@ -39,7 +39,7 @@ class DiagnosisView(APIView):
         return Response({"message": "Deleted successfully"})
 
     @staticmethod
-    def create(data):
+    def add(data):
         serializer = DiagnosisSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
