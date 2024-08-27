@@ -24,7 +24,10 @@ class PatientView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = PatientSerializer(data=request.data)
+        patient_data = request.data
+        print(patient_data)
+        patient_data["offline_picture"] = request.data["picture"]
+        serializer = PatientSerializer(data=patient_data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)

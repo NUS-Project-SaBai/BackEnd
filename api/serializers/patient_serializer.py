@@ -22,6 +22,7 @@ class PatientSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        print(data)
         output = {
             "model": "clinicmodels.patient",
             "pk": data["id"],
@@ -36,6 +37,7 @@ class PatientSerializer(serializers.ModelSerializer):
             "drug_allergy": data["drug_allergy"],
             "face_encodings": data["face_encodings"],
             "picture": data["picture"],
+            "offline_picture": data["offline_picture"],
             "filter_string": self.get_patient_enriched(instance),
             "patient_id": self.get_patient_id(instance),
         }

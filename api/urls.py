@@ -1,6 +1,8 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from api import views
+from django.conf.urls.static import static
+from sabaibiometrics import settings
 
 urlpatterns = [
     path("medications", views.MedicationView.as_view(), name="medications_list"),
@@ -31,3 +33,4 @@ urlpatterns = [
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

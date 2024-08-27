@@ -94,7 +94,8 @@ REST_FRAMEWORK = {
     ),
 }
 
-USE_DEFAULT_PERMISSION_CLASSES = os.getenv("USE_DEFAULT_PERMISSION_CLASSES") != "False"
+USE_DEFAULT_PERMISSION_CLASSES = os.getenv(
+    "USE_DEFAULT_PERMISSION_CLASSES") != "False"
 if USE_DEFAULT_PERMISSION_CLASSES:
     REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"] = (
         "rest_framework.permissions.IsAuthenticated",
@@ -207,3 +208,7 @@ JWT_AUTH = {
 }
 
 AUTH_USER_MODEL = "api.CustomUser"
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

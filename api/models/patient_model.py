@@ -14,8 +14,10 @@ class Patient(models.Model):
     contact_no = models.CharField(max_length=255, blank=True, null=True)
     gender = models.CharField(max_length=11)
     date_of_birth = models.DateTimeField(default=timezone.now)
-    poor =  models.CharField(max_length=3, default="No")
-    bs2 =  models.CharField(max_length=3, default="No")
+    poor = models.CharField(max_length=3, default="No")
+    bs2 = models.CharField(max_length=3, default="No")
     drug_allergy = models.TextField(default="None")
     face_encodings = models.CharField(max_length=3000, blank=True, null=True)
     picture = CloudinaryField("image", blank=True, null=True)
+    offline_picture = models.ImageField(
+        upload_to="offline_pictures", blank=True, null=True)
