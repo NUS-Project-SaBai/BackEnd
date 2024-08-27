@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from api.models import Medication
 from api.serializers import MedicationSerializer
-from api.views.utils import get_doctor_id
+from api.views.utils.utils import get_doctor_id
 from api.views import MedicationReviewView
 from django.db import transaction
 
