@@ -1,15 +1,10 @@
 from django.db import models
-from api.models import Consult, Medication
+from api.models import Consult, MedicationReview
 
 
 class Order(models.Model):
     class Meta:
         db_table = "order"
-
-    medicine = models.ForeignKey(
-        Medication, on_delete=models.SET_NULL, blank=True, null=True
-    )
-    quantity = models.IntegerField(default=0, blank=True)
     consult = models.ForeignKey(
         Consult,
         on_delete=models.SET_NULL,
@@ -19,4 +14,6 @@ class Order(models.Model):
     )
     notes = models.TextField(blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
-    order_status = models.CharField(max_length=255)
+    medication_review = models.ForeignKey(
+        MedicationReview, on_delete=models.SET_NULL, blank=True, null=True, related_name="order"
+    )

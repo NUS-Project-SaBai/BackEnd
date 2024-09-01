@@ -11,6 +11,7 @@ class ConsultSerializer(serializers.ModelSerializer):
         queryset=models.CustomUser.objects.all()
     )
     prescriptions = APISerializer.OrderSerializer(many=True, read_only=True)
+    diagnosis = APISerializer.DiagnosisSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Consult

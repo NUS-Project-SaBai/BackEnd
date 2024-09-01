@@ -29,12 +29,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',') 
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
 
 
 # Application definition
@@ -59,7 +59,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    'django.contrib.auth.middleware.RemoteUserMiddleware',
+    "django.contrib.auth.middleware.RemoteUserMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -87,16 +87,17 @@ WSGI_APPLICATION = "sabaibiometrics.wsgi.application"
 REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "EXCEPTION_HANDLER": "sabaibiometrics.custom_exception_handler.custom_exception_handler",
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
     ),
 }
 
-if os.getenv('USE_DEFAULT_PERMISSION_CLASSES') != 'False':
-    REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
-        'rest_framework.permissions.IsAuthenticated',
+USE_DEFAULT_PERMISSION_CLASSES = os.getenv("USE_DEFAULT_PERMISSION_CLASSES") != "False"
+if USE_DEFAULT_PERMISSION_CLASSES:
+    REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"] = (
+        "rest_framework.permissions.IsAuthenticated",
     )
 
 # Database
@@ -121,7 +122,7 @@ DATABASES = {
     }
 }
 
-if "test" in sys.argv or os.getenv('TEMP_DB') == 'True': 
+if "test" in sys.argv or os.getenv("TEMP_DB") == "True":
     DATABASES["default"] = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
@@ -169,16 +170,16 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Allow all:
-CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False') == 'True'
+CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", "False") == "True"
 
 # Or specify the allowed origins:
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS').split(',')
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS").split(",")
 
 # If you have specific headers being sent by your frontend, add them here
 CORS_ALLOW_HEADERS = [
-    'headers',
-    'content-type',
-    'authorization',
+    "headers",
+    "content-type",
+    "authorization",
 ]
 
 cloudinary.config(
@@ -189,19 +190,20 @@ cloudinary.config(
 )
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'django.contrib.auth.backends.RemoteUserBackend',
+    "django.contrib.auth.backends.ModelBackend",
+    "django.contrib.auth.backends.RemoteUserBackend",
 ]
 
+AUTH0_AUDIENCE = os.getenv("AUTH0_AUDIENCE")
+AUTH0_ISSUER = os.getenv("AUTH0_ISSUER")
+
 JWT_AUTH = {
-    'JWT_PAYLOAD_GET_USERNAME_HANDLER':
-        'sabaibiometrics.utils.jwt_get_username_from_payload_handler',
-    'JWT_DECODE_HANDLER':
-        'sabaibiometrics.utils.jwt_decode_token',
-    'JWT_ALGORITHM': 'RS256',
-    'JWT_AUDIENCE': os.getenv("AUTH0_AUDIENCE"),
-    'JWT_ISSUER': os.getenv("AUTH0_ISSUER"),
-    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    "JWT_PAYLOAD_GET_USERNAME_HANDLER": "sabaibiometrics.utils.jwt_get_username_from_payload_handler",
+    "JWT_DECODE_HANDLER": "sabaibiometrics.utils.jwt_decode_token",
+    "JWT_ALGORITHM": "RS256",
+    "JWT_AUDIENCE": AUTH0_AUDIENCE,
+    "JWT_ISSUER": AUTH0_ISSUER,
+    "JWT_AUTH_HEADER_PREFIX": "Bearer",
 }
 
-AUTH_USER_MODEL = 'api.CustomUser'
+AUTH_USER_MODEL = "api.CustomUser"

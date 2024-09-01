@@ -31,6 +31,8 @@ class PatientSerializer(serializers.ModelSerializer):
             "contact_no": data["contact_no"],
             "gender": data["gender"],
             "date_of_birth": data["date_of_birth"],
+            "poor": data["poor"],
+            "bs2": data["bs2"],
             "drug_allergy": data["drug_allergy"],
             "face_encodings": data["face_encodings"],
             "picture": data["picture"],
