@@ -9,4 +9,4 @@ class Command(BaseCommand):
         subprocess.run("python manage.py makemigrations", shell=True, text=True)
         subprocess.run("python manage.py migrate", shell=True, text=True)
         subprocess.run("python manage.py set_auth0_users", shell=True, text=True)
-        subprocess.run("python manage.py runserver", shell=True, text=True)
+        subprocess.run("python manage.py runserver 0.0.0.0:8000", shell=True, text=True)
