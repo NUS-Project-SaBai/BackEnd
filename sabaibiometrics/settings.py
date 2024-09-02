@@ -36,6 +36,8 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
 
+OFFLINE = os.getenv("OFFLINE")
+
 
 # Application definition
 
