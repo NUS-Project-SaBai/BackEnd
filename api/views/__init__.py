@@ -9,3 +9,4 @@ from .user_view import UserView
 from .orders_view import OrderView
 from .diagnosis_view import DiagnosisView
 from .utils.utils import get_doctor_id
+from .upload_file_view import upload_file
