@@ -31,6 +31,8 @@ class PatientView(APIView):
         if OFFLINE:
             patient_data["offline_picture"] = patient_data["picture"]
             del patient_data["picture"]
+        print(OFFLINE)
+        print(patient_data)
         serializer = PatientSerializer(data=patient_data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()

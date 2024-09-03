@@ -29,3 +29,5 @@ Pillow = "==10.4.0"
 [scripts]
 test = "python manage.py test"
 start = "python manage.py start"
+download_images = "python manage.py download_images"
+upload_images = "python manage.py upload_images"

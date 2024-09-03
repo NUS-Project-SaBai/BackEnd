@@ -36,8 +36,7 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
 
-OFFLINE = os.getenv("OFFLINE")
-
+OFFLINE = os.getenv("OFFLINE") == "True"
 
 # Application definition
 
@@ -214,3 +213,4 @@ AUTH_USER_MODEL = "api.CustomUser"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+CLOUDINARY_URL = os.getenv("CLOUDINARY_URL")
