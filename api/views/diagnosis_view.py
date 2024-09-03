@@ -23,14 +23,12 @@ class DiagnosisView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = DiagnosisSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        return DiagnosisView.create(request.data)
 
     def patch(self, request, pk):
         consult = Diagnosis.objects.get(pk=pk)
-        serializer = DiagnosisSerializer(consult, data=request.data, partial=True)
+        serializer = DiagnosisSerializer(
+            consult, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
@@ -39,3 +37,10 @@ class DiagnosisView(APIView):
         diagnosis = Diagnosis.objects.get(pk=pk)
         diagnosis.delete()
         return Response({"message": "Deleted successfully"})
+
+    @staticmethod
+    def add(data):
+        serializer = DiagnosisSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)

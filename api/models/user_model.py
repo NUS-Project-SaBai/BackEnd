@@ -4,3 +4,4 @@ from django.db import models
 
 class CustomUser(AbstractUser):
     auth0_id = models.CharField(max_length=255)
+    nickname = models.CharField(max_length=255)

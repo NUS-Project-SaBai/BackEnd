@@ -5,7 +5,7 @@
    Before proceeding with the installation, ensure that the following prerequisites are met:
 
    - PostgreSQL 15 is installed on your system.
-   - Python version 3.8 or higher max 3.12 is available in your environment.
+   - Python version 3.12 is available in your environment. (ONLY 3.12)
 
    ```bash
    git clone https://github.com/NUS-Project-SaBai/BackEnd/
@@ -13,10 +13,18 @@
 
 2. Set up postgreSQL Database
 
-   - Install PostgreSQL 15 if not already installed.
+   - Install PostgreSQL 15 if not already installed. https://www.postgresql.org/download/
    - Create a new PostgreSQL database for Project SaBai.
+      - After launching the setup wizard, select all 4 components to install.
+      - Select default location when prompted for location.
+      - Remember your PostgreSQL password.
+      - Open pgAdmin 4 after PostgreSQL installation.
+      - Open the servers dropdown tab on the left and enter your password.
+      - Right click "Databases" and go to Create > Database.
+      - Enter "Sabai" as the database name and press "Save" to successfully create the local database.
 
 3. Configure Database Settings
+
    Navigate to the Backend directory and create a .env file if it is not present. Copy the content from `.env.example` and update the database configuration settings to match your PostgreSQL database credentials. Cloudinary credentials is in the Key Credentials doc.
 
 ## Activating the virtual environment
@@ -24,6 +32,8 @@
 Assuming that you have successfully cloned the repository into your system and are inside the directory, the very first step is to activate your python virtual environment. This is a highly important step so as to clearly separate the dependencies of this project from those that already exist in your own system. Mixing them up can lead to some of your system dependencies to malfunction.
 
 We will be using Pipenv. <https://pipenv.pypa.io/en/latest/>
+
+Note: For Mac users, in the following commands you may have to use `python3` instead of `python`.
 
 Run this command if you have yet to install it:
 
@@ -67,6 +77,8 @@ This command will makemigrations, migrate the database, pull auth0 users, and st
 pipenv run start
 ```
 
+
+
 A localhost link will be provided for you to access the service. It will look in the command line as such:
 
 ```bash
@@ -79,6 +91,8 @@ Django version 2.2.4, using settings 'sabaibiometrics.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 ```
+
+\*Make sure you set up both the Frontend AND Backend before logging into localhost.
 
 ### Creating a superuser account in Django
 
