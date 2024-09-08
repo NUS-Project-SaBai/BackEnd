@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import os
 import tempfile
-from . import utils;
+from api.views.utils import utils;
 
 @csrf_exempt
 def upload_file(request):
@@ -19,7 +19,7 @@ def upload_file(request):
                 temp_file.write(chunk)
 
         # Call the function to upload to Google Drive
-        utils.utils.upload_photo(file_path)
+        utils.upload_photo(file_path)
 
         # Optionally delete the temp file
         os.remove(file_path)
