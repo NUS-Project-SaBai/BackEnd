@@ -50,9 +50,11 @@ INSTALLED_APPS = [
     "api",
     "sabaibiometrics",
     "cloudinary",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -180,6 +182,13 @@ CORS_ALLOW_HEADERS = [
     "headers",
     "content-type",
     "authorization",
+    'x-csrftoken',
+]
+
+CSRF_COOKIE_SECURE = False
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',  # Trust requests from the Next.js frontend
 ]
 
 cloudinary.config(
