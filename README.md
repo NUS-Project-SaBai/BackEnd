@@ -132,7 +132,50 @@ Running this command runs the service locally
 ```bash
 python manage.py runserver
 ```
+### Updating Pharmacy
+Import pandas first for the command to work
+```bash
+pip install pandas
+```
 
+Running this command updates the database with pharmacy stock from NUS Medicine's google sheet
+
+(currently awaiting updates so doesn't update database yet but just prints out the stock)
+
+```bash
+python manage.py update_stock
+```
+
+### Uploading to Google Docs
+Instructions to upload files to google docs
+
+1. create service account credentials
+   - go to https://developers.google.com/workspace/guides/create-credentials
+   - scroll down to "service account credentials" and select the blue button "go to service acounts"
+   - create a project, enter a name and select no organisation
+   - then select the project
+   - select "create service account" at the middle top of the page
+   - enter a name and put any description
+   -click create and continue and continue again and then click done
+   - go to actions and click on the 3 dots below it beside your service account
+   - select manage keys
+   - select add key -> create new key -> JSON -> create
+   - store the private key
+   - go to google drive and select the folder you would like to upload to
+   - share the folder and give editor access to the email that your service account has, which is at the service account page after you select your project
+
+2. Enable google drive api
+   - on the service accounts page, search on the search bar "drive" and select "Google Drive API"
+   - enable the api
+   - in your backend terminal, run the code to enable the api
+
+   ```bash
+   pip install google-api-python-client
+   ```
+
+3. Uploading
+   - route the SERVICE_ACCOUNT_FILE to the json file obtained from service account
+   - route the PARENT_FOLDER_ID to the id of the google drive file to upload to
 ## pgAdmin4
 
 This can be used as a tool to view your database and check if the data is correct.
