@@ -68,4 +68,3 @@ target/
 static/
 
 .env
-db.sqlite3
