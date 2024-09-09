@@ -1,74 +1,75 @@
-# OpenClinic
-A simple to use, self-contained portable clinic application
-for use in overseas missions to manage clinic operations.
+# BackEnd
 
-## Getting Started
-Running this project would require basics in git and the use of the command line. Refer to the section on **Basics** below for a quick rundown and a list of resources.
-***
+1. Prerequisities
 
-### Activating the virtual environment
-Assuming that you have successfully cloned the repository into your system and are inside the directory, the very first step is to activate your python virtual environment. This is a **highly** important step so as to clearly separate the dependencies of this project from those that already exist in your own system. Mixing them up can lead to some of your system depencies to malfunction.
+   Before proceeding with the installation, ensure that the following prerequisites are met:
 
-We will be using [virtualenv](https://python-guide-ru.readthedocs.io/en/latest/dev/virtualenvs.html) to set up our virtual environment. Run this command if you have yet to install it:
+   - PostgreSQL 15 is installed on your system.
+   - Python version 3.8 or higher max 3.12 is available in your environment.
 
-```
-$ pip install virtualenv
-```
+   ```bash
+   git clone https://github.com/NUS-Project-SaBai/BackEnd/
+   ```
 
- For setting up the virtual environment for the first time:
+2. Set up postgreSQL Database
 
-```
-$ virtualenv venv
-```
+   - Install PostgreSQL 15 if not already installed.
+   - Create a new PostgreSQL database for Project SaBai.
 
-This creates a /venv folder in your directory. Optimally, you will never need to touch this folder.
+3. Configure Database Settings
+   Navigate to the Backend directory and create a .env file if it is not present. Copy the content from `.env.example` and update the database configuration settings to match your PostgreSQL database credentials. Cloudinary credentials is in the Key Credentials doc.
 
-Starting the virtual environment:
-```
-$ source venv/bin/activate
-```
+## Activating the virtual environment
 
-This command needs to be run everytime you are working on your project! Or else, you run the risk of installing dependencies/ packages straight into your system.
+Assuming that you have successfully cloned the repository into your system and are inside the directory, the very first step is to activate your python virtual environment. This is a highly important step so as to clearly separate the dependencies of this project from those that already exist in your own system. Mixing them up can lead to some of your system dependencies to malfunction.
 
-To ascertain that the virutal environment is active, you should be able to see the word 'venv' appear on the latest line of your terminal/ shell:
-```
-(venv) (base) Angelico-MBP:sabai_2019 angelico$ 
+We will be using Pipenv. <https://pipenv.pypa.io/en/latest/>
+
+Run this command if you have yet to install it:
+
+```bash
+pip install pipenv
 ```
 
-Deactivating the virtual environment:
-```
-$ deactivate
+To initialise a new `pipenv` environment for python 3.12 (note you must already have this python version installed):
+
+```bash
+pipenv --python 3.12
 ```
 
-To ensure that it is indeed inactive, the word 'venv' would be gone from the latest line of your terminal/ shell:
-```
-(base) Angelico-MBP:sabai_2019 angelico$ 
+To use the virtual environment, run:
+
+```bash
+pipenv shell
 ```
 
-### Making migrations
-This command checks the changes done and sets up the migrations to be done to the database
+To exit from the virtual environment, run:
 
-```
-$ python manage.py makemigrations
-```
-
-### Migrating models to PostgreSQL database
-This command updates the schema of the database based on the migrations set up
-
-```
-$ python manage.py migrate
+```bash
+exit
 ```
 
-### Running the server
-Running this command runs the service locally
+### Install dependencies
 
+To install the dependencies, run:
+
+```bash
+pipenv install
 ```
-$ python manage.py runserver
+
+\*Do this in the virtual environment
+
+### Start the server
+
+This command will makemigrations, migrate the database, pull auth0 users, and start the server. The commands used are explained [here](#commands-used-when-running-the-following).
+
+```bash
+pipenv run start
 ```
 
 A localhost link will be provided for you to access the service. It will look in the command line as such:
 
-```
+```bash
 Watching for file changes with StatReloader
 Performing system checks...
 
@@ -79,160 +80,114 @@ Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 ```
 
-### Common Issues
+### Creating a superuser account in Django
 
-#### Issue involving psycopg2
-This should occur mostly for Mac OS users. The issue will look as such on the terminal:
-
-```
-ImportError: dlopen(/Users/Craig/pyenv/mysite/lib/python2.7/site-packages/psycopg2/_psycopg.so, 2): Library not loaded: @executable_path/../lib/libssl.1.0.0.dylib
-
-Referenced from: /Applications/Postgres.app/Contents/MacOS/lib/libpq.dylib
-
-Reason: image not found
+```bash
+python manage.py createsuperuser
 ```
 
-##### References
-- https://stackoverflow.com/questions/16407995/psycopg2-image-not-found
-- https://medium.com/pixel-heart/os-x-sierra-postgresql-and-psycopg2-42c0c95acb23
-- https://medium.com/@ssscripting/fixing-library-not-loaded-usr-local-opt-openssl-1-1-lib-libssl-1-1-dylib-loaderror-d4c2a21ddf9
+### Creating the dummy users
 
-Here are the possible solutions that you could try in order:
-
-##### Re-install psycopg2
-```
-$ pip uninstall psycopg2
-$ pip install psycopg2
+```bash
+python manage.py create_default_users
 ```
 
-##### Re-install postgreSQL
-```
-$ brew update
-$ brew doctor
-$ brew install postgresql
-```
+## Commands used when running the following
 
-##### Install/ re-install openSSL
-
-```
-$ brew install openssl
+```bash
+pipenv run start
 ```
 
-##### Link the appropriate libraries from openSSL
-To correctly do this, take note of the library that cannot be loaded in your error message. For the error message above, the library in question is `libssl.1.0.0.dylib`. For this library, copy-paste the commands below and run it:
+### Making migrations
 
-```
-$ sudo ln -s /usr/local/Cellar/openssl/<insert version here>/lib/libssl.1.0.0.dylib /usr/local/lib
+This command checks the changes done and sets up the migrations to be done to the database
 
-$ sudo ln -s /usr/local/Cellar/openssl/<insert version here>/lib/libcrypto.1.0.0.dylib /usr/local/lib
-```
-
-To check out the correct version of openssl you can move to the directory and view its contents:
-
-```
-$ cd /usr/local/Cellar/openssl
-
-$ ls
+```bash
+python manage.py makemigrations
 ```
 
-It should only contain one directory, named as the version.
+### Migrating models to PostgreSQL database
 
-If the library in question is `libssl.1.1.dylib`, you would need to ensure that you have version 1.1 of openSSL. You can download it via Homebrew:
+This command updates the schema of the database based on the migrations set up
 
-```
-$ brew reinstall openssl@1.1
-```
-
-You can then copy-paste the commands below and run it:
-
-```
-$ sudo ln -s /usr/local/Cellar/openssl@1.1/<insert version here>/lib/libssl.1.1.dylib /usr/local/lib
-
-$ sudo ln -s /usr/local/Cellar/openssl@1.1/<insert version here>/lib/libcrypto.1.1.dylib /usr/local/lib
+```bash
+python manage.py migrate
 ```
 
+Note: Above commands from installing requirements to migrating models only need to be done once during setup.
 
+### Authentication (obtainin user accounts from auth0)
 
+Running the following command in Backend folder will pull all the users from auth0 into Django database before starting the server.
+This needs to be done anytime a new user is added to auth0.
 
-
-## API Documentation
-The OpenClinic API is separated into different modules.
-For example, all functions related to patients is done
-by the patients module. The API Documentation will be
-separated by these modules.
-
-### Errors
-All successful requests return a HTTP status code of 200. 
-If the requested resource is not found, a status code of 404
-is sent. If the request is malformed due to user error, a status
-code of 400 is sent. Any 500 series error indicates a bug on
-the application side, and a bugfix request will need to be sent.
-
-### Patient
-#### GET: /patients/by_name
-Parameters:
-```
-name: Full or partial name of the patient(s) you want 
-to retrieve
-```
-This endpoint retrieves an array of patient objects. The
-'name' parameter is used as a substring to retrieve all
-patients with that string in their name.
-
-Result:
-```
-[
-  {
-    "model": "clinicmodels.patient",
-    "pk": 1,
-    "fields": {
-      "village_prefix": "TGV",
-      "name": "Aloha Samsam",
-      "contact_no": "12345678",
-      "gender": "Female",
-      "travelling_time_to_village": 30,
-      "date_of_birth": "1995-09-30",
-      "drug_allergy": "all",
-      "parent": 1,
-      "face_encodings": "22",
-      "picture": "static/images/Screenshot_1_w0Aipr6.png"
-    }
-  }
-]
+```bash
+python manage.py set_auth0_users
 ```
 
-#### GET: /patients/by_id
-Parameters:
+### Running the server
+
+Running this command runs the service locally
+
+```bash
+python manage.py runserver
 ```
-id: Primary key of the Patient you want to retrieve
+### Updating Pharmacy
+Import pandas first for the command to work
+```bash
+pip install pandas
 ```
-This endpoint retrieves a Patient object in a one element 
-array according to the primary key provided by the id.
 
-## Basics
+Running this command updates the database with pharmacy stock from NUS Medicine's google sheet
 
-### Git
+(currently awaiting updates so doesn't update database yet but just prints out the stock)
 
-#### Reference 
-https://git-scm.com/docs
+```bash
+python manage.py update_stock
+```
 
-#### Common Commands
-These are the common commands that will be used throughout the duration of the project. Do familiarise yourself with them through the link above and know how to correctly use them.
-- git add
-- git commit
-- git push
-- git pull
-- git clone
-- git checkout
+### Uploading to Google Docs
+Instructions to upload files to google docs
 
-### Command Line
+1. create service account credentials
+   - go to https://developers.google.com/workspace/guides/create-credentials
+   - scroll down to "service account credentials" and select the blue button "go to service acounts"
+   - create a project, enter a name and select no organisation
+   - then select the project
+   - select "create service account" at the middle top of the page
+   - enter a name and put any description
+   -click create and continue and continue again and then click done
+   - go to actions and click on the 3 dots below it beside your service account
+   - select manage keys
+   - select add key -> create new key -> JSON -> create
+   - store the private key
+   - go to google drive and select the folder you would like to upload to
+   - share the folder and give editor access to the email that your service account has, which is at the service account page after you select your project
 
-#### Reference 
-https://lifehacker.com/a-command-line-primer-for-beginners-5633909
+2. Enable google drive api
+   - on the service accounts page, search on the search bar "drive" and select "Google Drive API"
+   - enable the api
+   - in your backend terminal, run the code to enable the api
 
-#### Common Commands
-Aside from running program commands such as `python` or `git`, these are commands as well that will be used a lot of times when in the terminal/ shell:
-- cd
-- ls
-- rm
-- find
+   ```bash
+   pip install google-api-python-client
+   ```
+
+3. Uploading
+   - route the SERVICE_ACCOUNT_FILE to the json file obtained from service account
+   - route the PARENT_FOLDER_ID to the id of the google drive file to upload to
+## pgAdmin4
+
+This can be used as a tool to view your database and check if the data is correct.
+
+To view data tables:
+
+1.  Launch pgAdmin4
+2.  Navigate to your database
+3.  Schemas => public => table
+4.  Right click table and view/edit data
+
+## Troubleshooting
+
+1. If you have other virtual environments active (e.g. anaconda will show up as (base) ). Remeber to deactivate it using the `conda deactivate` command, to prevent any intereference caused by nested virtual environments.
+2. Use `pipenv run start` instead of `python manage.py runserver`
