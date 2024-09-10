@@ -18,6 +18,7 @@ import cloudinary.uploader
 import cloudinary.api
 import os
 import sys
+import dj_database_url
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -93,10 +94,10 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
     ),
 }
+USE_DEFAULT_PERMISSION_CLASSES = os.getenv(
+    "USE_DEFAULT_PERMISSION_CLASSES") != "False"
 
 OFFLINE = os.getenv('OFFLINE', 'False') == 'True'
-USE_DEFAULT_PERMISSION_CLASSES = os.getenv(
-    'USE_DEFAULT_PERMISSION_CLASSES') != 'False'
 if USE_DEFAULT_PERMISSION_CLASSES and not OFFLINE:
     REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
         'rest_framework.permissions.IsAuthenticated',
@@ -105,24 +106,30 @@ if USE_DEFAULT_PERMISSION_CLASSES and not OFFLINE:
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    # "default": dj_database_url.config(
-    #     default="postgres://sabai_gnfs_user:MGbRjWK9fMrnSB5PYsHvcZ9BIMReXok1@dpg-clntdu4jtl8s73ah3tug-a.singapore-postgres.render.com/sabai_gnfs",
-    #     conn_max_age=600,
-    # )
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.getenv("POSTGRES_NAME"),
-        "USER": os.getenv("POSTGRES_USER"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("POSTGRES_HOST"),
-        "PORT": os.getenv("POSTGRES_PORT"),
-        "TEST": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-        },
+LIVE_POSTGRES_DATABASE_URL = os.getenv("LIVE_POSTGRES_DATABASE_URL")
+
+if LIVE_POSTGRES_DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=LIVE_POSTGRES_DATABASE_URL,
+            conn_max_age=600,
+        )
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": os.getenv("POSTGRES_NAME"),
+            "USER": os.getenv("POSTGRES_USER"),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+            "HOST": os.getenv("POSTGRES_HOST"),
+            "PORT": os.getenv("POSTGRES_PORT"),
+            "TEST": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+            },
+        }
+    }
 
 if "test" in sys.argv or os.getenv('TEMP_DB') == 'True':
     DATABASES["default"] = {
