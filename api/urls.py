@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 from sabaibiometrics import settings
 
 urlpatterns = [
+    path("test", views.TestView.as_view(), name="test"),
     path("medications", views.MedicationView.as_view(), name="medications_list"),
     path(
         "medications/<int:pk>",
