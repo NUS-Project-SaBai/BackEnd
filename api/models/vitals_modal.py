@@ -46,16 +46,22 @@ class Vitals(models.Model):
     right_eye_pinhole = models.TextField(blank=True, null=True)
 
     # Children vitals
-    gross_motor = models.BooleanField(blank=True, null=True)
-    red_reflex = models.BooleanField(blank=True, null=True)
+    gross_motor = models.TextField(blank=True, null=True)
+    red_reflex = models.TextField(blank=True, null=True)
     scoliosis = models.TextField(blank=True, null=True)
-    thelarche = models.BooleanField(blank=True, null=True)
+    thelarche = models.TextField(
+        blank=True, null=True, default="Haven't Asked / Not Applicable"
+    )
     thelarche_age = models.IntegerField(blank=True, null=True)
-    pubarche = models.BooleanField(blank=True, null=True)
+    pubarche = models.TextField(
+        blank=True, null=True, default="Haven't Asked / Not Applicable"
+    )
     pubarche_age = models.IntegerField(blank=True, null=True)
-    menarche = models.BooleanField(blank=True, null=True)
+    menarche = models.TextField(
+        blank=True, null=True, default="Haven't Asked / Not Applicable"
+    )
     menarche_age = models.IntegerField(blank=True, null=True)
-    pallor = models.BooleanField(blank=True, null=True)
+    pallor = models.TextField(blank=True, null=True)
     oral_cavity = models.TextField(blank=True, null=True)
     heart = models.TextField(blank=True, null=True)
     abdomen = models.TextField(blank=True, null=True)
