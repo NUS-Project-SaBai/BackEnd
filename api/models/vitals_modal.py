@@ -49,24 +49,39 @@ class Vitals(models.Model):
     gross_motor = models.TextField(blank=True, null=True)
     red_reflex = models.TextField(blank=True, null=True)
     scoliosis = models.TextField(blank=True, null=True)
-    thelarche = models.TextField(
-        blank=True, null=True, default="Haven't Asked / Not Applicable"
-    )
-    thelarche_age = models.IntegerField(blank=True, null=True)
-    pubarche = models.TextField(
-        blank=True, null=True, default="Haven't Asked / Not Applicable"
-    )
-    pubarche_age = models.IntegerField(blank=True, null=True)
-    menarche = models.TextField(
-        blank=True, null=True, default="Haven't Asked / Not Applicable"
-    )
-    menarche_age = models.IntegerField(blank=True, null=True)
+
     pallor = models.TextField(blank=True, null=True)
     oral_cavity = models.TextField(blank=True, null=True)
     heart = models.TextField(blank=True, null=True)
     abdomen = models.TextField(blank=True, null=True)
     lungs = models.TextField(blank=True, null=True)
     hernial_orifices = models.TextField(blank=True, null=True)
+
+    # Puberty
+    pubarche = models.TextField(
+        blank=True, null=True, default="Haven't Asked / Not Applicable"
+    )
+    pubarche_age = models.IntegerField(blank=True, null=True)
+
+    # Female Puberty
+    thelarche = models.TextField(
+        blank=True, null=True, default="Haven't Asked / Not Applicable"
+    )
+    thelarche_age = models.IntegerField(blank=True, null=True)
+    menarche = models.TextField(
+        blank=True, null=True, default="Haven't Asked / Not Applicable"
+    )
+    menarche_age = models.IntegerField(blank=True, null=True)
+
+    # Male Puberty
+    voice_change = models.TextField(
+        blank=True, null=True, default="Haven't Asked / Not Applicable"
+    )
+    voice_change_age = models.IntegerField(blank=True, null=True)
+    testicular_growth = models.TextField(
+        blank=True, null=True, default="Haven't Asked / Not Applicable"
+    )
+    testicular_growth_age = models.IntegerField(blank=True, null=True)
 
     # Notes
     others = models.TextField(blank=True, null=True)
