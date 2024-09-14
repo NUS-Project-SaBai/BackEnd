@@ -24,12 +24,12 @@ def authenticate():
     return creds
 
 
-def upload_photo(file_path):
+def upload_photo(file_path, labeled_filename):
     creds = authenticate()  # credentials to authenticate
     service = build('drive', 'v3', credentials=creds)
 
     file_metadata = {
-        'name': os.path.basename(file_path),
+        'name': labeled_filename,
         'parents': [PARENT_FOLDER_ID]
     }
 
