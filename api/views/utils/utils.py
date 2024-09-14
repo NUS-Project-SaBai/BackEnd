@@ -1,6 +1,7 @@
 from sabaibiometrics.utils import jwt_decode_token
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
+import os
 
 
 def get_doctor_id(headers):
@@ -28,7 +29,7 @@ def upload_photo(file_path):
     service = build('drive', 'v3', credentials=creds)
 
     file_metadata = {
-        'name': "Cat",
+        'name': os.path.basename(file_path),
         'parents': [PARENT_FOLDER_ID]
     }
 

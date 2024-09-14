@@ -1,10 +1,10 @@
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 import os
 import tempfile
 from api.views.utils import utils;
 
-@csrf_protect
+@csrf_exempt
 def upload_file(request):
     if request.method == 'POST':
         uploaded_file = request.FILES['file']
