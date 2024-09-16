@@ -8,6 +8,7 @@ from .user_view import UserView
 
 from .orders_view import OrderView
 from .diagnosis_view import DiagnosisView
-from .utils.utils import get_doctor_id
+from .utils import get_doctor_id
+from .test_view import TestView
 from .upload_file_view import upload_file
 from .csrf_token_view import get_csrf_token
