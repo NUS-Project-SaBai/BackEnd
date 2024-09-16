@@ -109,7 +109,7 @@ if USE_DEFAULT_PERMISSION_CLASSES:
 
 LIVE_POSTGRES_DATABASE_URL = os.getenv("LIVE_POSTGRES_DATABASE_URL")
 
-if LIVE_POSTGRES_DATABASE_URL:
+if LIVE_POSTGRES_DATABASE_URL != "False":
     DATABASES = {
         "default": dj_database_url.config(
             default=LIVE_POSTGRES_DATABASE_URL,
@@ -137,6 +137,8 @@ if "test" in sys.argv or os.getenv("TEMP_DB") == "True":
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
+
+print(DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
