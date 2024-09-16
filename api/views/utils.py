@@ -13,7 +13,6 @@ def get_doctor_id(headers):
 
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
-SERVICE_ACCOUNT_FILE = 'annular-strata-433816-d1-4df090169a8a.json'
 
 
 def authenticate():
