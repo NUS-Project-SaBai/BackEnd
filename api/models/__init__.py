@@ -9,3 +9,4 @@ from .order_model import Order
 from django.contrib.auth.models import User
 from .user_model import CustomUser
 from .jwks_model import JWKS
+from .file_model import File

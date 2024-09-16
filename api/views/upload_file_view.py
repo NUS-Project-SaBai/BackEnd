@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 import os
 import tempfile
 from api.views import utils
+from api.serializers import FileSerializer
 
 
 @csrf_exempt
@@ -10,6 +11,7 @@ def upload_file(request):
     if request.method == 'POST':
         uploaded_file = request.FILES['file']
         labeled_filename = request.POST.get('file_name')
+        patient_pk = request.POST.get('patient_pk')
 
         if not uploaded_file:
             return JsonResponse({'error': 'No file was uploaded'}, status=400)

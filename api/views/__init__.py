@@ -9,3 +9,4 @@ from .orders_view import OrderView
 from .diagnosis_view import DiagnosisView
 from .test_view import TestView
 from .upload_file_view import upload_file
+from .file_view import FileView
