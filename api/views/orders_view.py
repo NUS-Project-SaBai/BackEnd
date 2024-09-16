@@ -5,7 +5,7 @@ from api.models import Order, MedicationReview, Medication
 from api.serializers import OrderSerializer, MedicationReviewSerializer
 from api.views import MedicationView
 from django.utils import timezone
-from api.views.utils.utils import get_doctor_id
+from api.views.utils import get_doctor_id
 
 
 class OrderView(APIView):

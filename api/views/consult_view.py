@@ -5,7 +5,7 @@ from api.models import Consult
 from api.serializers import ConsultSerializer
 from api import views
 from django.db import transaction
-from api.views.utils import utils
+from api.views import utils
 
 
 class ConsultView(APIView):

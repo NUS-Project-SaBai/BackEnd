@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import os
 import tempfile
-from api.views.utils import utils
+from api.views import utils
 
 
 @csrf_exempt

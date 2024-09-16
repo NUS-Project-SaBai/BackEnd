@@ -1,7 +1,7 @@
 from sabaibiometrics.utils import jwt_decode_token
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
-import os
+from sabaibiometrics.settings import GOOGLE_DRIVE_SERVICE_ACCOUNT_FILE, GOOGLE_DRIVE_FILE_ID
 
 
 def get_doctor_id(headers):
@@ -13,14 +13,12 @@ def get_doctor_id(headers):
 
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
-SERVICE_ACCOUNT_FILE = 'api/views/utils/annular-strata-433816-d1-4df090169a8a.json'
-
-PARENT_FOLDER_ID = "1yYfYXACDQoJ5LX51C4r7_d850Tq37aJf"  # url for where to upload
+SERVICE_ACCOUNT_FILE = 'annular-strata-433816-d1-4df090169a8a.json'
 
 
 def authenticate():
     creds = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+        GOOGLE_DRIVE_SERVICE_ACCOUNT_FILE, scopes=SCOPES)
     return creds
 
 
@@ -30,16 +28,10 @@ def upload_photo(file_path, labeled_filename):
 
     file_metadata = {
         'name': labeled_filename,
-        'parents': [PARENT_FOLDER_ID]
+        'parents': [GOOGLE_DRIVE_FILE_ID]
     }
 
     file = service.files().create(
         body=file_metadata,  # where to upload and name to upload as
         media_body=file_path  # picture or document to upload
     ).execute()
-
-    print(f"File uploaded successfully! ID: {file.get('id')}")
-
-
-# calling the function, this will spam upload on start up
-# upload_photo("api/views/utils/image.png")
