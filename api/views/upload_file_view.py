@@ -25,7 +25,7 @@ def upload_file(request):
                 temp_file.write(chunk)
 
         # Call the function to upload to Google Drive
-        utils.upload_photo(file_path, labeled_filename)
+        file_url = utils.upload_photo(file_path, labeled_filename)
 
         # Optionally delete the temp file
         os.remove(file_path)

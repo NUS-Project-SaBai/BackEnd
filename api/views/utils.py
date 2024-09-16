@@ -34,3 +34,7 @@ def upload_photo(file_path, labeled_filename):
         body=file_metadata,  # where to upload and name to upload as
         media_body=file_path  # picture or document to upload
     ).execute()
+
+    file_id = file.get('id')
+    file_url = f"https://drive.google.com/file/d/{file_id}/view?usp=sharing"
+    return file_url
