@@ -1,15 +1,16 @@
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_protect, csrf_exempt
+from django.views.decorators.csrf import csrf_exempt
 import os
 import tempfile
-from api.views.utils import utils;
+from api.views.utils import utils
+
 
 @csrf_exempt
 def upload_file(request):
     if request.method == 'POST':
         uploaded_file = request.FILES['file']
         labeled_filename = request.POST.get('file_name')
-        
+
         if not uploaded_file:
             return JsonResponse({'error': 'No file was uploaded'}, status=400)
 

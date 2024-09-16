@@ -190,7 +190,6 @@ CORS_ALLOW_HEADERS = [
     "headers",
     "content-type",
     "authorization",
-    'x-csrftoken',
 ]
 
 CSRF_COOKIE_SECURE = False

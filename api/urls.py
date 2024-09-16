@@ -30,7 +30,6 @@ urlpatterns = [
     path("medication_review/<int:pk>", views.MedicationReviewView.as_view(),
          name="medication_review_detail"),
     path('upload/', views.upload_file, name='upload_file'),
-    path('api/get-csrf-token/', views.get_csrf_token, name='get_csrf_token'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
