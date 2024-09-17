@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "sabaibiometrics",
     "cloudinary",
     "corsheaders",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [
