@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
 from django.db import transaction
 from api.models import Order, MedicationReview, Medication
 from api.serializers import OrderSerializer, MedicationReviewSerializer
@@ -55,6 +56,12 @@ class OrderView(APIView):
                 "order_status": order_status,
                 "date": timezone.now(),
             }
+            if medication_review_data["quantity_remaining"] < 0:
+                return Response(
+                    {"error": "Medicine stock cannot be negative."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
             serializer = MedicationReviewSerializer(
                 order.medication_review, data=medication_review_data, partial=True
             )

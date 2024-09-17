@@ -6,5 +6,5 @@ class Medication(models.Model):
         db_table = "medication"
 
     medicine_name = models.CharField(max_length=255)
-    quantity = models.IntegerField(default=0)
+    quantity = models.PositiveIntegerField(default=0)
     notes = models.TextField(blank=True, null=True)
