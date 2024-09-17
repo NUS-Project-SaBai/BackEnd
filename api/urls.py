@@ -29,6 +29,7 @@ urlpatterns = [
          name="medication_review_list"),
     path("medication_review/<int:pk>", views.MedicationReviewView.as_view(),
          name="medication_review_detail"),
+    path("extract", views.ExtractView.as_view(), name="extract"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
