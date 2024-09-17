@@ -33,7 +33,7 @@ EXPOSE 8000 5432
 
 # Switch to the non-privileged user to run the application.
 
-USER appuser
+# USER appuser
 
 # Placed after user is changed to allow changes to the app's root folder by the user
 WORKDIR /app
@@ -46,4 +46,5 @@ RUN pipenv install --dev --ignore-pipfile --deploy
 # Copy the source code into the container.
 COPY . .
 
-CMD ["pipenv", "run", "start"]
+# CMD ["pipenv", "run", "start"]
+CMD ["gunicorn", "sabaibiometrics.wsgi", "--bind", "0.0.0.0:8000", "&"]
