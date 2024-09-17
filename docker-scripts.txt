@@ -1,0 +1,13 @@
+[Insert account id].dkr.ecr.us-east-1.amazonaws.com/sabai:test
+
+docker build . -t backend
+
+docker run -dit -p 8000:8000 --name backend --env-file .env backend
+
+docker image tag backend [Insert account id].dkr.ecr.us-east-1.amazonaws.com/sabai:test
+
+aws sso login --profile sabai-dev
+
+aws ecr get-login-password --region us-east-1 --profile sabai-dev | docker login --username AWS --password-stdin [Insert account id].dkr.ecr.us-east-1.amazonaws.com
+
+docker image push [Insert account id].dkr.ecr.us-east-1.amazonaws.com/sabai:test
