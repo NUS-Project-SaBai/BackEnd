@@ -69,3 +69,5 @@ static/
 
 .env
 db.sqlite3
+*.xlsx
+temp_csv/*

@@ -5,6 +5,7 @@ from .patient_view import PatientView
 from .visit_view import VisitView
 from .vitals_view import VitalsView
 from .user_view import UserView
+from .extract_view import ExtractView
 
 from .orders_view import OrderView
 from .diagnosis_view import DiagnosisView
