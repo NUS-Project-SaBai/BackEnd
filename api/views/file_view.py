@@ -5,6 +5,7 @@ from api.serializers import FileSerializer
 import os
 import tempfile
 from api.views import utils
+from sabaibiometrics.settings import OFFLINE
 
 
 class FileView(APIView):
@@ -39,34 +40,21 @@ class FileView(APIView):
         if not labeled_filename:
             return Response({'error': 'No labeled filename provided'}, status=400)
 
-        file_path = os.path.join(tempfile.gettempdir(), uploaded_file.name)
-
-        # Save the file temporarily
-        with open(file_path, 'wb+') as temp_file:
-            for chunk in uploaded_file.chunks():
-                temp_file.write(chunk)
-
-        # Call the function to upload to Google Drive
-        file_url = utils.upload_photo(file_path, labeled_filename)
-
-        # Optionally delete the temp file
-        os.remove(file_path)
-
         data = {
             "patient": patient_pk,
-            "file_path": file_url,
             "file_name": labeled_filename
         }
+
+        if OFFLINE:
+            data["offline_file"] = uploaded_file
+        else:
+            data["file_path"] = utils.upload_photo(
+                uploaded_file, labeled_filename)
 
         serializer = FileSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
-
-        # serializer = FileSerializer(data=request.data)
-        # if serializer.is_valid(raise_exception=True):
-        #     serializer.save()
-        #     return Response(serializer.data)
 
     def patch(self, request, pk):
         user = File.objects.get(pk=pk)

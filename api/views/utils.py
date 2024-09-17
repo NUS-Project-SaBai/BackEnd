@@ -2,6 +2,8 @@ from sabaibiometrics.utils import jwt_decode_token
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
 from sabaibiometrics.settings import GOOGLE_DRIVE_SERVICE_ACCOUNT_FILE, GOOGLE_DRIVE_FILE_ID
+import os
+import tempfile
 
 
 def get_doctor_id(headers):
@@ -21,7 +23,7 @@ def authenticate():
     return creds
 
 
-def upload_photo(file_path, labeled_filename):
+def upload_photo(uploaded_file, labeled_filename):
     creds = authenticate()  # credentials to authenticate
     service = build('drive', 'v3', credentials=creds)
 
@@ -30,10 +32,20 @@ def upload_photo(file_path, labeled_filename):
         'parents': [GOOGLE_DRIVE_FILE_ID]
     }
 
+    file_path = os.path.join(tempfile.gettempdir(), uploaded_file.name)
+
+    # Save the file temporarily
+    with open(file_path, 'wb+') as temp_file:
+        for chunk in uploaded_file.chunks():
+            temp_file.write(chunk)
+
     file = service.files().create(
         body=file_metadata,  # where to upload and name to upload as
         media_body=file_path  # picture or document to upload
     ).execute()
+
+    # Optionally delete the temp file
+    os.remove(file_path)
 
     file_id = file.get('id')
     file_url = f"https://drive.google.com/file/d/{file_id}/view?usp=sharing"
