@@ -15,8 +15,8 @@ class Command(BaseCommand):
             'appointments': Consult,
             'diagnoses': Diagnosis,
             'medication': Medication, 
-            # 'order': Order,
-            # 'customUser': CustomUser, 
+            'order': Order,
+            'customUser': CustomUser, 
             'medicationReview': MedicationReview
         }
 
