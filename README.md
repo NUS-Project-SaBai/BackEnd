@@ -162,3 +162,41 @@ To view data tables:
 
 1. If you have other virtual environments active (e.g. anaconda will show up as (base) ). Remeber to deactivate it using the `conda deactivate` command, to prevent any intereference caused by nested virtual environments.
 2. Use `pipenv run start` instead of `python manage.py runserver`
+
+# AWS
+
+Prerequisites:
+1. AWS CLI has been set up locally.
+2. Docker has been installed.
+2. Docker CLI has been set up locally.
+   
+## Upload Docker Image
+
+Run the following commands in local shell, in the root directory of the project.
+
+1. Build the image.\
+`docker build . -t backend`
+
+2. Test if the image works locally.\
+`docker run -dit -p 8000:8000 --name backend --env-file .env backend`\
+This runs the image named `backend` in detached, interactive, teletypewriter mode, publishing port 8000 and using the .env file.
+
+3. Tag the image with the ECR repo\
+`docker image tag backend 533267377414.dkr.ecr.us-east-1.amazonaws.com/sabai:test`
+
+4. Login to aws if you haven't done so\
+`aws sso login --profile sabai-dev`
+
+5. Login to ECR and link docker\
+`aws ecr get-login-password --region us-east-1 --profile sabai-dev | docker login --username AWS --password-stdin 533267377414.dkr.ecr.us-east-1.amazonaws.com`
+
+6. Push the image to ECR\
+`docker image push 533267377414.dkr.ecr.us-east-1.amazonaws.com/sabai:test`
+
+## Deploy Instance
+
+### Upload Env Variables (Secret and Non-Secret)
+
+### Create Task Definition
+
+### Create Service
