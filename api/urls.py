@@ -1,8 +1,8 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from api import views
+from sabaibiometrics.settings import OFFLINE, MEDIA_ROOT, MEDIA_URL
 from django.conf.urls.static import static
-from sabaibiometrics import settings
 
 urlpatterns = [
     path("test", views.TestView.as_view(), name="test"),
@@ -31,7 +31,12 @@ urlpatterns = [
          name="medication_review_list"),
     path("medication_review/<int:pk>", views.MedicationReviewView.as_view(),
          name="medication_review_detail"),
+    path('upload/', views.FileView.as_view(), name='upload_file'),
 ]
 
+if OFFLINE:
+    urlpatterns += static(MEDIA_URL,
+                          document_root=MEDIA_ROOT)
+
 urlpatterns = format_suffix_patterns(urlpatterns)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)

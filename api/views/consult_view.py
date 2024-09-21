@@ -5,6 +5,7 @@ from api.models import Consult
 from api.serializers import ConsultSerializer
 from api import views
 from django.db import transaction
+from api.views import utils
 
 
 class ConsultView(APIView):
@@ -25,7 +26,7 @@ class ConsultView(APIView):
 
     def post(self, request):
         consult_data = request.data.get("consult")
-        consult_data["doctor"] = views.utils.get_doctor_id(request.headers)
+        consult_data["doctor"] = utils.get_doctor_id(request.headers)
         consult_serializer = ConsultSerializer(data=consult_data)
 
         if consult_serializer.is_valid(raise_exception=True):

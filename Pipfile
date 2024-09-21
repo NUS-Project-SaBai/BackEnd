@@ -23,6 +23,8 @@ requests = "==2.32.3"
 django = "==5.0.6"
 psycopg2-binary = "*"
 Pillow = "==10.4.0"
+google-api-python-client="2.142.0"
+django-extensions = "==3.2.3"
 
 [dev-packages]
 

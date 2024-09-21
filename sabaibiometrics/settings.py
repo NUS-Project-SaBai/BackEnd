@@ -37,8 +37,6 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
 
-OFFLINE = os.getenv("OFFLINE") == "True"
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -52,9 +50,12 @@ INSTALLED_APPS = [
     "api",
     "sabaibiometrics",
     "cloudinary",
+    "corsheaders",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -108,7 +109,7 @@ if USE_DEFAULT_PERMISSION_CLASSES:
 
 LIVE_POSTGRES_DATABASE_URL = os.getenv("LIVE_POSTGRES_DATABASE_URL")
 
-if LIVE_POSTGRES_DATABASE_URL:
+if "postgres" in LIVE_POSTGRES_DATABASE_URL:
     DATABASES = {
         "default": dj_database_url.config(
             default=LIVE_POSTGRES_DATABASE_URL,
@@ -191,6 +192,12 @@ CORS_ALLOW_HEADERS = [
     "authorization",
 ]
 
+CSRF_COOKIE_SECURE = False
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',  # Trust requests from the Next.js frontend
+]
+
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
     api_key=os.getenv("CLOUDINARY_API_KEY"),
@@ -221,3 +228,9 @@ AUTH_USER_MODEL = "api.CustomUser"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CLOUDINARY_URL = os.getenv("CLOUDINARY_URL")
+GOOGLE_DRIVE_SERVICE_ACCOUNT_FILE = os.getenv(
+    "GOOGLE_DRIVE_SERVICE_ACCOUNT_FILE")
+GOOGLE_DRIVE_FILE_ID = os.getenv("GOOGLE_DRIVE_FILE_ID")
+
+
+OFFLINE = os.getenv("OFFLINE", "False") == "True"
