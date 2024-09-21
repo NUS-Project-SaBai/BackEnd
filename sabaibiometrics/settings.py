@@ -35,7 +35,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
 # Application definition
 
@@ -96,12 +96,13 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
     ),
 }
-
 USE_DEFAULT_PERMISSION_CLASSES = os.getenv(
     "USE_DEFAULT_PERMISSION_CLASSES") != "False"
-if USE_DEFAULT_PERMISSION_CLASSES:
-    REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"] = (
-        "rest_framework.permissions.IsAuthenticated",
+
+OFFLINE = os.getenv('OFFLINE', 'False') == 'True'
+if USE_DEFAULT_PERMISSION_CLASSES and not OFFLINE:
+    REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
+        'rest_framework.permissions.IsAuthenticated',
     )
 
 # Database
@@ -132,7 +133,7 @@ else:
         }
     }
 
-if "test" in sys.argv or os.getenv("TEMP_DB") == "True":
+if "test" in sys.argv or os.getenv('TEMP_DB') == 'True':
     DATABASES["default"] = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
@@ -191,6 +192,9 @@ CORS_ALLOW_HEADERS = [
     "content-type",
     "authorization",
 ]
+
+if OFFLINE:
+    CORS_ALLOW_HEADERS.append('doctor')
 
 CSRF_COOKIE_SECURE = False
 CORS_ALLOW_CREDENTIALS = True
