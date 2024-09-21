@@ -37,7 +37,6 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -229,11 +228,14 @@ JWT_AUTH = {
 
 AUTH_USER_MODEL = "api.CustomUser"
 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+CLOUDINARY_URL = os.getenv("CLOUDINARY_URL")
+
 GOOGLE_DRIVE_SERVICE_ACCOUNT_FILE = os.getenv(
     "GOOGLE_DRIVE_SERVICE_ACCOUNT_FILE")
 GOOGLE_DRIVE_FILE_ID = os.getenv("GOOGLE_DRIVE_FILE_ID")
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 OFFLINE = os.getenv("OFFLINE", "False") == "True"

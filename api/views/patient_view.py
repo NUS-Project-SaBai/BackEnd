@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from api.models import Patient
 from api.serializers import PatientSerializer
 
+from sabaibiometrics.settings import OFFLINE
+
 
 class PatientView(APIView):
 
@@ -24,7 +26,11 @@ class PatientView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = PatientSerializer(data=request.data)
+        patient_data = request.data
+        if OFFLINE:
+            offline_picture = patient_data.pop("picture", None)
+            patient_data["offline_picture"] = offline_picture
+        serializer = PatientSerializer(data=patient_data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
