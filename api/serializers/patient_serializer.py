@@ -22,7 +22,6 @@ class PatientSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        print(data)
         output = {
             "model": "clinicmodels.patient",
             "pk": data["id"],

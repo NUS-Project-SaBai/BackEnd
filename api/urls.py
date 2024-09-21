@@ -37,6 +37,3 @@ urlpatterns = [
 if OFFLINE:
     urlpatterns += static(MEDIA_URL,
                           document_root=MEDIA_ROOT)
-
-urlpatterns = format_suffix_patterns(urlpatterns)
-urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
