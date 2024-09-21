@@ -4,7 +4,8 @@ from api import serializers as APISerializer
 
 
 class VitalsSerializer(serializers.ModelSerializer):
-    visit = serializers.PrimaryKeyRelatedField(queryset=models.Visit.objects.all())
+    visit = serializers.PrimaryKeyRelatedField(
+        queryset=models.Visit.objects.all())
 
     class Meta:
         model = models.Vitals
@@ -12,5 +13,6 @@ class VitalsSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation["visit"] = APISerializer.VisitSerializer(instance.visit).data
+        representation["visit"] = APISerializer.VisitSerializer(
+            instance.visit).data
         return representation

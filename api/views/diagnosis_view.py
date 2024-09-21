@@ -1,7 +1,5 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.core.exceptions import ObjectDoesNotExist
-
 from api.models import Diagnosis
 from api.serializers import DiagnosisSerializer
 
