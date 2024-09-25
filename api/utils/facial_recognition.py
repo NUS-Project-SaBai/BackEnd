@@ -5,9 +5,8 @@ from botocore.exceptions import NoCredentialsError, ClientError
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_REGION = "us-east-1"
+COLLECTION_ID = "sabai-test"
 
-BUCKET_NAME = "patients-images"
-FOLDER_NAME = "index"
 s3_client = None
 
 try:
@@ -30,7 +29,7 @@ def generate_faceprint(file):
         image_binary = getattr(file, 'file').getvalue()
 
         response = rekognition_client.index_faces(
-            CollectionId='patients',
+            CollectionId=COLLECTION_ID,
             Image={
                 'Bytes': image_binary
             },
@@ -62,7 +61,7 @@ def search_faceprint(file):
         image_binary = getattr(file, 'file').getvalue()
 
         response = rekognition_client.search_faces_by_image(
-            CollectionId='patients',
+            CollectionId=COLLECTION_ID,
             Image={
                 'Bytes': image_binary
             },
