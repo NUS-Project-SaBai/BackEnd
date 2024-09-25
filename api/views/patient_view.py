@@ -26,9 +26,15 @@ class PatientView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        # for django request.data returns a MultiQuery Object.
+        # MultiQuery will wrap all the data value into a list
         patient_data = request.data
         if OFFLINE:
-            offline_picture = patient_data.pop("picture", None)
+            # IMPT: pop and get to be done separately!
+            # next line just returns the data value without the list
+            offline_picture = patient_data.get("picture", None)
+            # next line is just to delete it
+            patient_data.pop("picture")
             patient_data["offline_picture"] = offline_picture
         serializer = PatientSerializer(data=patient_data)
         if serializer.is_valid(raise_exception=True):
