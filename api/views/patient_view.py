@@ -43,8 +43,12 @@ class PatientView(APIView):
 
     def patch(self, request, pk):
         patient = Patient.objects.get(pk=pk)
-        serializer = PatientSerializer(
-            patient, data=request.data, partial=True)
+        patient_data = request.data
+        if OFFLINE:
+            offline_picture = patient_data.get("picture", None)
+            patient_data.pop("picture")
+            patient_data["offline_picture"] = offline_picture
+        serializer = PatientSerializer(patient, data=patient_data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
