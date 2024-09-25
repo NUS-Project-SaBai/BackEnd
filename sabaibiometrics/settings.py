@@ -108,7 +108,7 @@ if USE_DEFAULT_PERMISSION_CLASSES and not OFFLINE:
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-LIVE_POSTGRES_DATABASE_URL = os.getenv("LIVE_POSTGRES_DATABASE_URL")
+LIVE_POSTGRES_DATABASE_URL = os.getenv("LIVE_POSTGRES_DATABASE_URL") or False
 
 if "postgres" in LIVE_POSTGRES_DATABASE_URL:
     DATABASES = {
