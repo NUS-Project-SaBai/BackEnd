@@ -35,7 +35,7 @@ class PatientView(APIView):
         serializer = PatientSerializer(data=patient_data)
         face_encoding = facial_recognition.generate_faceprint(patient_data['picture']) if not OFFLINE else ''
         if serializer.is_valid(raise_exception=True):
-            serializer.save(face_encoding=face_encoding)
+            serializer.save(face_encodings=face_encoding)
             return Response(serializer.data)
 
     def patch(self, request, pk):
@@ -50,8 +50,3 @@ class PatientView(APIView):
         patient = Patient.objects.get(pk=pk)
         patient.delete()
         return Response({"message": "Deleted successfully"})
-
-@api_view(['POST'])
-def indexFace(request):
-    face_encoding = facial_recognition.generate_faceprint(request.data['picture'])
-    return Response(face_encoding)
