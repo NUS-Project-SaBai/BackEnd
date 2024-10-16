@@ -1,8 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 from api.models import Patient
 from api.serializers import PatientSerializer
+from api.utils import facial_recognition
 
 from sabaibiometrics.settings import OFFLINE
 
@@ -31,8 +33,9 @@ class PatientView(APIView):
             offline_picture = patient_data.pop("picture", None)
             patient_data["offline_picture"] = offline_picture
         serializer = PatientSerializer(data=patient_data)
+        face_encoding = facial_recognition.generate_faceprint(patient_data['picture']) if not OFFLINE else ''
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            serializer.save(face_encoding=face_encoding)
             return Response(serializer.data)
 
     def patch(self, request, pk):
@@ -47,3 +50,8 @@ class PatientView(APIView):
         patient = Patient.objects.get(pk=pk)
         patient.delete()
         return Response({"message": "Deleted successfully"})
+
+@api_view(['POST'])
+def indexFace(request):
+    face_encoding = facial_recognition.generate_faceprint(request.data['picture'])
+    return Response(face_encoding)
