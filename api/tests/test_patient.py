@@ -2,7 +2,6 @@ from api.tests.dummy import post_patient_dummy
 from api.tests.test_setup import TestSetup
 from rest_framework.reverse import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
-import io
 
 
 class TestPatient(TestSetup):
