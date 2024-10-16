@@ -25,6 +25,8 @@ psycopg2-binary = "*"
 Pillow = "==10.4.0"
 google-api-python-client="2.142.0"
 django-extensions = "==3.2.3"
+boto3 = "==1.34.21"
+botocore = "==1.34.118"
 
 [dev-packages]
 
