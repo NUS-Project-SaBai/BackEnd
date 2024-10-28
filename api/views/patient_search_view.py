@@ -9,6 +9,7 @@ class PatientSearchView(APIView):
 
     def post(self, request):
         face_encoding = facial_recognition.search_faceprint(request.data['picture'])
-        patients = Patient.objects.filter(face_encodings=face_encoding[0][0])
-        serializer = PatientSerializer(patients, many=True)
+        ls = list(face_encoding.keys())
+        patients = Patient.objects.filter(face_encodings__in=ls)
+        serializer = PatientSerializer(patients, many=True, context={'confidence':face_encoding})
         return Response(serializer.data)

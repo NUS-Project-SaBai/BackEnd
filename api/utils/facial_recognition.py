@@ -4,7 +4,7 @@ from botocore.exceptions import NoCredentialsError, ClientError
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_REGION = "us-east-1"
+AWS_REGION = "ap-southeast-1"
 COLLECTION_ID = "sabai-test"
 
 s3_client = None
@@ -70,15 +70,15 @@ def search_faceprint(file):
 
         if response['ResponseMetadata']['HTTPStatusCode'] != 200:
             # to find a better way to handle network errors here
-            return [] 
+            return {} 
 
-        matched_faceprints = []
+        matched_faceprints = {}
         for match in response['FaceMatches']:
-            matched_faceprints.append((match['Face']['FaceId'], match['Face']['Confidence']))    
+            matched_faceprints[match['Face']['FaceId']] = match['Face']['Confidence']
 
         return matched_faceprints
 
     except ClientError as e:
         print(f"Error finding image, client error: {e}")
-        return [] 
+        return {}
 
