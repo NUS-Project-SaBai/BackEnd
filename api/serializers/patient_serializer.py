@@ -48,7 +48,6 @@ class PatientSerializer(serializers.ModelSerializer):
             "picture": f'{BACKEND_API}/{data["offline_picture"]}' if OFFLINE else f'{CLOUDINARY_URL}/{data["picture"]}',
             "filter_string": self.get_patient_enriched(instance),
             "patient_id": self.get_patient_id(instance),
-            "picture": data["picture"],
             "confidence": self.get_confidence(instance),
         }
         return output
