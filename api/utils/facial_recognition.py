@@ -1,6 +1,8 @@
 import os
+from tkinter import OFF
 import boto3
 from botocore.exceptions import NoCredentialsError, ClientError
+from sabaibiometrics.settings import ENABLE_FACIAL_RECOGNITION 
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
@@ -24,6 +26,9 @@ def generate_faceprint(file):
     Uploads an image to AWS Rekognition API, returns the faceprint generated. Faceprint will be stored with
     patient details in database, under face encoding
     '''
+
+    if not ENABLE_FACIAL_RECOGNITION:
+        return ''
 
     try:
         image_binary = getattr(file, 'file').getvalue()
@@ -54,9 +59,12 @@ def generate_faceprint(file):
 def search_faceprint(file):
     '''
     Searches collection for faceprints that match the faces in image uploaded
-    Returns an array of tuples with the following syntax:
-        (matched_faceprint, confidence_of_match)
+    Returns a dictionary of {face_encoding: confidence} pairs
+    Face_encoding is a hexadecimal string that identifies the patient
     '''
+    if not ENABLE_FACIAL_RECOGNITION:
+        return {} 
+
     try:
         image_binary = getattr(file, 'file').getvalue()
 

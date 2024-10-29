@@ -240,5 +240,6 @@ GOOGLE_DRIVE_FILE_ID = os.getenv("GOOGLE_DRIVE_FILE_ID")
 
 OFFLINE = os.getenv("OFFLINE", "False") == "True"
 
-
 BACKEND_API = os.getenv("BACKEND_API")
+
+ENABLE_FACIAL_RECOGNITION = os.getenv("ENABLE_FACIAL_RECOGNITION", "False") == "True"
