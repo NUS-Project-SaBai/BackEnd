@@ -3,6 +3,7 @@ from rest_framework.response import Response
 
 from api.models import Patient
 from api.serializers import PatientSerializer
+from api.utils import facial_recognition
 
 from sabaibiometrics.settings import OFFLINE
 
@@ -37,8 +38,9 @@ class PatientView(APIView):
             patient_data.pop("picture")
             patient_data["offline_picture"] = offline_picture
         serializer = PatientSerializer(data=patient_data)
+        face_encoding = facial_recognition.generate_faceprint(patient_data['picture']) if not OFFLINE else ''
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            serializer.save(face_encodings=face_encoding)
             return Response(serializer.data)
 
     def patch(self, request, pk):

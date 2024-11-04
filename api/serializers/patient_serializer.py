@@ -6,6 +6,7 @@ from sabaibiometrics.settings import OFFLINE, CLOUDINARY_URL, BACKEND_API
 class PatientSerializer(serializers.ModelSerializer):
     patient_enriched = serializers.SerializerMethodField()
     patient_id = serializers.SerializerMethodField()
+    confidence = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Patient
@@ -20,6 +21,14 @@ class PatientSerializer(serializers.ModelSerializer):
 
     def get_patient_id(self, patient):
         return f"{patient.village_prefix}" + f"{patient.pk}".zfill(3)
+    
+    def get_confidence(self, patient):
+        confidence_dict= self.context.get('confidence', {})
+        if not confidence_dict:
+            print('List of confidence is empty')
+            return ''
+        confidence_level = confidence_dict.get(patient.face_encodings, '')
+        return confidence_level
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -40,5 +49,6 @@ class PatientSerializer(serializers.ModelSerializer):
             "picture": f'{BACKEND_API}/{data["offline_picture"]}' if OFFLINE else f'{CLOUDINARY_URL}/{data["picture"]}',
             "filter_string": self.get_patient_enriched(instance),
             "patient_id": self.get_patient_id(instance),
+            "confidence": self.get_confidence(instance),
         }
         return output
