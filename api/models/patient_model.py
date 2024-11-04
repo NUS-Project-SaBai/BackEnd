@@ -17,6 +17,7 @@ class Patient(models.Model):
     date_of_birth = models.DateTimeField(default=timezone.now)
     poor = models.CharField(max_length=3, default="No")
     bs2 = models.CharField(max_length=3, default="No")
+    sabai = models.CharField(max_length=3, default="No")
     drug_allergy = models.TextField(default="None")
     face_encodings = models.CharField(max_length=3000, blank=True, null=True)
     picture = CloudinaryField("image", blank=True, null=True)

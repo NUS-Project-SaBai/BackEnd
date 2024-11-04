@@ -43,6 +43,7 @@ class PatientSerializer(serializers.ModelSerializer):
             "date_of_birth": data["date_of_birth"],
             "poor": data["poor"],
             "bs2": data["bs2"],
+            "sabai": data["sabai"],
             "drug_allergy": data["drug_allergy"],
             "face_encodings": data["face_encodings"],
             "picture": f'{BACKEND_API}/{data["offline_picture"]}' if OFFLINE else f'{CLOUDINARY_URL}/{data["picture"]}',
