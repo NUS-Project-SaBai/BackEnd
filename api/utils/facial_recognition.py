@@ -1,5 +1,4 @@
 import os
-from tkinter import OFF
 import boto3
 from botocore.exceptions import NoCredentialsError, ClientError
 from sabaibiometrics.settings import ENABLE_FACIAL_RECOGNITION 
