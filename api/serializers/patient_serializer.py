@@ -46,7 +46,7 @@ class PatientSerializer(serializers.ModelSerializer):
             "sabai": data["sabai"],
             "drug_allergy": data["drug_allergy"],
             "face_encodings": data["face_encodings"],
-            "picture": f'{BACKEND_API}/{data["offline_picture"]}' if OFFLINE else f'{CLOUDINARY_URL}/{data["picture"]}',
+            "picture": f'{BACKEND_API}{data["offline_picture"]}' if OFFLINE else f'{CLOUDINARY_URL}/{data["picture"]}',
             "filter_string": self.get_patient_enriched(instance),
             "patient_id": self.get_patient_id(instance),
             "confidence": self.get_confidence(instance),
