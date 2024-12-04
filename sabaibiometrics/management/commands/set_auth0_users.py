@@ -25,6 +25,12 @@ class Command(BaseCommand):
     help = "Get Auth0 user"
 
     def handle(self, *args, **kwargs):
+        # Remove all users without an auth0_id
+        users = CustomUser.objects.all()
+        for user in users:
+            if user.auth0_id == "":
+                user.delete()
+
         try:
             jwks_url = f'https://{os.getenv("AUTH0_DOMAIN")}/.well-known/jwks.json'
             jwks_data = requests.get(jwks_url).json()
