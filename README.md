@@ -158,6 +158,19 @@ To view data tables:
 3.  Schemas => public => table
 4.  Right click table and view/edit data
 
+## Offline Setup
+
+Change the following variables in Offline Setup, IP Address should be static and refers to the FrontEnd IP Address/Port Number:
+```
+OFFLINE=True
+BACKEND_API=https://192.168.1.100:3000/api/v1
+```
+
+Run the following command to start offline. This is very similar to the start command except it uses 0.0.0.0 instead.
+```
+pipenv run offline
+```
+
 ## Troubleshooting
 
 1. If you have other virtual environments active (e.g. anaconda will show up as (base) ). Remeber to deactivate it using the `conda deactivate` command, to prevent any intereference caused by nested virtual environments.
