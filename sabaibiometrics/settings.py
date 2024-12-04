@@ -139,6 +139,15 @@ if "test" in sys.argv or os.getenv('TEMP_DB') == 'True':
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 
+DATABASES["sabai_backup"] = {
+    "ENGINE": "django.db.backends.postgresql_psycopg2",
+    "NAME": "sabai_backup",
+    "USER": os.getenv("POSTGRES_USER"),
+    "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+    "HOST": os.getenv("POSTGRES_HOST"),
+    "PORT": os.getenv("POSTGRES_PORT"),
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
