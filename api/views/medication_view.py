@@ -1,21 +1,48 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from api.models import Medication
+from api.models.medication_review_model import MedicationReview
 from api.serializers import MedicationSerializer
+from api.serializers.medication_review_serializer import MedicationReviewSerializer
 from api.views.utils import get_doctor_id
 from api.views import MedicationReviewView
 from django.db import transaction
+from django.db.models import Sum
 
 
 class MedicationView(APIView):
 
     def get(self, request, pk=None):
-        if pk is not None:
+        # if no pk, return all medications
+        if pk is None:
+            medications = Medication.objects.all()
+            serializer = MedicationSerializer(medications, many=True)
+            return Response(serializer.data)
+
+        order_status = request.query_params.get("order_status", False)
+
+        # no order status specified, return the medicine with the pk
+        if order_status == False:
             return self.get_object(pk)
 
-        medications = Medication.objects.all()
-        serializer = MedicationSerializer(medications, many=True)
-        return Response(serializer.data)
+        # sum all the pending medicine needed.
+        mr = MedicationReview.objects.filter(order_status=order_status, medicine_id=pk)
+        pending_quantity = mr.aggregate(Sum("quantity_changed")).get(
+            "quantity_changed__sum"
+        )
+        medications = Medication.objects.get(pk=pk)
+        current_quantity = medications.quantity
+        return Response(
+            {
+                "medicine_id": pk,
+                "medicine_name": medications.medicine_name,
+                "notes": medications.notes,
+                "pending_quantity": (
+                    pending_quantity if pending_quantity is not None else 0
+                ),
+                "current_quantity": current_quantity,
+            }
+        )
 
     def get_object(self, pk):
         medication = Medication.objects.get(pk=pk)
