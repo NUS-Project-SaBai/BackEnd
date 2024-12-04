@@ -48,7 +48,7 @@ class FileView(APIView):
         if OFFLINE:
             data["offline_file"] = uploaded_file
         else:
-            data["file_path"] = utils.upload_photo(
+            data["file_path"] = utils.upload_file(
                 uploaded_file, labeled_filename)
 
         serializer = FileSerializer(data=data)
