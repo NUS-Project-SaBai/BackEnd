@@ -5,6 +5,9 @@ from django.utils import timezone
 class MedicationReview(models.Model):
     class Meta:
         db_table = "medication_review"
+        indexes = [
+            models.Index(fields=['order_status']),
+        ]
     ORDER_STATUS_CHOICES = [
         ('APPROVED', 'Approved'),
         ('PENDING', 'Pending'),
