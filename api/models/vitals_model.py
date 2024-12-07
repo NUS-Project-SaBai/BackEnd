@@ -35,7 +35,10 @@ class Vitals(models.Model):
         blank=True, null=True, default="Haven't Asked / Not Applicable"
     )
     urine_test = models.TextField(blank=True, null=True)
-    blood_glucose = models.DecimalField(
+    blood_glucose_non_fasting = models.DecimalField(
+        decimal_places=2, max_digits=5, blank=True, null=True
+    )
+    blood_glucose_fasting = models.DecimalField(
         decimal_places=2, max_digits=5, blank=True, null=True
     )
 
