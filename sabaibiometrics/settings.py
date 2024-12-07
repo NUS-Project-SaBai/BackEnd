@@ -252,3 +252,5 @@ OFFLINE = os.getenv("OFFLINE", "False") == "True"
 BACKEND_API = os.getenv("BACKEND_API")
 
 ENABLE_FACIAL_RECOGNITION = os.getenv("ENABLE_FACIAL_RECOGNITION", "False") == "True"
+
+TELEGRAM_API_TOKEN = os.getenv("TELEGRAM_API_TOKEN")
