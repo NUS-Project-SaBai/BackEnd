@@ -109,6 +109,7 @@ if USE_DEFAULT_PERMISSION_CLASSES and not OFFLINE:
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 LIVE_POSTGRES_DATABASE_URL = os.getenv("LIVE_POSTGRES_DATABASE_URL") or False
+# LIVE_POSTGRES_DATABASE_URL=False
 
 if LIVE_POSTGRES_DATABASE_URL:
     DATABASES = {
@@ -139,14 +140,20 @@ if "test" in sys.argv or os.getenv('TEMP_DB') == 'True':
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 
-DATABASES["sabai_backup"] = {
+DATABASES["sabai_backup_061224"] = {
     "ENGINE": "django.db.backends.postgresql_psycopg2",
-    "NAME": "sabai_backup",
+    "NAME": "sabai_backup_061224",
     "USER": os.getenv("POSTGRES_USER"),
     "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
     "HOST": os.getenv("POSTGRES_HOST"),
     "PORT": os.getenv("POSTGRES_PORT"),
 }
+
+LIVE_POSTGRES_DATABASE_URL = os.getenv("LIVE_POSTGRES_DATABASE_URL")
+DATABASES["live"] = dj_database_url.config(
+            default=LIVE_POSTGRES_DATABASE_URL,
+            conn_max_age=600,
+        )
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

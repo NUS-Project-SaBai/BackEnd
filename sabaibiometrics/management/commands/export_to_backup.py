@@ -70,9 +70,10 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.stdout.write(self.style.SUCCESS(
             "Starting data export to PostgreSQL backup database..."))
-
+        
         # Use the 'sabai_backup' database
-        backup_db_name = "sabai_backup"
+        backup_db_name = "sabai_backup_061224"
+        
 
         # Ensure the backup database is correctly configured
         if backup_db_name not in settings.DATABASES:
