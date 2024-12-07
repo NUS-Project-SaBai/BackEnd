@@ -63,6 +63,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.auth.middleware.RemoteUserMiddleware",
+    "api.middleware.tele_logging.SimpleMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -252,3 +253,6 @@ OFFLINE = os.getenv("OFFLINE", "False") == "True"
 BACKEND_API = os.getenv("BACKEND_API")
 
 ENABLE_FACIAL_RECOGNITION = os.getenv("ENABLE_FACIAL_RECOGNITION", "False") == "True"
+
+TELEGRAM_API_TOKEN = os.getenv("TELEGRAM_API_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
