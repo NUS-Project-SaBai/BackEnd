@@ -17,6 +17,7 @@ class OrderView(APIView):
         orders = Order.objects.all()
         order_status = request.query_params.get("order_status", "")
         if order_status:
+            orders = orders.select_related('medication_review')
             orders = orders.filter(
                 medication_review__order_status=order_status)
         serializer = OrderSerializer(orders, many=True)
