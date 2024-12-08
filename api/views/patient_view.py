@@ -38,12 +38,12 @@ class PatientView(APIView):
             patient_data.pop("picture")
             patient_data["offline_picture"] = offline_picture
         serializer = PatientSerializer(data=patient_data)
-        print("ok")
+        # print("ok")
         if OFFLINE:
             face_encoding = facial_recognition.generate_faceprint(patient_data['offline_picture']) if ENABLE_FACIAL_RECOGNITION else ''
         else:
             face_encoding = facial_recognition.generate_faceprint(patient_data['picture']) if ENABLE_FACIAL_RECOGNITION else ''
-        print(face_encoding)
+        # print(face_encoding)
         if serializer.is_valid(raise_exception=True):
             serializer.save(face_encodings=face_encoding)
             return Response(serializer.data)
