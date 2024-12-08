@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import transaction
-from api.models import Order, MedicationReview, Medication
-from api.serializers import OrderSerializer, MedicationReviewSerializer
+from api.models import Order, MedicationReview, Medication, Diagnosis
+from api.serializers import OrderSerializer, MedicationReviewSerializer, DiagnosisSerializer
 from api.views import MedicationView
 from django.utils import timezone
 from api.views.utils import get_doctor_id
@@ -15,13 +15,20 @@ class OrderView(APIView):
         if pk is not None:
             return self.get_object(pk)
         orders = Order.objects.all()
+        
         order_status = request.query_params.get("order_status", "")
         if order_status:
-            orders = orders.select_related('medication_review')
             orders = orders.filter(
                 medication_review__order_status=order_status)
-        serializer = OrderSerializer(orders, many=True)
-        return Response(serializer.data)
+            orders = orders.select_related('medication_review')
+            consult_ids = orders.values_list('consult_id', flat=True)
+
+            diagnoses = Diagnosis.objects.filter(consult_id__in=consult_ids)
+            diagnoses_serializer = DiagnosisSerializer(diagnoses, many=True)
+            order_serializer = OrderSerializer(orders, many=True)
+            return Response({"orders": order_serializer.data, "diagnoses": diagnoses_serializer.data})
+        order_serializer = OrderSerializer(orders, many=True)
+        return Response(order_serializer.data)
 
     def get_object(self, pk):
         order = Order.objects.get(pk=pk)

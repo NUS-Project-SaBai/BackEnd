@@ -14,10 +14,13 @@ class PatientView(APIView):
         if pk is not None:
             return self.get_object(pk)
 
-        patients = Patient.objects.order_by("-pk").all()
+        patients = Patient.objects.order_by("-pk")
         patient_name = request.query_params.get("name", "")
+        patient_village_code = request.query_params.get("village_code", "")
         if patient_name:
-            patients = Patient.objects.filter(name=patient_name)
+            patients = patients.filter(name__iexact=patient_name)
+        if patient_village_code:
+            patients = patients.filter(village_prefix__iexact=patient_village_code)
         serializer = PatientSerializer(patients, many=True)
         return Response(serializer.data)
 
