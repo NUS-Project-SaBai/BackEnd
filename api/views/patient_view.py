@@ -6,6 +6,7 @@ from api.serializers import PatientSerializer
 from api.utils import facial_recognition
 
 from sabaibiometrics.settings import ENABLE_FACIAL_RECOGNITION, OFFLINE
+from sabaibiometrics.custom_cache import photos_cache
 
 
 class PatientView(APIView):
@@ -19,6 +20,9 @@ class PatientView(APIView):
         if patient_name:
             patients = Patient.objects.filter(name=patient_name)
         serializer = PatientSerializer(patients, many=True)
+        picture = photos_cache.get(request.user)
+        print('cached picture')
+        print(picture)
         return Response(serializer.data)
 
     def get_object(self, pk):
@@ -38,7 +42,6 @@ class PatientView(APIView):
             patient_data.pop("picture")
             patient_data["offline_picture"] = offline_picture
         serializer = PatientSerializer(data=patient_data)
-        print("ok")
         if OFFLINE:
             face_encoding = facial_recognition.generate_faceprint(patient_data['offline_picture']) if ENABLE_FACIAL_RECOGNITION else ''
         else:
