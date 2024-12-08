@@ -21,11 +21,11 @@ class PatientSerializer(serializers.ModelSerializer):
 
     def get_patient_id(self, patient):
         return f"{patient.village_prefix}" + f"{patient.pk}".zfill(3)
-    
+
     def get_confidence(self, patient):
         confidence_dict= self.context.get('confidence', {})
         if not confidence_dict:
-            print('List of confidence is empty')
+            # print('List of confidence is empty')
             return ''
         confidence_level = confidence_dict.get(patient.face_encodings, '')
         return confidence_level
