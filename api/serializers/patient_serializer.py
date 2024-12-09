@@ -15,12 +15,12 @@ class PatientSerializer(serializers.ModelSerializer):
     def get_patient_enriched(self, patient):
         return (
             f"{patient.village_prefix}"
-            + f"{patient.pk}".zfill(3)
+            + f"{patient.pk}".zfill(4)
             + f"{patient.village_prefix}{patient.pk} {patient.contact_no} {patient.name}"
         )
 
     def get_patient_id(self, patient):
-        return f"{patient.village_prefix}" + f"{patient.pk}".zfill(3)
+        return f"{patient.village_prefix}" + f"{patient.pk}".zfill(4)
 
     def get_confidence(self, patient):
         confidence_dict= self.context.get('confidence', {})
