@@ -10,6 +10,7 @@ class OrderSerializer(serializers.ModelSerializer):
     medication_review = serializers.PrimaryKeyRelatedField(
         queryset=models.MedicationReview.objects.all(), required=False
     )
+    diagnoses = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Order
@@ -17,6 +18,13 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def get_visit(self, obj):
         return APISerializer.VisitSerializer(obj.consult.visit).data
+    
+    def get_diagnoses(self, obj):
+        # Fetch diagnoses from the consult related object
+        if obj.consult:
+            diagnoses = obj.consult.diagnoses
+            return APISerializer.DiagnosisSerializer(diagnoses, many=True).data
+        return []
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
