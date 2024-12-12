@@ -12,7 +12,11 @@ class DiagnosisSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation["consult"] = APISerializer.ConsultSerializer(
-            instance.consult
-        ).data
+        # representation["consult"] = APISerializer.ConsultSerializer(
+        #     instance.consult
+        # ).data
+        representation["consult"] = {
+            "id": instance.consult.id,
+            "date": instance.consult.date,
+        } if instance.consult else None
         return representation
