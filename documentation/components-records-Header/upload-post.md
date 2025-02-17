@@ -48,10 +48,10 @@
 #### Data Fetched by the Frontend
 - **Complete Data Set**:  
   All File Fields
-  - file_path = models.CharField(max_length=255, null=True)
-  - offline_file = models.FileField(upload_to='offline_files/', null=True)
-  - file_name = models.CharField(max_length=255)
-  - created_at = models.DateTimeField(auto_now_add=True)
+  - file_path
+  - offline_file
+  - file_name
+  - created_at
 
   + Patient Fields (for patient associated with File)
   ```json
@@ -77,8 +77,7 @@
   ```
   
 #### Data Used by the Frontend
-- **Relevant Data Subset**:  
-  None
+  None: Data in response is for debugging purposes, not production use
 
 ---
 
@@ -86,7 +85,7 @@
 
 #### Processing on the Frontend
 - **Where**:  
-  under the 'uploadFile' function, ...
+  under the `uploadFile` function, ...
 - **How**: 
   - document name is labelled: labeledDocumentName = `${patientIdentifier}-${currentDate}-${documentName}`;
   - Data on the file (e.g. file_name, patient_pk, current_date etc.) is put together in a FormData component 
