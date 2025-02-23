@@ -4,7 +4,8 @@
 
 **Frontend Location**:
 
-- `pages/registration/index.js`
+- `pages/records/patient-record/index.js`
+- `pages/records/patient-vitals/index.js`
 
 - **Purpose on Frontend**:
 - patients endpoint retrieves data for `patientID`; patient id is determined by the route
@@ -13,12 +14,12 @@
 
 ## API Endpoint:
 
-- `/patients`
+- `/patients/${patientID}`
 
 ### Overview
 
 - **Description**:  
-  Returns an array of JSON objectS with all of the patients data
+  Returns a JSON object with the patient data
 - **HTTP Method**:  
   GET
 - **Authentication**:
@@ -108,7 +109,13 @@ Error: Request failed with status code 404
 
 - **Relevant Data Subset**:
 
-- used in RegistrationAutoSuggest components
+  - drug_allergy: index.js
+  - gender: index.js and VitalsTable
+  - date_of_birth: VitalsTable, Header
+  - village_prefix: Header
+  - pk: Header
+  - picture: Header
+  - name: Header
 
 ---
 

@@ -8,18 +8,18 @@
 
 **Purpose on Frontend**:
 
-Adds a new visit for a specific patientID via a JSON object
+- patients POST endpoint adds a new patient data to the backend
 
 ---
 
 ## API Endpoint:
 
-- `/visits`
+- `/patients`
 
 ### Overview
 
 - **Description**:  
-  Adds a new visit for a specific patientID via a JSON object
+  Adds a new patient for a specific patient via a JSON object
 - **HTTP Method**:  
   POST
 - **Authentication**:
@@ -40,9 +40,17 @@ NIL
 
 ```json
 {
-  "patient": "integer",
-  "status": "string",
-  "visit_date": "string (DD MMMM YYYY HH:mm format)"
+  "name": "string",
+  "identification_number": "string",
+  "gender": "string",
+  "contact_no": "string",
+  "date_of_birth": "string",
+  "drug_allergy": "string",
+  "village_prefix": "string",
+  "poor": "boolean",
+  "bs2": "boolean",
+  "sabai": "boolean",
+  "picture": "URL of image"
 }
 ```
 
@@ -51,8 +59,6 @@ NIL
 ---
 
 ### Response Details
-
-Returns the personal details of the patient associated with the patientID
 
 #### Response Structure
 
@@ -74,13 +80,9 @@ Error: Request failed with status code 404
 #### Processing on the Frontend
 
 - **Where**:  
-  submitNewVisit
+  submitNewPatient
 - **How**:  
-  Formats the new visit in a JSON object with 3 properties
-- **Example**:
-  - patient: patient.pk,
-  - status: 'started',
-  - visit_date: moment().format('DD MMMM YYYY HH:mm'),
+  Formats the new patient in a JSON object with properties
 
 #### Processing on the Backend
 
