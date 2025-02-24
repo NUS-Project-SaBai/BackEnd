@@ -58,8 +58,8 @@ None
       "approval": {
         "auth0_id": "auth0|653a8f84d77e7cf783f83333",
         "username": "auth0|653a8f84d77e7cf783f83333",
-        "email": "email",
-        "nickname": ""
+        "email": "sabai@nuscomputing.com",
+        "nickname": "sabai"
       },
       "medicine": {
         "id": 1,
