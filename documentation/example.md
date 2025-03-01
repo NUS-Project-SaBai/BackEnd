@@ -17,16 +17,10 @@
   A brief summary of what this API endpoint does.
 - **HTTP Method**:  
   e.g., GET, POST, PUT, DELETE
-- **Authentication**:  
-  Describe if this endpoint requires authentication (e.g., JWT, API keys).
 
 ---
 
 ### Request Details
-
-#### URL Parameters
-- **Parameter Name**: Description, type, and example value.
-- **Parameter Name**: Description, type, and example value.
 
 #### Query Parameters
 - **Parameter Name**: Description, type, and example value.
@@ -87,7 +81,7 @@
   Specify the component or module handling the processing.
 - **How**:  
   Explain what processing is being done on the data (e.g., filtering, formatting).
-- **Example**:  
+- **Example (if applicable)**:  
   Describe any transformation or manipulation applied.
 
 #### Processing on the Backend
@@ -95,7 +89,7 @@
   Specify which part of the backend handles data processing (e.g., in the view, serializer, or a dedicated service).
 - **How**:  
   Outline what transformations, validations, or business logic is applied to the data.
-- **Example**:  
+- **Example (if applicable)**:  
   Provide details on the logic or algorithms used to process data before sending the response.
 
 ---
