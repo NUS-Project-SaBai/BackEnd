@@ -7,7 +7,7 @@
 - `pages/registration/index.js`
 
 - **Purpose on Frontend**:
-- patients endpoint retrieves data for `patientID`; patient id is determined by the route
+- patients endpoint retrieves all of the patients data to be used in RegistrationAutoSuggest components
 
 ---
 
@@ -18,7 +18,7 @@
 ### Overview
 
 - **Description**:  
-  Returns an array of JSON objectS with all of the patients data
+  Returns an array of JSON objects with all of the patients data
 - **HTTP Method**:  
   GET
 - **Authentication**:
@@ -29,7 +29,7 @@
 
 #### URL Parameters
 
-- **patientID**: primary key of the patient, integer, "1750"
+NIL
 
 #### Query Parameters
 
@@ -107,8 +107,10 @@ Error: Request failed with status code 404
 #### Data Used by the Frontend
 
 - **Relevant Data Subset**:
-
-- used in RegistrationAutoSuggest components
+  used in RegistrationAutoSuggest components
+- name
+- village_prefix
+- pk
 
 ---
 
@@ -121,11 +123,10 @@ NIL
 #### Processing on the Backend
 
 - **Where**:  
-  Specify which part of the backend handles data processing (e.g., in the view, serializer, or a dedicated service).
-- **How**:  
-  Outline what transformations, validations, or business logic is applied to the data.
-- **Example**:  
-  Provide details on the logic or algorithms used to process data before sending the response.
+  patient_view.py
+- **How**:
+  Order the patients object by desc pk and returns in a serialised format
+- **Example**:
 
 ---
 

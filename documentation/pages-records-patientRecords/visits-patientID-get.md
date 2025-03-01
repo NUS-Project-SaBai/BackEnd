@@ -1,4 +1,4 @@
-# visits endpoint
+# visits with patientID query parameter endpoint
 
 ---
 
@@ -9,13 +9,13 @@
 
 **Purpose on Frontend**:
 
-- visits endpoint retrieves data for `patientID`; patient id is determined by the route
+- visits endpoint retrieves data for `patientID`; patient id is determined by the route and displays the vists data of the patient
+- In registration index file, used to check and prevent duplicate visits within the hour
 
 ---
 
 ## API Endpoint:
 
-- `/visits`
 - `/visits?patient={patientID}`
 
 ### Overview
@@ -125,21 +125,21 @@ Error: Request failed with status code 404
 
 #### Processing on the Frontend
 
-- **Where**:  
-  Specify the component or module handling the processing.
+- **Where**:
+- `pages/registration/index.js` : handleNewVisit async function
+
 - **How**:  
-  Explain what processing is being done on the data (e.g., filtering, formatting).
-- **Example**:  
-  Describe any transformation or manipulation applied.
+  The length of the array of JSON objects is extracted and if there are previous visits checks whether the last visit was within the hour. Throws a confirmation dialog whether to proceed with adding a new a new visit
 
 #### Processing on the Backend
 
-- **Where**:  
-  Specify which part of the backend handles data processing (e.g., in the view, serializer, or a dedicated service).
-- **How**:  
-  Outline what transformations, validations, or business logic is applied to the data.
-- **Example**:  
-  Provide details on the logic or algorithms used to process data before sending the response.
+Primary key is passed to patient_view.py, where get_object method calls an ORM query before being serialised by visit_serializer.py and wrapped in a HTTP-Reponse.
+
+```python
+visit = Visit.objects.get(pk=pk)
+        serializer = VisitSerializer(visit)
+        return Response(serializer.data)
+```
 
 ---
 

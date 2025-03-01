@@ -62,7 +62,32 @@ Returns the personal details of the patient associated with the patientID
   200:
 
 ```json
-
+[
+  {
+    "id": 1840,
+    "patient": {
+      "model": "clinicmodels.patient",
+      "pk": 1750,
+      "village_prefix": "SV",
+      "name": "patient_name",
+      "identification_number": "",
+      "contact_no": "",
+      "gender": "Female",
+      "date_of_birth": "ISO 8051 date and time format",
+      "poor": "No",
+      "bs2": "No",
+      "sabai": "No",
+      "drug_allergy": "None",
+      "face_encodings": "4f993c46-d194-40d2-90f4-79e21c556fee",
+      "picture": "url_with_jpg",
+      "filter_string": "SV1750SV1750  patient_name",
+      "patient_id": "SV1750",
+      "confidence": ""
+    },
+    "date": "ISO 8601 date and time format",
+    "status": "started"
+  }
+]
 ```
 
 404:
@@ -85,11 +110,9 @@ Error: Request failed with status code 404
 #### Processing on the Backend
 
 - **Where**:  
-  Specify which part of the backend handles data processing (e.g., in the view, serializer, or a dedicated service).
+  visit_view.py
 - **How**:  
-  Outline what transformations, validations, or business logic is applied to the data.
-- **Example**:  
-  Provide details on the logic or algorithms used to process data before sending the response.
+  Uses the VisitSerializer's is_valid method to check whether response is valid and saves and returns corresponding response
 
 ---
 
