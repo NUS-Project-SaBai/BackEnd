@@ -7,7 +7,7 @@ class Diagnosis(models.Model):
         db_table = "diagnosis"
 
     consult = models.ForeignKey(
-        Consult, on_delete=models.SET_NULL, blank=True, null=True
+        Consult, on_delete=models.SET_NULL, blank=True, null=True, related_name='diagnoses'
     )
     details = models.TextField(blank=True, null=True)
     category = models.CharField(max_length=255, blank=True, null=True)
