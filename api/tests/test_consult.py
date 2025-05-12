@@ -37,10 +37,10 @@ class TestConsultAPI(TestSetup):
                         "face_encodings": None,
                         "picture": "image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
                         "filter_string": "VPF001VPF1 contact_no patient_name",
-                        "patient_id": "VPF001"
+                        "patient_id": "VPF001",
                     },
                     "date": "2021-01-01T00:00:00Z",
-                    "status": "status"
+                    "status": "status",
                 },
                 "doctor": {
                     "auth0_id": "1",
@@ -54,7 +54,7 @@ class TestConsultAPI(TestSetup):
                 "plan": "plan",
                 "referred_for": "referred_for",
                 "referral_notes": "referral_notes",
-                "remarks": "remarks"
+                "remarks": "remarks",
             },
         )
 
@@ -192,11 +192,9 @@ class TestConsultAPI(TestSetup):
 
         # DELETE
 
-        delete_response = self.client.delete(
-            reverse("consults_detail", args=["1"]))
+        delete_response = self.client.delete(reverse("consults_detail", args=["1"]))
         self.assertEqual(delete_response.status_code, 200)
-        self.assertEqual(delete_response.data, {
-                         "message": "Deleted successfully"})
+        self.assertEqual(delete_response.data, {"message": "Deleted successfully"})
 
         # GET
         get_response = self.client.get(reverse("consults_list"))

@@ -25,8 +25,7 @@ class DiagnosisView(APIView):
 
     def patch(self, request, pk):
         consult = Diagnosis.objects.get(pk=pk)
-        serializer = DiagnosisSerializer(
-            consult, data=request.data, partial=True)
+        serializer = DiagnosisSerializer(consult, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)

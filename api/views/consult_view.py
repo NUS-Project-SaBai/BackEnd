@@ -44,8 +44,7 @@ class ConsultView(APIView):
 
     def patch(self, request, pk):
         consult = Consult.objects.get(pk=pk)
-        serializer = ConsultSerializer(
-            consult, data=request.data, partial=True)
+        serializer = ConsultSerializer(consult, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)

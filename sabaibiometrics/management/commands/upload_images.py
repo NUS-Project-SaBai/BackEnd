@@ -16,8 +16,9 @@ class Command(BaseCommand):
             for patient in patients:
                 if patient.offline_picture:
                     upload_result = cloudinary.uploader.upload(
-                        patient.offline_picture.path)
-                    patient.picture = upload_result['url']
+                        patient.offline_picture.path
+                    )
+                    patient.picture = upload_result["url"]
                     patient.save()
             self.stdout.write("Pictures uploaded successfully")
         except IntegrityError as e:

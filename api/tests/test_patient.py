@@ -22,25 +22,24 @@ class TestPatient(TestSetup):
             "drug_allergy": "drug_allergy",
             "face_encodings": "88e4a97a-10d0-4e63-abe0-bd36808974b4",
             "filter_string": "VPF001VPF1 contact_no patient_name",
-            "patient_id" : 'VPF001'
+            "patient_id": "VPF001",
         }
 
         # The value of picture must be set to the file handle of the Bytes object of the image
-        dummy['picture'] = SimpleUploadedFile(
+        dummy["picture"] = SimpleUploadedFile(
             "tom_holland_learn.jpeg",
-            open("api/tests/tom_holland_learn.jpeg", 'rb').read(), 
-            content_type='image/jpeg')
+            open("api/tests/tom_holland_learn.jpeg", "rb").read(),
+            content_type="image/jpeg",
+        )
 
         post_response = self.client.post(
-            reverse(list_endpoint),
-            dummy,
-            format='multipart'
+            reverse(list_endpoint), dummy, format="multipart"
         )
 
         # The image is stored in a Cloudinary field, and is represented as a url to the image on Cloudinary.
         # After every upload, a new url is generated for that image, thus the expected url string in 'picture'
         # must be updated with the generated url.
-        dummy_result['picture'] = post_response.data['picture']
+        dummy_result["picture"] = post_response.data["picture"]
 
         self.assertEqual(post_response.status_code, 200)
         self.assertEqual(
@@ -59,20 +58,19 @@ class TestPatient(TestSetup):
         # File pointer needs to be reset to the start before it can be used again.
         # picture.seek(0)
 
-        dummy['picture'] = SimpleUploadedFile(
+        dummy["picture"] = SimpleUploadedFile(
             "tom_holland_learn.jpeg",
-            open("api/tests/tom_holland_learn.jpeg", 'rb').read(), 
-            content_type='image/jpeg')
+            open("api/tests/tom_holland_learn.jpeg", "rb").read(),
+            content_type="image/jpeg",
+        )
 
         # PATCH
         put_response = self.client.patch(
-            reverse(detail_endpoint, args=["1"]),
-            dummy,
-            format='multipart'
+            reverse(detail_endpoint, args=["1"]), dummy, format="multipart"
         )
 
         self.assertEqual(put_response.status_code, 200)
-        dummy_result['picture'] = put_response.data['picture']
+        dummy_result["picture"] = put_response.data["picture"]
         self.assertEqual(
             put_response.data,
             dummy_result,
