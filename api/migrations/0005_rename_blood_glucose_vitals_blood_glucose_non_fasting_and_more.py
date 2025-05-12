@@ -6,18 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0004_merge_20241104_2310'),
+        ("api", "0004_merge_20241104_2310"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='vitals',
-            old_name='blood_glucose',
-            new_name='blood_glucose_non_fasting',
+            model_name="vitals",
+            old_name="blood_glucose",
+            new_name="blood_glucose_non_fasting",
         ),
         migrations.AddField(
-            model_name='vitals',
-            name='blood_glucose_fasting',
-            field=models.DecimalField(blank=True, decimal_places=2, max_digits=5, null=True),
+            model_name="vitals",
+            name="blood_glucose_fasting",
+            field=models.DecimalField(
+                blank=True, decimal_places=2, max_digits=5, null=True
+            ),
         ),
     ]

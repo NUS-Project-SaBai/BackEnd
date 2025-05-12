@@ -3,7 +3,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db import transaction
 from api.models import Order, MedicationReview, Medication, Diagnosis
-from api.serializers import OrderSerializer, MedicationReviewSerializer, DiagnosisSerializer
+from api.serializers import (
+    OrderSerializer,
+    MedicationReviewSerializer,
+    DiagnosisSerializer,
+)
 from api.views import MedicationView
 from django.utils import timezone
 from api.views.utils import get_doctor_id
@@ -15,18 +19,22 @@ class OrderView(APIView):
         if pk is not None:
             return self.get_object(pk)
         orders = Order.objects.all()
-        
+
         order_status = request.query_params.get("order_status", "")
         if order_status:
-            orders = orders.filter(
-                medication_review__order_status=order_status)
-            orders = orders.select_related('medication_review')
-            consult_ids = orders.values_list('consult_id', flat=True)
+            orders = orders.filter(medication_review__order_status=order_status)
+            orders = orders.select_related("medication_review")
+            consult_ids = orders.values_list("consult_id", flat=True)
 
             diagnoses = Diagnosis.objects.filter(consult_id__in=consult_ids)
             diagnoses_serializer = DiagnosisSerializer(diagnoses, many=True)
             order_serializer = OrderSerializer(orders, many=True)
-            return Response({"orders": order_serializer.data, "diagnoses": diagnoses_serializer.data})
+            return Response(
+                {
+                    "orders": order_serializer.data,
+                    "diagnoses": diagnoses_serializer.data,
+                }
+            )
         order_serializer = OrderSerializer(orders, many=True)
         return Response(order_serializer.data)
 
@@ -52,8 +60,7 @@ class OrderView(APIView):
         order_status = request.data.get("order_status")
 
         if order_status == "PENDING":
-            serializer = OrderSerializer(
-                order, data=request.data, partial=True)
+            serializer = OrderSerializer(order, data=request.data, partial=True)
         elif order_status == "CANCELLED":
             serializer = MedicationReviewSerializer(
                 order.medication_review, data=request.data, partial=True
@@ -69,9 +76,9 @@ class OrderView(APIView):
             if medication_review_data["quantity_remaining"] < 0:
                 return Response(
                     {"error": "Medicine stock cannot be negative."},
-                    status=status.HTTP_400_BAD_REQUEST
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
-            
+
             serializer = MedicationReviewSerializer(
                 order.medication_review, data=medication_review_data, partial=True
             )
@@ -103,8 +110,7 @@ class OrderView(APIView):
             "medicine": medicine,
             "order_status": "PENDING",
         }
-        medication_review = MedicationReview.objects.create(
-            **medication_review_data)
+        medication_review = MedicationReview.objects.create(**medication_review_data)
         order_data["medication_review"] = medication_review.pk
         serializer = OrderSerializer(data=order_data)
         if serializer.is_valid(raise_exception=True):

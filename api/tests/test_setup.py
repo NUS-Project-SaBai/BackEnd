@@ -11,7 +11,6 @@ class TestSetup(TestCase):
             username="test_user",
             email=f"{str(uuid.uuid4())}@email.com",
             auth0_id=1,
-
         )
         self.client.force_authenticate(user=self.user)
         return super().setUp()

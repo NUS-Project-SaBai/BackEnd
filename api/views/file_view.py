@@ -17,9 +17,7 @@ class FileView(APIView):
 
         patient_pk = request.query_params.get("patient_pk", "")
         if patient_pk:
-            files = files.filter(
-                patient_id=patient_pk
-            )
+            files = files.filter(patient_id=patient_pk)
 
         serializer = FileSerializer(files, many=True)
         return Response(serializer.data)
@@ -30,26 +28,22 @@ class FileView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        uploaded_file = request.data.get('file')
-        labeled_filename = request.data.get('file_name')
-        patient_pk = request.data.get('patient_pk')
+        uploaded_file = request.data.get("file")
+        labeled_filename = request.data.get("file_name")
+        patient_pk = request.data.get("patient_pk")
 
         if not uploaded_file:
-            return Response({'error': 'No file was uploaded'}, status=400)
+            return Response({"error": "No file was uploaded"}, status=400)
 
         if not labeled_filename:
-            return Response({'error': 'No labeled filename provided'}, status=400)
+            return Response({"error": "No labeled filename provided"}, status=400)
 
-        data = {
-            "patient": patient_pk,
-            "file_name": labeled_filename
-        }
+        data = {"patient": patient_pk, "file_name": labeled_filename}
 
         if OFFLINE:
             data["offline_file"] = uploaded_file
         else:
-            data["file_path"] = utils.upload_file(
-                uploaded_file, labeled_filename)
+            data["file_path"] = utils.upload_file(uploaded_file, labeled_filename)
 
         serializer = FileSerializer(data=data)
         if serializer.is_valid(raise_exception=True):

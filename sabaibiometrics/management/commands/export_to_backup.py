@@ -16,11 +16,25 @@ class Command(BaseCommand):
         Returns a sorted list of models respecting their foreign key dependencies.
         """
         models = apps.get_models()
-        order = ['Group', 'ContentType', 'Permission', 'LogEntry', 'Patient', 'File', 'Visit', 'CustomUser', 'Consult',
-                 'Diagnosis', 'Medication', 'MedicationReview', 'Order']
+        order = [
+            "Group",
+            "ContentType",
+            "Permission",
+            "LogEntry",
+            "Patient",
+            "File",
+            "Visit",
+            "CustomUser",
+            "Consult",
+            "Diagnosis",
+            "Medication",
+            "MedicationReview",
+            "Order",
+        ]
         model_order_map = {name: index for index, name in enumerate(order)}
-        sorted_models = sorted(models, key=lambda model: model_order_map.get(
-            model.__name__, float('inf')))
+        sorted_models = sorted(
+            models, key=lambda model: model_order_map.get(model.__name__, float("inf"))
+        )
 
         for model in sorted_models:
             print(model.__name__)
@@ -68,21 +82,25 @@ class Command(BaseCommand):
     #         f'Data export completed. Database created at: {sqlite_db_filename}'))
 
     def handle(self, *args, **kwargs):
-        self.stdout.write(self.style.SUCCESS(
-            "Starting data export to PostgreSQL backup database..."))
+        self.stdout.write(
+            self.style.SUCCESS("Starting data export to PostgreSQL backup database...")
+        )
 
         # Use the 'sabai_backup' database
         backup_db_name = "sabai_backup"
 
         # Ensure the backup database is correctly configured
         if backup_db_name not in settings.DATABASES:
-            self.stdout.write(self.style.ERROR(
-                f"Backup database configuration '{backup_db_name}' is missing in settings.DATABASES."))
+            self.stdout.write(
+                self.style.ERROR(
+                    f"Backup database configuration '{backup_db_name}' is missing in settings.DATABASES."
+                )
+            )
             return
 
         # Run migrations for the backup database
         self.stdout.write(f"Running migrations for the '{backup_db_name}' database...")
-        call_command('migrate', database=backup_db_name)
+        call_command("migrate", database=backup_db_name)
 
         # Get all models registered in the Django project
         sorted_models = self.get_model_dependencies()
@@ -106,5 +124,8 @@ class Command(BaseCommand):
             except ProgrammingError as e:
                 self.stdout.write(f"Skipping model {model.__name__}: {e}")
 
-        self.stdout.write(self.style.SUCCESS(
-            "Data export to PostgreSQL backup database completed successfully."))
+        self.stdout.write(
+            self.style.SUCCESS(
+                "Data export to PostgreSQL backup database completed successfully."
+            )
+        )
