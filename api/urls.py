@@ -23,6 +23,11 @@ urlpatterns = [
     path("user/<int:pk>", views.UserView.as_view(), name="user_detail"),
     path("consults", views.ConsultView.as_view(), name="consults_list"),
     path("consults/<int:pk>", views.ConsultView.as_view(), name="consults_detail"),
+    path(
+        "pdf_consults/<int:pk>",
+        views.PdfConsultView.as_view(),
+        name="pdf_consults_detail",
+    ),
     path("diagnosis", views.DiagnosisView.as_view(), name="diagnosis_list"),
     path("diagnosis/<int:pk>", views.DiagnosisView.as_view(), name="diagnosis_detail"),
     path("orders", views.OrderView.as_view(), name="orders_list"),

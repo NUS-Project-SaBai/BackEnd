@@ -29,6 +29,7 @@ boto3 = "==1.34.21"
 botocore = "==1.34.118"
 black = "*"
 pre-commit = "*"
+reportlab = "*"
 
 [dev-packages]
 
