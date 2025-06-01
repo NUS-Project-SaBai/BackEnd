@@ -8,3 +8,4 @@ from .visit_serializer import VisitSerializer
 from .vitals_serializer import VitalsSerializer
 from .consult_serializer import ConsultSerializer
 from .file_serializer import FileSerializer
+from .glasses_serializer import GlassesSerializer
