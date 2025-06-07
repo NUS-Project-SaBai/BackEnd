@@ -26,17 +26,18 @@ class ReferralView(APIView):
         return Response(response)
     
     def patch(self, request, pk):
-        try:
-            referral = Referrals.objects.get(pk=pk)
-        except Referrals.DoesNotExist:
-            return Response(status = status.HTTP_404_NOT_FOUND)
-            
-        serializer = ReferralSerializer(referral, data=request.data)
-        if serializer.is_valid():
+
+        referral = Referrals.objects.get(pk=pk)
+
+        filtered_request_data = dict(
+            filter(lambda item: item[1] != "", request.data.items())
+        )
+        
+        serializer = ReferralSerializer(referral, data=filtered_request_data, partial=True)
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+            return Response(serializer.data)
+
     def get_object(self, pk):
         referral = Referrals.objects.get(pk=pk)
         serializer_referral = ReferralSerializer(referral)
