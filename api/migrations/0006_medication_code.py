@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0005_rename_blood_glucose_vitals_blood_glucose_non_fasting_and_more'),
+        ("api", "0005_rename_blood_glucose_vitals_blood_glucose_non_fasting_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='medication',
-            name='code',
+            model_name="medication",
+            name="code",
             field=models.CharField(blank=True, max_length=100, null=True, unique=True),
         ),
     ]
