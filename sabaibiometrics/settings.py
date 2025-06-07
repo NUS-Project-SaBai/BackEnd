@@ -35,7 +35,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
 
 # Application definition
 
@@ -96,14 +96,25 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
     ),
 }
+<<<<<<< HEAD
+USE_DEFAULT_PERMISSION_CLASSES = os.getenv("USE_DEFAULT_PERMISSION_CLASSES") != "False"
+
+OFFLINE = os.getenv("OFFLINE", "False") == "True"
+if USE_DEFAULT_PERMISSION_CLASSES and not OFFLINE:
+    REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"] = (
+        "rest_framework.permissions.IsAuthenticated",
+    )
+=======
+
 USE_DEFAULT_PERMISSION_CLASSES = os.getenv(
     "USE_DEFAULT_PERMISSION_CLASSES") != "False"
 
 OFFLINE = os.getenv('OFFLINE', 'False') == 'True'
-if USE_DEFAULT_PERMISSION_CLASSES and not OFFLINE:
-    REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
-        'rest_framework.permissions.IsAuthenticated',
-    )
+# if USE_DEFAULT_PERMISSION_CLASSES and not OFFLINE:
+#     REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
+#         'rest_framework.permissions.IsAuthenticated',
+#     )
+>>>>>>> 249e795 (updated backend for medication code)
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -133,7 +144,7 @@ else:
         }
     }
 
-if "test" in sys.argv or os.getenv('TEMP_DB') == 'True':
+if "test" in sys.argv or os.getenv("TEMP_DB") == "True":
     DATABASES["default"] = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
@@ -203,12 +214,12 @@ CORS_ALLOW_HEADERS = [
 ]
 
 if OFFLINE:
-    CORS_ALLOW_HEADERS.append('doctor')
+    CORS_ALLOW_HEADERS.append("doctor")
 
 CSRF_COOKIE_SECURE = False
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',  # Trust requests from the Next.js frontend
+    "http://localhost:3000",  # Trust requests from the Next.js frontend
 ]
 
 cloudinary.config(
@@ -238,12 +249,11 @@ JWT_AUTH = {
 AUTH_USER_MODEL = "api.CustomUser"
 
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 CLOUDINARY_URL = os.getenv("CLOUDINARY_URL")
 
-GOOGLE_DRIVE_SERVICE_ACCOUNT_FILE = os.getenv(
-    "GOOGLE_DRIVE_SERVICE_ACCOUNT_FILE")
+GOOGLE_DRIVE_SERVICE_ACCOUNT_FILE = os.getenv("GOOGLE_DRIVE_SERVICE_ACCOUNT_FILE")
 GOOGLE_DRIVE_FILE_ID = os.getenv("GOOGLE_DRIVE_FILE_ID")
 
 

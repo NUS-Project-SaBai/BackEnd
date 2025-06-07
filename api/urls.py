@@ -14,7 +14,7 @@ urlpatterns = [
     ),
     path("patients", views.PatientView.as_view(), name="patients_list"),
     path("patients/<int:pk>", views.PatientView.as_view(), name="patients_detail"),
-    path("patients/search_face", views.PatientSearchView.as_view(), name='search_face'),
+    path("patients/search_face", views.PatientSearchView.as_view(), name="search_face"),
     path("visits", views.VisitView.as_view(), name="visits_list"),
     path("visits/<int:pk>", views.VisitView.as_view(), name="visits_detail"),
     path("vitals", views.VitalsView.as_view(), name="vitals_list"),
@@ -24,19 +24,23 @@ urlpatterns = [
     path("consults", views.ConsultView.as_view(), name="consults_list"),
     path("consults/<int:pk>", views.ConsultView.as_view(), name="consults_detail"),
     path("diagnosis", views.DiagnosisView.as_view(), name="diagnosis_list"),
-    path("diagnosis/<int:pk>", views.DiagnosisView.as_view(),
-         name="diagnosis_detail"),
+    path("diagnosis/<int:pk>", views.DiagnosisView.as_view(), name="diagnosis_detail"),
     path("orders", views.OrderView.as_view(), name="orders_list"),
     path("orders/<int:pk>", views.OrderView.as_view(), name="orders_detail"),
-    path("medication_review", views.MedicationReviewView.as_view(),
-         name="medication_review_list"),
-    path("medication_review/<int:pk>", views.MedicationReviewView.as_view(),
-         name="medication_review_detail"),
-    path('upload/', views.FileView.as_view(), name='upload_file'),
+    path(
+        "medication_review",
+        views.MedicationReviewView.as_view(),
+        name="medication_review_list",
+    ),
+    path(
+        "medication_review/<int:pk>",
+        views.MedicationReviewView.as_view(),
+        name="medication_review_detail",
+    ),
+    path("upload/", views.FileView.as_view(), name="upload_file"),
 ]
 
 if OFFLINE:
-    urlpatterns += static(MEDIA_URL,
-                          document_root=MEDIA_ROOT)
+    urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
 
 urlpatterns = format_suffix_patterns(urlpatterns)
