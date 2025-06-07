@@ -7,7 +7,9 @@ class Referrals(models.Model):
         db_table = "referrals"
 
     referral_state = models.TextField(blank=True, null=True)
-    referral_comments = models.TextField(blank=True, null=True)
+    referral_notes = models.TextField(blank=True, null=True)
+    referral_outcome = models.TextField(blank=True, null=True)
+    referred_for = models.TextField(blank=True, null=True)
     consult = models.ForeignKey(Consult, on_delete=models.SET_NULL, blank=True, null=True)
 
 
