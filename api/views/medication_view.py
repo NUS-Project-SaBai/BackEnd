@@ -41,6 +41,7 @@ class MedicationView(APIView):
                     pending_quantity if pending_quantity is not None else 0
                 ),
                 "current_quantity": current_quantity,
+                "code": medications.code,
             }
         )
 
@@ -74,6 +75,7 @@ class MedicationView(APIView):
             ),
             "quantity": medication.quantity + quantityChange,
             "notes": request.data.get("notes", medication.notes),
+            "code": request.data.get("code", medication.code),
         }
         serializer = MedicationSerializer(medication, data=data, partial=True)
 
