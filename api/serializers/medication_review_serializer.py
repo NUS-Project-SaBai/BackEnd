@@ -5,7 +5,8 @@ from api import serializers as APISerializer
 
 class MedicationReviewSerializer(serializers.ModelSerializer):
     approval = serializers.SlugRelatedField(
-        slug_field="auth0_id", queryset=models.CustomUser.objects.all()
+        slug_field='auth0_id',
+        queryset=models.CustomUser.objects.all()
     )
     medicine = serializers.PrimaryKeyRelatedField(
         queryset=models.Medication.objects.all()
@@ -18,13 +19,11 @@ class MedicationReviewSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation["approval"] = APISerializer.UserSerializer(
-            instance.approval
-        ).data
+            instance.approval).data
         representation["medicine"] = APISerializer.MedicationSerializer(
-            instance.medicine
-        ).data
+            instance.medicine).data
         if self.context.get("include_order", False):
             representation["order"] = APISerializer.OrderSerializer(
-                instance.order.first(), context={"include_consult": True}
-            ).data
+                instance.order.first(), context={
+                    "include_consult": True}).data
         return representation

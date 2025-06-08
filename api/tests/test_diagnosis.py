@@ -99,9 +99,11 @@ class TestDiagnosisAPI(TestSetup):
 
         # DELETE
 
-        delete_response = self.client.delete(reverse(detail_endpoint, args=["1"]))
+        delete_response = self.client.delete(
+            reverse(detail_endpoint, args=["1"]))
         self.assertEqual(delete_response.status_code, 200)
-        self.assertEqual(delete_response.data, {"message": "Deleted successfully"})
+        self.assertEqual(delete_response.data, {
+                         "message": "Deleted successfully"})
 
         # GET
         get_response = self.client.get(reverse(list_endpoint))

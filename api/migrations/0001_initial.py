@@ -57,40 +57,24 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Patient",
             fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("village_prefix", models.CharField(max_length=5)),
-                ("name", models.CharField(max_length=255)),
-                (
-                    "identification_number",
-                    models.CharField(blank=True, max_length=255, null=True),
-                ),
-                ("contact_no", models.CharField(blank=True, max_length=255, null=True)),
-                ("gender", models.CharField(max_length=11)),
-                (
-                    "date_of_birth",
-                    models.DateTimeField(default=django.utils.timezone.now),
-                ),
-                ("poor", models.CharField(default="No", max_length=3)),
-                ("bs2", models.CharField(default="No", max_length=3)),
-                ("drug_allergy", models.TextField(default="None")),
-                (
-                    "face_encodings",
-                    models.CharField(blank=True, max_length=3000, null=True),
-                ),
-                (
-                    "picture",
-                    cloudinary.models.CloudinaryField(
-                        blank=True, max_length=255, null=True, verbose_name="image"
-                    ),
-                ),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('village_prefix', models.CharField(max_length=5)),
+                ('name', models.CharField(max_length=255)),
+                ('identification_number', models.CharField(
+                    blank=True, max_length=255, null=True)),
+                ('contact_no', models.CharField(
+                    blank=True, max_length=255, null=True)),
+                ('gender', models.CharField(max_length=11)),
+                ('date_of_birth', models.DateTimeField(
+                    default=django.utils.timezone.now)),
+                ('poor', models.CharField(default='No', max_length=3)),
+                ('bs2', models.CharField(default='No', max_length=3)),
+                ('drug_allergy', models.TextField(default='None')),
+                ('face_encodings', models.CharField(
+                    blank=True, max_length=3000, null=True)),
+                ('picture', cloudinary.models.CloudinaryField(
+                    blank=True, max_length=255, null=True, verbose_name='image')),
             ],
             options={
                 "db_table": "patients",
@@ -108,7 +92,8 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("password", models.CharField(max_length=128, verbose_name="password")),
+                ("password", models.CharField(
+                    max_length=128, verbose_name="password")),
                 (
                     "last_login",
                     models.DateTimeField(
@@ -364,39 +349,24 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name="File",
+            name='File',
             fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("file_path", models.CharField(max_length=255, null=True)),
-                (
-                    "offline_file",
-                    models.FileField(null=True, upload_to="offline_files/"),
-                ),
-                ("file_name", models.CharField(max_length=255)),
-                ("created_at", models.DateTimeField(auto_now_add=True)),
-                (
-                    "patient",
-                    models.ForeignKey(
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
-                        to="api.patient",
-                    ),
-                ),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('file_path', models.CharField(max_length=255, null=True)),
+                ('offline_file', models.FileField(
+                    null=True, upload_to='offline_files/')),
+                ('file_name', models.CharField(max_length=255)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('patient', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, to='api.patient')),
             ],
             options={
-                "db_table": "file",
+                'db_table': 'file',
             },
         ),
         migrations.CreateModel(
-            name="Visit",
+            name='Visit',
             fields=[
                 (
                     "id",
@@ -435,126 +405,58 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Vitals",
             fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "height",
-                    models.DecimalField(
-                        blank=True, decimal_places=2, max_digits=5, null=True
-                    ),
-                ),
-                (
-                    "weight",
-                    models.DecimalField(
-                        blank=True, decimal_places=2, max_digits=5, null=True
-                    ),
-                ),
-                (
-                    "temperature",
-                    models.DecimalField(decimal_places=2, max_digits=5, null=True),
-                ),
-                (
-                    "systolic",
-                    models.DecimalField(
-                        blank=True, decimal_places=0, max_digits=3, null=True
-                    ),
-                ),
-                (
-                    "diastolic",
-                    models.DecimalField(
-                        blank=True, decimal_places=0, max_digits=3, null=True
-                    ),
-                ),
-                (
-                    "heart_rate",
-                    models.DecimalField(
-                        blank=True, decimal_places=0, max_digits=3, null=True
-                    ),
-                ),
-                (
-                    "hemocue_count",
-                    models.DecimalField(
-                        blank=True, decimal_places=2, max_digits=5, null=True
-                    ),
-                ),
-                (
-                    "diabetes_mellitus",
-                    models.TextField(
-                        blank=True, default="Haven't Asked / Not Applicable", null=True
-                    ),
-                ),
-                ("urine_test", models.TextField(blank=True, null=True)),
-                (
-                    "blood_glucose",
-                    models.DecimalField(
-                        blank=True, decimal_places=2, max_digits=5, null=True
-                    ),
-                ),
-                ("left_eye_degree", models.TextField(blank=True, null=True)),
-                ("right_eye_degree", models.TextField(blank=True, null=True)),
-                ("left_eye_pinhole", models.TextField(blank=True, null=True)),
-                ("right_eye_pinhole", models.TextField(blank=True, null=True)),
-                ("gross_motor", models.TextField(blank=True, null=True)),
-                ("red_reflex", models.TextField(blank=True, null=True)),
-                ("scoliosis", models.TextField(blank=True, null=True)),
-                ("pallor", models.TextField(blank=True, null=True)),
-                ("oral_cavity", models.TextField(blank=True, null=True)),
-                ("heart", models.TextField(blank=True, null=True)),
-                ("abdomen", models.TextField(blank=True, null=True)),
-                ("lungs", models.TextField(blank=True, null=True)),
-                ("hernial_orifices", models.TextField(blank=True, null=True)),
-                (
-                    "pubarche",
-                    models.TextField(
-                        blank=True, default="Haven't Asked / Not Applicable", null=True
-                    ),
-                ),
-                ("pubarche_age", models.IntegerField(blank=True, null=True)),
-                (
-                    "thelarche",
-                    models.TextField(
-                        blank=True, default="Haven't Asked / Not Applicable", null=True
-                    ),
-                ),
-                ("thelarche_age", models.IntegerField(blank=True, null=True)),
-                (
-                    "menarche",
-                    models.TextField(
-                        blank=True, default="Haven't Asked / Not Applicable", null=True
-                    ),
-                ),
-                ("menarche_age", models.IntegerField(blank=True, null=True)),
-                (
-                    "voice_change",
-                    models.TextField(
-                        blank=True, default="Haven't Asked / Not Applicable", null=True
-                    ),
-                ),
-                ("voice_change_age", models.IntegerField(blank=True, null=True)),
-                (
-                    "testicular_growth",
-                    models.TextField(
-                        blank=True, default="Haven't Asked / Not Applicable", null=True
-                    ),
-                ),
-                ("testicular_growth_age", models.IntegerField(blank=True, null=True)),
-                ("others", models.TextField(blank=True, null=True)),
-                (
-                    "visit",
-                    models.OneToOneField(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
-                        to="api.visit",
-                    ),
-                ),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('height', models.DecimalField(blank=True,
+                 decimal_places=2, max_digits=5, null=True)),
+                ('weight', models.DecimalField(blank=True,
+                 decimal_places=2, max_digits=5, null=True)),
+                ('temperature', models.DecimalField(
+                    decimal_places=2, max_digits=5, null=True)),
+                ('systolic', models.DecimalField(blank=True,
+                 decimal_places=0, max_digits=3, null=True)),
+                ('diastolic', models.DecimalField(blank=True,
+                 decimal_places=0, max_digits=3, null=True)),
+                ('heart_rate', models.DecimalField(blank=True,
+                 decimal_places=0, max_digits=3, null=True)),
+                ('hemocue_count', models.DecimalField(
+                    blank=True, decimal_places=2, max_digits=5, null=True)),
+                ('diabetes_mellitus', models.TextField(blank=True,
+                 default="Haven't Asked / Not Applicable", null=True)),
+                ('urine_test', models.TextField(blank=True, null=True)),
+                ('blood_glucose', models.DecimalField(
+                    blank=True, decimal_places=2, max_digits=5, null=True)),
+                ('left_eye_degree', models.TextField(blank=True, null=True)),
+                ('right_eye_degree', models.TextField(blank=True, null=True)),
+                ('left_eye_pinhole', models.TextField(blank=True, null=True)),
+                ('right_eye_pinhole', models.TextField(blank=True, null=True)),
+                ('gross_motor', models.TextField(blank=True, null=True)),
+                ('red_reflex', models.TextField(blank=True, null=True)),
+                ('scoliosis', models.TextField(blank=True, null=True)),
+                ('pallor', models.TextField(blank=True, null=True)),
+                ('oral_cavity', models.TextField(blank=True, null=True)),
+                ('heart', models.TextField(blank=True, null=True)),
+                ('abdomen', models.TextField(blank=True, null=True)),
+                ('lungs', models.TextField(blank=True, null=True)),
+                ('hernial_orifices', models.TextField(blank=True, null=True)),
+                ('pubarche', models.TextField(blank=True,
+                 default="Haven't Asked / Not Applicable", null=True)),
+                ('pubarche_age', models.IntegerField(blank=True, null=True)),
+                ('thelarche', models.TextField(blank=True,
+                 default="Haven't Asked / Not Applicable", null=True)),
+                ('thelarche_age', models.IntegerField(blank=True, null=True)),
+                ('menarche', models.TextField(blank=True,
+                 default="Haven't Asked / Not Applicable", null=True)),
+                ('menarche_age', models.IntegerField(blank=True, null=True)),
+                ('voice_change', models.TextField(blank=True,
+                 default="Haven't Asked / Not Applicable", null=True)),
+                ('voice_change_age', models.IntegerField(blank=True, null=True)),
+                ('testicular_growth', models.TextField(blank=True,
+                 default="Haven't Asked / Not Applicable", null=True)),
+                ('testicular_growth_age', models.IntegerField(blank=True, null=True)),
+                ('others', models.TextField(blank=True, null=True)),
+                ('visit', models.OneToOneField(blank=True, null=True,
+                 on_delete=django.db.models.deletion.SET_NULL, to='api.visit')),
             ],
             options={
                 "db_table": "vitals",

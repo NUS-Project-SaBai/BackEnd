@@ -10,7 +10,8 @@ class Patient(models.Model):
 
     village_prefix = models.CharField(max_length=5)
     name = models.CharField(max_length=255)
-    identification_number = models.CharField(max_length=255, blank=True, null=True)
+    identification_number = models.CharField(
+        max_length=255, blank=True, null=True)
     contact_no = models.CharField(max_length=255, blank=True, null=True)
     gender = models.CharField(max_length=11)
     date_of_birth = models.DateTimeField(default=timezone.now)
@@ -21,8 +22,7 @@ class Patient(models.Model):
     face_encodings = models.CharField(max_length=3000, blank=True, null=True)
     picture = CloudinaryField("image", blank=True, null=True)
     offline_picture = models.ImageField(
-        upload_to="offline_pictures", blank=True, null=True
-    )
+        upload_to="offline_pictures", blank=True, null=True)
 
     def clean(self):
         # Ensure that at least one of picture or offline_picture is provided

@@ -4,7 +4,8 @@ from api import serializers as APISerializer
 
 
 class FileSerializer(serializers.ModelSerializer):
-    patient = serializers.PrimaryKeyRelatedField(queryset=models.Patient.objects.all())
+    patient = serializers.PrimaryKeyRelatedField(
+        queryset=models.Patient.objects.all())
 
     class Meta:
         model = models.File

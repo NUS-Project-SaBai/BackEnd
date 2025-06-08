@@ -42,9 +42,9 @@ class VitalsView(APIView):
 
     def patch_object(self, request, vital):
         filtered_request_data = dict(
-            filter(lambda item: item[1] != "", request.data.items())
-        )
-        serializer = VitalsSerializer(vital, data=filtered_request_data, partial=True)
+            filter(lambda item: item[1] != "", request.data.items()))
+        serializer = VitalsSerializer(
+            vital, data=filtered_request_data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)

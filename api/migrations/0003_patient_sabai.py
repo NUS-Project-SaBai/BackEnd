@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("api", "0002_patient_offline_picture"),
+        ('api', '0002_patient_offline_picture'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="patient",
-            name="sabai",
-            field=models.CharField(default="No", max_length=3),
+            model_name='patient',
+            name='sabai',
+            field=models.CharField(default='No', max_length=3),
         ),
     ]

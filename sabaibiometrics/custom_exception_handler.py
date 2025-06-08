@@ -16,8 +16,6 @@ def custom_exception_handler(exc, context):
     elif isinstance(exc, ValueError):
         return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
     elif response is None:
-        return Response(
-            {"error": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return Response({"error": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return response
