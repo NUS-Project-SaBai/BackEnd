@@ -96,7 +96,6 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
     ),
 }
-<<<<<<< HEAD
 USE_DEFAULT_PERMISSION_CLASSES = os.getenv("USE_DEFAULT_PERMISSION_CLASSES") != "False"
 
 OFFLINE = os.getenv("OFFLINE", "False") == "True"
@@ -104,17 +103,6 @@ if USE_DEFAULT_PERMISSION_CLASSES and not OFFLINE:
     REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"] = (
         "rest_framework.permissions.IsAuthenticated",
     )
-=======
-
-USE_DEFAULT_PERMISSION_CLASSES = os.getenv(
-    "USE_DEFAULT_PERMISSION_CLASSES") != "False"
-
-OFFLINE = os.getenv('OFFLINE', 'False') == 'True'
-# if USE_DEFAULT_PERMISSION_CLASSES and not OFFLINE:
-#     REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
-#         'rest_framework.permissions.IsAuthenticated',
-#     )
->>>>>>> 249e795 (updated backend for medication code)
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

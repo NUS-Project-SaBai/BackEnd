@@ -22,7 +22,6 @@ def jwt_decode_token(token):
     if public_key is None:
         raise Exception("Public key not found.")
 
-<<<<<<< HEAD
     return jwt.decode(
         token,
         public_key,
@@ -30,6 +29,3 @@ def jwt_decode_token(token):
         issuer=AUTH0_ISSUER,
         algorithms=["RS256"],
     )
-=======
-    return jwt.decode(token, public_key, audience=AUTH0_AUDIENCE, issuer=AUTH0_ISSUER, algorithms=['RS256'])
->>>>>>> 249e795 (updated backend for medication code)
