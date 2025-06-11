@@ -13,10 +13,12 @@ class GlassesView(APIView):
         if visit_id:
             glasses = Glasses.objects.filter(visit_id=visit_id)
         else:
-            glasses = Glasses.objects.all()
-        serializer = GlassesSerializer(glasses, many=True)
+            # get the latest glasses prescription,
+            # TODO: Double check if there should only be one glasses prescriptions per visit.
+            glasses = Glasses.objects.all().order_by("-id").first()
+        serializer = GlassesSerializer(glasses)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     def get_object(self, pk):
         glasses = get_object_or_404(Glasses, pk=pk)
         serializer = GlassesSerializer(glasses)
