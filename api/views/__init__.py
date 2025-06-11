@@ -11,3 +11,4 @@ from .diagnosis_view import DiagnosisView
 from .test_view import TestView
 from .file_view import FileView
 from .glasses_view import GlassesView
+from .referral_view import ReferralView
