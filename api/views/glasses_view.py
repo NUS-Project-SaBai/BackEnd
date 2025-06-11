@@ -8,23 +8,14 @@ from api.serializers import GlassesSerializer, VisitSerializer
 
 
 class GlassesView(APIView):
-    def get(self, request, pk=None):
-        if pk is not None:
-            return self.get_object(pk)
-        
-        patient = request.query_params.get("patient", None)
-        if patient is not None:
-            visits = (
-                Visit.objects.select_related("patient")
-                .filter(patient_id=patient)
-                .order_by("-id")
-            )
-            serializer = VisitSerializer(visits, many=True)
-            return Response(serializer.data)
-
-        glasses = Glasses.objects.all().order_by("-id")
+    def get(self, request):
+        visit_id = request.query_params.get("visit")
+        if visit_id:
+            glasses = Glasses.objects.filter(visit_id=visit_id)
+        else:
+            glasses = Glasses.objects.all()
         serializer = GlassesSerializer(glasses, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_object(self, pk):
         glasses = get_object_or_404(Glasses, pk=pk)
@@ -32,21 +23,21 @@ class GlassesView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        visit_id = request.data.get("visit_id")
+        if not visit_id:
+            return Response(
+                {"detail": "visit_id is required in the request body."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        visit = get_object_or_404(Visit, id=visit_id)
         serializer = GlassesSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(visit=visit)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def patch(self, request, pk):
         glasses = get_object_or_404(Glasses, pk=pk)
-
-        data = {
-            "left_glasses_degree": request.data.get("left_glasses_degree", glasses.left_glasses_degree),
-            "right_glasses_degree": request.data.get("right_glasses_degree", glasses.right_glasses_degree),
-            "visit_id": request.data.get("visit_id", glasses.visit_id),
-        }
-
-        serializer = GlassesSerializer(glasses, data=data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        serializer = GlassesSerializer(glasses, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)

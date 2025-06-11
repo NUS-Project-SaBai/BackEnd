@@ -3,16 +3,13 @@ from api import models
 from api import serializers as APISerializer
 
 class GlassesSerializer(serializers.ModelSerializer):
-    visit = serializers.PrimaryKeyRelatedField(
-        queryset=models.Visit.objects.all())
+    visit = serializers.IntegerField(source="visit.id", read_only=True)
 
     class Meta:
         model = models.Glasses
-        fields = "__all__"
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation["patient"] = APISerializer.PatientSerializer(
-            instance.visit.patient
-        ).data
-        return representation
+        fields = [
+            "id",
+            "left_glasses_degree",
+            "right_glasses_degree",
+            "visit_id",
+        ]
