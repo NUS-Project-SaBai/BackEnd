@@ -38,6 +38,8 @@ urlpatterns = [
         name="medication_review_detail",
     ),
     path("upload/", views.FileView.as_view(), name="upload_file"),
+    path("glasses", views.GlassesView.as_view(), name="glasses_list"),
+    path("glasses/<int:pk>", views.GlassesView.as_view(), name="glasses_detail"),
 ]
 
 if OFFLINE:
