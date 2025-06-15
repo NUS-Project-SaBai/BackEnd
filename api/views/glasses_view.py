@@ -10,12 +10,21 @@ from api.serializers import GlassesSerializer, VisitSerializer
 class GlassesView(APIView):
     def get(self, request):
         visit_id = request.query_params.get("visit")
+
         if visit_id:
-            glasses = Glasses.objects.filter(visit_id=visit_id)
+            # Get latest Glasses instance for the visit
+            glasses = (
+                Glasses.objects.filter(visit_id=visit_id)
+                .order_by("-id")
+                .first()
+            )
         else:
-            # get the latest glasses prescription,
-            # TODO: Double check if there should only be one glasses prescriptions per visit.
+            # Fallback to latest overall
             glasses = Glasses.objects.all().order_by("-id").first()
+
+        if not glasses:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
         serializer = GlassesSerializer(glasses)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
