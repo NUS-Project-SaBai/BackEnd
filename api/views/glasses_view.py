@@ -19,8 +19,8 @@ class GlassesView(APIView):
                 .first()
             )
         else:
-            # Fallback to latest overall
-            glasses = Glasses.objects.all().order_by("-id").first()
+            # Fallback to list of glasses
+            glasses = Glasses.objects.all()
 
         if not glasses:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -48,7 +48,13 @@ class GlassesView(APIView):
 
     def patch(self, request, pk):
         glasses = get_object_or_404(Glasses, pk=pk)
-        serializer = GlassesSerializer(glasses, data=request.data, partial=True)
+        # Filter out empty fields from request data
+        filtered_request_data = {
+            key: value for key, value in request.data.items() if value != ""
+        }
+        serializer = GlassesSerializer(
+            glasses, data=filtered_request_data, partial=True
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
