@@ -18,65 +18,13 @@ class PatientView(APIView):
         if pk is not None:
             return self.get_object(pk)
         
-        # # Check if any visits exist for a test patient
-        # test_patient = Patient.objects.first()
-        # print("check:")
-        # print(Visit.objects.filter(patient=test_patient).exists())  # Should return True/False
-
-        # # Get the latest visit date for each patient
-        # latest_visit_subquery = Visit.objects.filter(
-        #     patient_id=OuterRef('pk')
-        # ).order_by('-date').values('date')[:1]
-
-        # patients = Patient.objects.annotate(
-        #     last_visit=Subquery(latest_visit_subquery)
-        # ).order_by("-last_visit").order_by("-pk")
-
         patients = Patient.objects.annotate(
             last_visit=Subquery(
                 Visit.objects.filter(patient_id=OuterRef('pk'))
                 .order_by('-date')
-                .values('date')
+                .values('date')[:1]
             )
         ).order_by("-last_visit", "-pk")
-
-        # Check if visits exist for first patient
-        test_patient = Patient.objects.first()
-        visits = Visit.objects.filter(patient=test_patient).order_by('-date')
-        print(visits.exists())  # Should be True
-        print(visits.first().date)  # Should show a valid datetime
-
-        test_subquery = Visit.objects.filter(patient_id=1).order_by('-date').values('date')[:1]
-        print(Subquery(test_subquery))  # Should return a date
-
-        patients = Patient.objects.annotate(
-            last_visit=Subquery(
-                Visit.objects.filter(patient_id=OuterRef('pk'))
-                .order_by('-date')
-                .values('date')#[:1]  # Critical: must limit to 1 row
-                # Explicitly cast if needed:
-                # .annotate(date_as_dt=Cast('date', DateTimeField()))
-                # .values('date_as_dt')[:1]
-            )
-        ).order_by("-pk")
-
-        patients = Patient.objects.annotate(
-            # TEST 1: Hardcoded value
-            last_visit_test=Value("2023-01-01"),  # Static string
-            
-            # TEST 2: Current time (dynamic)
-            last_visit_now=Value(timezone.now()),
-            
-            # TEST 3: Subquery with Coalesce as fallback
-            last_visit_real=Coalesce(
-                Subquery(
-                    Visit.objects.filter(patient_id=OuterRef('pk'))
-                    .order_by('-date')
-                    .values('date')[:1]
-                ),
-                Value("NO_VISITS")  # Fallback value
-            )
-        ).order_by("-pk")
 
         patient_name = request.query_params.get("name", "")
         patient_village_code = request.query_params.get("village_code", "")

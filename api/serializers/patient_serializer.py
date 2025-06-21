@@ -7,6 +7,7 @@ class PatientSerializer(serializers.ModelSerializer):
     patient_enriched = serializers.SerializerMethodField()
     patient_id = serializers.SerializerMethodField()
     confidence = serializers.SerializerMethodField()
+    last_visit = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = models.Patient
@@ -32,7 +33,6 @@ class PatientSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        print(data)
         output = {
             "model": "clinicmodels.patient",
             "pk": data["id"],
