@@ -7,7 +7,8 @@ class PatientSerializer(serializers.ModelSerializer):
     patient_enriched = serializers.SerializerMethodField()
     patient_id = serializers.SerializerMethodField()
     confidence = serializers.SerializerMethodField()
-    last_visit = serializers.DateTimeField(read_only=True)
+    last_visit_date = serializers.DateTimeField(read_only=True)
+    last_visit_id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = models.Patient
@@ -55,6 +56,7 @@ class PatientSerializer(serializers.ModelSerializer):
             "filter_string": self.get_patient_enriched(instance),
             "patient_id": self.get_patient_id(instance),
             "confidence": self.get_confidence(instance),
-            "last_visit": data.get("last_visit"), 
+            "last_visit_date": data.get("last_visit_date"), 
+            "last_visit_id": data.get("last_visit_id"), 
         }
         return output

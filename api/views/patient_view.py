@@ -1,9 +1,7 @@
 from api.models.visit_model import Visit
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import OuterRef, Subquery, DateTimeField, Value
-from django.db.models.functions import Cast, Coalesce
-from django.utils import timezone
+from django.db.models import OuterRef, Subquery, DateField, IntegerField
 
 from api.models import Patient
 from api.serializers import PatientSerializer
@@ -11,20 +9,28 @@ from api.utils import facial_recognition
 
 from sabaibiometrics.settings import ENABLE_FACIAL_RECOGNITION, OFFLINE
 
-last_visit_subquery = Subquery(
-    Visit.objects.filter(patient_id=OuterRef('pk'))
-    .order_by('-date')
-    .values('date')[:1]
-)
+# last_visit_subquery = Subquery(
+#     Visit.objects.filter(patient_id=OuterRef('pk'))
+#     .order_by('-date')
+#     .values('date')[:1]
+# )
+
+last_visit_qs = Visit.objects.filter(patient_id=OuterRef('pk')).order_by('-date')
+
 class PatientView(APIView):
 
     def get(self, request, pk=None):
         if pk is not None:
             return self.get_object(pk)
         
+        # patients = Patient.objects.annotate(
+        #     last_visit=last_visit_subquery
+        # ).order_by("-last_visit", "-pk")
+
         patients = Patient.objects.annotate(
-            last_visit=last_visit_subquery
-        ).order_by("-last_visit", "-pk")
+            last_visit_date=Subquery(last_visit_qs.values('date')[:1], output_field=DateField()),
+            last_visit_id=Subquery(last_visit_qs.values('pk')[:1], output_field=IntegerField()),
+        ).order_by('-last_visit_date', '-pk')
 
         patient_name = request.query_params.get("name", "")
         patient_village_code = request.query_params.get("village_code", "")
@@ -37,7 +43,8 @@ class PatientView(APIView):
 
     def get_object(self, pk):
         patient = Patient.objects.annotate(
-            last_visit=last_visit_subquery
+            last_visit_date=Subquery(last_visit_qs.values('date')[:1], output_field=DateField()),
+            last_visit_id=Subquery(last_visit_qs.values('pk')[:1], output_field=IntegerField()),
         ).get(pk=pk)
         serializer = PatientSerializer(patient)
         return Response(serializer.data)
