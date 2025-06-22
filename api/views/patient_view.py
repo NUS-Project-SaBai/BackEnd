@@ -11,7 +11,11 @@ from api.utils import facial_recognition
 
 from sabaibiometrics.settings import ENABLE_FACIAL_RECOGNITION, OFFLINE
 
-
+last_visit_subquery = Subquery(
+    Visit.objects.filter(patient_id=OuterRef('pk'))
+    .order_by('-date')
+    .values('date')[:1]
+)
 class PatientView(APIView):
 
     def get(self, request, pk=None):
@@ -19,11 +23,7 @@ class PatientView(APIView):
             return self.get_object(pk)
         
         patients = Patient.objects.annotate(
-            last_visit=Subquery(
-                Visit.objects.filter(patient_id=OuterRef('pk'))
-                .order_by('-date')
-                .values('date')[:1]
-            )
+            last_visit=last_visit_subquery
         ).order_by("-last_visit", "-pk")
 
         patient_name = request.query_params.get("name", "")
@@ -36,7 +36,9 @@ class PatientView(APIView):
         return Response(serializer.data)
 
     def get_object(self, pk):
-        patient = Patient.objects.get(pk=pk)
+        patient = Patient.objects.annotate(
+            last_visit=last_visit_subquery
+        ).get(pk=pk)
         serializer = PatientSerializer(patient)
         return Response(serializer.data)
 
