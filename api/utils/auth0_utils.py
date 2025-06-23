@@ -1,9 +1,9 @@
-import requests
+import os
 
-AUTH0_DOMAIN = "sabai.jp.auth0.com"
-AUTH0_CLIENT_ID = "jNlvcpCDrfAChWX2nsEp9kCk0WjRFmSt"
-AUTH0_CLIENT_SECRET = "Z7U0t0vyliuUTbcrRE2OGGsM51jlKkvi8-zZHCqqJGLfFq1X0vMNIF8UgRl6IwgQ"
-AUTH0_AUDIENCE = f"https://{AUTH0_DOMAIN}/api/v2/"
+AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
+AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
+AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
+AUTH0_AUDIENCE = os.getenv("AUTH0_AUDIENCE", f"https://{AUTH0_DOMAIN}/api/v2/")
 
 def get_auth0_token():
     url = f"https://{AUTH0_DOMAIN}/oauth/token"
