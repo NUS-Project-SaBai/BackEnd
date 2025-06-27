@@ -12,10 +12,17 @@ class ConsultView(APIView):
     def get(self, request, pk=None):
         if pk is not None:
             return self.get_object(pk)
+        
         consults = Consult.objects.all()
+
         visit_key = request.query_params.get("visit", "")
+        patient_ID = request.query_params.get("patientID", "")    
+
         if visit_key:
             consults = consults.filter(visit=visit_key)
+        elif patient_ID:
+            consults = consults.filter(visit__patient__pk=patient_ID)
+
         serializer = ConsultSerializer(consults, many=True)
         return Response(serializer.data)
 

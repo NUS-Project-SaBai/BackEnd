@@ -10,11 +10,17 @@ class VitalsView(APIView):
     def get(self, request, pk=None):
         if pk is not None:
             return self.get_object(pk)
-
+        
         vitals = Vitals.objects.all()
+
         visit = request.query_params.get("visit", "")
+        patient_ID = request.query_params.get("patientID", "")
+
         if visit:
-            vitals = Vitals.objects.filter(visit=visit)
+            vitals = vitals.filter(visit=visit)
+        elif patient_ID:
+            vitals = vitals.filter(visit__patient__pk=patient_ID)
+
         serializer = VitalsSerializer(vitals, many=True)
         return Response(serializer.data)
 
