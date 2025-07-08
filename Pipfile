@@ -36,6 +36,8 @@ reportlab = "*"
 [scripts]
 test = "python manage.py test"
 start = "python manage.py start"
+makemigrations = "python manage.py makemigrations"
+migrate = "python manage.py migrate"
 download_images = "python manage.py download_images"
 upload_images = "python manage.py upload_images"
 offline = "python manage.py offline"
