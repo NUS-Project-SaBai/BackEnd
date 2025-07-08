@@ -12,4 +12,5 @@ class GlassesSerializer(serializers.ModelSerializer):
             "left_glasses_degree",
             "right_glasses_degree",
             "visit_id",
+            "notes",
         ]
