@@ -4,19 +4,22 @@ from api import serializers as APISerializer
 
 
 class ConsultSerializer(serializers.ModelSerializer):
-    visit = serializers.PrimaryKeyRelatedField(queryset=models.Visit.objects.all())
-    doctor = serializers.SlugRelatedField(
-        slug_field="auth0_id", queryset=models.CustomUser.objects.all()
+    visit_id = serializers.PrimaryKeyRelatedField(
+        source="visit", queryset=models.Visit.objects.all(), write_only=True
     )
+    visit = APISerializer.VisitSerializer(read_only=True)
+
+    doctor_id = serializers.SlugRelatedField(
+        source="doctor",
+        slug_field="auth0_id",
+        queryset=models.CustomUser.objects.all(),
+        write_only=True,
+    )
+    doctor = APISerializer.UserSerializer(read_only=True)
+
     prescriptions = APISerializer.OrderSerializer(many=True, read_only=True)
     diagnosis = APISerializer.DiagnosisSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Consult
         fields = "__all__"
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation["visit"] = APISerializer.VisitSerializer(instance.visit).data
-        representation["doctor"] = APISerializer.UserSerializer(instance.doctor).data
-        return representation

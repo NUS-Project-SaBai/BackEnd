@@ -1,55 +1,40 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
-from api.models import Vitals
 from api.serializers import VitalsSerializer
+from api.services import vitals_service
+from api.models import Vitals
 
 
 class VitalsView(APIView):
-
     def get(self, request, pk=None):
-        if pk is not None:
-            return self.get_object(pk)
+        if pk:
+            vitals = vitals_service.get_vitals(pk)
+            serializer = VitalsSerializer(vitals)
+            return Response(serializer.data)
 
-        vitals = Vitals.objects.all()
-        visit = request.query_params.get("visit", "")
-        if visit:
-            vitals = Vitals.objects.filter(visit=visit)
-        serializer = VitalsSerializer(vitals, many=True)
-        return Response(serializer.data)
-
-    def get_object(self, pk):
-        vitals = Vitals.objects.get(pk=pk)
-        serializer = VitalsSerializer(vitals)
+        visit_id = request.query_params.get("visit")
+        vitals_qs = vitals_service.list_vitals(visit_id)
+        serializer = VitalsSerializer(vitals_qs, many=True)
         return Response(serializer.data)
 
     def post(self, request):
         serializer = VitalsSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        serializer.is_valid(raise_exception=True)
+        vitals = serializer.save()
+        return Response(VitalsSerializer(vitals).data)
 
     def patch(self, request, pk=None):
-        if pk is not None:
-            vital = Vitals.objects.get(pk=pk)
-            return self.patch_object(request, vital)
+        if pk:
+            vital = vitals_service.get_vitals(pk)
+        else:
+            visit_id = request.query_params.get("visit")
+            vital = vitals_service.list_vitals(visit_id).first()
 
-        vital = Vitals.objects.all()
-        visit = request.query_params.get("visit", "")
-        if visit:
-            vital = vital.filter(visit=visit).first()
-        return self.patch_object(request, vital)
-
-    def patch_object(self, request, vital):
-        filtered_request_data = dict(
-            filter(lambda item: item[1] != "", request.data.items())
-        )
-        serializer = VitalsSerializer(vital, data=filtered_request_data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        serializer = VitalsSerializer(vital, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated_vital = serializer.save()
+        return Response(VitalsSerializer(updated_vital).data)
 
     def delete(self, request, pk):
-        vitals = Vitals.objects.get(pk=pk)
-        vitals.delete()
+        vitals_service.delete_vitals(pk)
         return Response({"message": "Deleted successfully"})

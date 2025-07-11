@@ -3,5 +3,5 @@ from api.views import VisitView
 
 urlpatterns = [
     path("", VisitView.as_view(), name="visits_list"),
-    path("<int:pk>", VisitView.as_view(), name="visits_pk"),
+    path("<int:pk>/", VisitView.as_view(), name="visits_pk"),
 ]

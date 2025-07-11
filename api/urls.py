@@ -18,7 +18,7 @@ urlpatterns = [
         "medication_review/",
         include(("api.routes.medication_review", "medication_review")),
     ),
-    path("files", include(("api.routes.files", "files"))),
+    path("files/", include(("api.routes.files", "files"))),
     path("glasses/", include(("api.routes.glasses", "glasses"))),
     path("referrals/", include(("api.routes.referrals", "referrals"))),
 ]
