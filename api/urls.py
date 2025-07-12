@@ -1,52 +1,26 @@
-from django.urls import path
+from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from api import views
 from sabaibiometrics.settings import OFFLINE, MEDIA_ROOT, MEDIA_URL
 from django.conf.urls.static import static
 
+
 urlpatterns = [
-    path("test", views.TestView.as_view(), name="test"),
-    path("medications", views.MedicationView.as_view(), name="medications_list"),
+    path("test/", include(("api.routes.test", "test"))),
+    path("medication/", include(("api.routes.medication", "medication"))),
+    path("patients/", include(("api.routes.patients", "patients"))),
+    path("visits/", include(("api.routes.visits", "visits"))),
+    path("vitals/", include(("api.routes.vitals", "vitals"))),
+    path("users/", include(("api.routes.users", "users"))),
+    path("consults/", include(("api.routes.consults", "consults"))),
+    path("diagnosis/", include(("api.routes.diagnosis", "diagnosis"))),
+    path("orders/", include(("api.routes.orders", "orders"))),
     path(
-        "medications/<int:pk>",
-        views.MedicationView.as_view(),
-        name="medications_detail",
+        "medication_review/",
+        include(("api.routes.medication_review", "medication_review")),
     ),
-    path("patients", views.PatientView.as_view(), name="patients_list"),
-    path("patients/<int:pk>", views.PatientView.as_view(), name="patients_detail"),
-    path("patients/search_face", views.PatientSearchView.as_view(), name="search_face"),
-    path("visits", views.VisitView.as_view(), name="visits_list"),
-    path("visits/<int:pk>", views.VisitView.as_view(), name="visits_detail"),
-    path("vitals", views.VitalsView.as_view(), name="vitals_list"),
-    path("vitals/<int:pk>", views.VitalsView.as_view(), name="vitals_detail"),
-    path("user", views.UserView.as_view(), name="user_list"),
-    path("user/<int:pk>", views.UserView.as_view(), name="user_detail"),
-    path("consults", views.ConsultView.as_view(), name="consults_list"),
-    path("consults/<int:pk>", views.ConsultView.as_view(), name="consults_detail"),
-    path(
-        "pdf_consults/<int:pk>",
-        views.PdfConsultView.as_view(),
-        name="pdf_consults_detail",
-    ),
-    path("diagnosis", views.DiagnosisView.as_view(), name="diagnosis_list"),
-    path("diagnosis/<int:pk>", views.DiagnosisView.as_view(), name="diagnosis_detail"),
-    path("orders", views.OrderView.as_view(), name="orders_list"),
-    path("orders/<int:pk>", views.OrderView.as_view(), name="orders_detail"),
-    path(
-        "medication_review",
-        views.MedicationReviewView.as_view(),
-        name="medication_review_list",
-    ),
-    path(
-        "medication_review/<int:pk>",
-        views.MedicationReviewView.as_view(),
-        name="medication_review_detail",
-    ),
-    path("upload/", views.FileView.as_view(), name="upload_file"),
-    path("glasses", views.GlassesView.as_view(), name="glasses_list"),
-    path("glasses/<int:pk>", views.GlassesView.as_view(), name="glasses_detail"),
-    path("referrals", views.ReferralView.as_view(), name="referral_list"),
-    path("referrals/<int:pk>", views.ReferralView.as_view(), name="referral_detail"),
+    path("files/", include(("api.routes.files", "files"))),
+    path("glasses/", include(("api.routes.glasses", "glasses"))),
+    path("referrals/", include(("api.routes.referrals", "referrals"))),
 ]
 
 if OFFLINE:
