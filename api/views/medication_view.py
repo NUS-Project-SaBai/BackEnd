@@ -4,7 +4,7 @@ from rest_framework import status
 
 from api.serializers import MedicationSerializer
 from api.services import medication_service
-from BackEnd.api.utils.doctor_utils import get_doctor_id
+from api.utils.doctor_utils import get_doctor_id
 
 
 class MedicationView(APIView):

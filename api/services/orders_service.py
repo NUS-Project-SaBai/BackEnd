@@ -9,7 +9,7 @@ from api.serializers import (
     MedicationReviewSerializer,
     DiagnosisSerializer,
 )
-from BackEnd.api.utils.doctor_utils import get_doctor_id
+from api.utils.doctor_utils import get_doctor_id
 
 from collections import defaultdict
 

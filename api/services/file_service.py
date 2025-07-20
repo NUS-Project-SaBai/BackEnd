@@ -2,7 +2,7 @@
 
 from api.models import File
 from api.serializers import FileSerializer
-from BackEnd.api.utils import file_utils
+from api.utils import file_utils
 from django.conf import settings
 
 

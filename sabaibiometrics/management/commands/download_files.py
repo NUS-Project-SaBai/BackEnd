@@ -4,7 +4,7 @@ from api.models import File
 from django.db.utils import IntegrityError
 import requests
 from sabaibiometrics.settings import CLOUDINARY_URL
-from BackEnd.api.utils import file_utils
+from api.utils import file_utils
 
 
 class Command(BaseCommand):

@@ -1,6 +1,6 @@
 from api.models import Consult
 from api.serializers import ConsultSerializer
-from BackEnd.api.utils import doctor_utils
+from api.utils import doctor_utils
 from django.db import transaction
 
 from api.services.orders_service import create_order  # to be created
