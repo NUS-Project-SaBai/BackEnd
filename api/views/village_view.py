@@ -24,7 +24,7 @@ class VillageView(APIView):
         created = village_service.create_village(serializer.validated_data)
         return Response(VillageSerializer(created).data, status=status.HTTP_201_CREATED)
 
-    #should include changing name(search replace), and also visibility of village (hidden or not)
+    # should include changing name(search replace), and also visibility of village (hidden or not)
     def patch(self, request, pk):
         village = village_service.get_village_by_id(pk)
         filtered_data = {k: v for k, v in request.data.items() if v != ""}
