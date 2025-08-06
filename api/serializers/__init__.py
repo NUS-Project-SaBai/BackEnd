@@ -9,3 +9,4 @@ from .vitals_serializer import VitalsSerializer
 from .consult_serializer import ConsultSerializer
 from .file_serializer import FileSerializer
 from .glasses_serializer import GlassesSerializer
+from .village_serializer import VillageSerializer
