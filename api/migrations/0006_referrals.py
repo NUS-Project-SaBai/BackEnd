@@ -7,20 +7,36 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0005_rename_blood_glucose_vitals_blood_glucose_non_fasting_and_more'),
+        ("api", "0005_rename_blood_glucose_vitals_blood_glucose_non_fasting_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Referrals',
+            name="Referrals",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('referral_state', models.TextField(blank=True, null=True)),
-                ('referral_comments', models.TextField(blank=True, null=True)),
-                ('consult', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='api.consult')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("referral_state", models.TextField(blank=True, null=True)),
+                ("referral_comments", models.TextField(blank=True, null=True)),
+                (
+                    "consult",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="api.consult",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'referrals',
+                "db_table": "referrals",
             },
         ),
     ]

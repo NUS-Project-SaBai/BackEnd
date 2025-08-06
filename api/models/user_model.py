@@ -5,7 +5,5 @@ from django.db import models
 class CustomUser(AbstractUser):
     auth0_id = models.CharField(max_length=255)
     nickname = models.CharField(max_length=255)
-    ROLE_CHOICES = [
-        ("admin", "Admin"),("member", "Member")
-    ]
+    ROLE_CHOICES = [("admin", "Admin"), ("member", "Member")]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="member")

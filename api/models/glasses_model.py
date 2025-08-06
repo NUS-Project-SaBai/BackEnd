@@ -1,6 +1,7 @@
 from django.db import models
 from api.models import Visit
 
+
 class Glasses(models.Model):
     class Meta:
         db_table = "glasses_prescription"
