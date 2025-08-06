@@ -2,6 +2,7 @@ from rest_framework import serializers
 from api import models
 from api import serializers as APISerializer
 
+
 class ReferralSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Referrals
