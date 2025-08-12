@@ -1,9 +1,10 @@
 # api/services/files.py
 
+from django.conf import settings
+
 from api.models import File
 from api.serializers import FileSerializer
 from api.utils import file_utils
-from django.conf import settings
 
 
 def list_files(patient_pk=None, include_deleted=False):
@@ -52,8 +53,16 @@ def update_file(pk, data):
     file = File.objects.get(pk=pk)
     serializer = FileSerializer(file, data=data, partial=True)
     serializer.is_valid(raise_exception=True)
-    updatedFile = serializer.save()
-    return updatedFile
+
+    if not settings.OFFLINE:
+        if not file.file_path:
+            raise ConnectionError("Failed to edit file on Google Drive.\nFile:\n", file)
+
+        if serializer.validated_data.get("file_name"):
+            file_utils.rename_file(
+                file.file_path, serializer.validated_data["file_name"]
+            )
+    return serializer.save()
 
 
 # soft delete only
