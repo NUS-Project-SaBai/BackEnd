@@ -21,7 +21,10 @@ urlpatterns = [
     path("files/", include(("api.routes.files", "files"))),
     path("glasses/", include(("api.routes.glasses", "glasses"))),
     path("referrals/", include(("api.routes.referrals", "referrals"))),
-    path("api/", include(("api.routes.patient_records", "patient_records"))),
+    # CUSTOM ENDPOINTS
+    path(
+        "patient_records/", include(("api.routes.patient_records", "patient_records"))
+    ),
 ]
 
 if OFFLINE:
