@@ -11,3 +11,5 @@ class File(models.Model):
     offline_file = models.FileField(upload_to="offline_files/", null=True)
     file_name = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField(blank=True, null=True)
+    is_deleted = models.BooleanField(default=False)
