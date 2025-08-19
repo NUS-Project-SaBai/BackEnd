@@ -8,3 +8,10 @@ class MedicationHistoryVM:
     qty_changed: int
     qty_remaining: int
     date: str
+
+@dataclass
+class PharmacyStockVM:
+    medicine_id: int
+    medicine_name: str
+    quantity: int
+    code: str

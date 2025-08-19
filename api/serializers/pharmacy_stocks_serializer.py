@@ -7,3 +7,9 @@ class MedicationHistorySerializer(serializers.Serializer):
     qty_changed = serializers.IntegerField()
     qty_remaining = serializers.IntegerField()
     date = serializers.DateTimeField()
+
+class PharmacyStockSerializer(serializers.Serializer):
+    medicine_id = serializers.IntegerField(source='id')
+    medicine_name = serializers.CharField()
+    quantity = serializers.IntegerField()
+    code = serializers.CharField()

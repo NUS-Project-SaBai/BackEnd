@@ -32,7 +32,10 @@ urlpatterns = [
     ),
 
     path(
-        "medication_history/<int:medicine_id>/", include(("api.routes.pharmacy_stocks", "pharmacy_stocks"))
+        "medication_history/<int:medicine_id>/", include(("api.routes.medication_history", "medication_history"))
+    ),
+
+    path("pharmacy_stocks/", include(("api.routes.pharmacy_stocks", "pharmacy_stocks"))
     ),
 ]
 

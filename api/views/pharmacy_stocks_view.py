@@ -2,13 +2,11 @@
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from api.services.pharmacy_stocks_service import get_medication_history_viewmodel
-from api.serializers.pharmacy_stocks_serializer import MedicationHistorySerializer
+from api.services.pharmacy_stocks_service import get_pharmacy_stock_viewmodel
+from api.serializers.pharmacy_stocks_serializer import PharmacyStockSerializer
 
-class MedicationHistoryView(APIView):
-    def get(self, request, medicine_id):
-        # Fetch the medication history for a specific medicine
-        medication_history = get_medication_history_viewmodel(medicine_id)
-        medication_history_serialized = MedicationHistorySerializer(medication_history, many=True)
-        return Response(medication_history_serialized.data)
-
+class PharmacyStocksView(APIView):
+    def get(self, request):
+        pharmacy_stocks = get_pharmacy_stock_viewmodel()
+        pharmacy_stocks_serialized = PharmacyStockSerializer(pharmacy_stocks, many=True)
+        return Response(pharmacy_stocks_serialized.data)
