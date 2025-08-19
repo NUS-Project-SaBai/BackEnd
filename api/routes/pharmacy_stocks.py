@@ -1,6 +1,6 @@
 from django.urls import path
-from api.views.pharmacy_stocks_view import MedicationHistoryView
+from api.views.pharmacy_stocks_view import PharmacyStocksView
 
 urlpatterns = [
-    path("", MedicationHistoryView.as_view(), name="pharmacy_stocks"),
+    path("", PharmacyStocksView.as_view(), name="pharmacy_stocks"),
 ]

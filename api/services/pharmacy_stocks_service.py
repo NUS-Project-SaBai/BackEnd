@@ -1,4 +1,4 @@
-from api.models import MedicationReview, Order
+from api.models import MedicationReview, Order, Medication
 from collections import defaultdict
 
 def get_medication_history_viewmodel(medicine_id: int):
@@ -25,3 +25,7 @@ def get_medication_history_viewmodel(medicine_id: int):
         })
     
     return medication_history
+
+def get_pharmacy_stock_viewmodel():
+    medication_data = Medication.objects.all().values('id', 'medicine_name', 'quantity', 'code')
+    return list(medication_data)
