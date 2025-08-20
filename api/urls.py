@@ -34,9 +34,6 @@ urlpatterns = [
     path(
         "medication_history/", include(("api.routes.medication_history", "medication_history"))
     ),
-
-    path("pharmacy_stocks/", include(("api.routes.pharmacy_stocks", "pharmacy_stocks"))
-    ),
 ]
 
 if OFFLINE:
