@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+
 class MedicationHistorySerializer(serializers.Serializer):
     approval_name = serializers.CharField()
     doctor_name = serializers.CharField()
