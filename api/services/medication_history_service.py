@@ -10,10 +10,8 @@ def get_medication_history_viewmodel(medicine_id: int):
     for review in medication_reviews:
         order = Order.objects.filter(medication_review=review).first()
         consult = order.consult if order else None
-        visit = consult.visit if consult else None
-        doctor = consult.doctor if consult else None
         
         medication_history_list.append(
-            MedicationHistoryVM(review, visit, doctor)
+            MedicationHistoryVM(review, consult)
         )
     return medication_history_list
