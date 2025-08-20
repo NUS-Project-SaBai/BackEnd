@@ -1,35 +1,32 @@
-from dataclasses import dataclass
-from typing import List, Optional
-from datetime import datetime
-
-@dataclass(frozen=True)
 class PharmacyOrderVM:
-    id: int
-    medication_name: Optional[str]
-    medication_code: Optional[str]
-    quantity_changed: Optional[int]
-    notes: Optional[str]
+    def __init__(self, order):
+        medicine = order.medication_review.medicine if order.medication_review else None
+        self.id = medicine.id if medicine else None
+        self.medication_name = medicine.medicine_name if medicine else None
+        self.medication_code = medicine.code if medicine else None
+        self.quantity_changed = order.medication_review.quantity_changed if order.medication_review else None
+        self.notes = order.notes
 
-@dataclass(frozen=True)
 class DiagnosisVM:
-    category: str
-    details: str
+    def __init__(self, diagnosis):
+        self.category = diagnosis.category
+        self.details = diagnosis.details
 
-@dataclass(frozen=True)
 class VisitBundleVM:
-    visit_id: int
-    visit_date: Optional[datetime]
-    orders: List[PharmacyOrderVM]
-    diagnoses: List[DiagnosisVM]
+    def __init__(self, visit, orders, diagnoses):
+        self.visit_id = visit.pk
+        self.visit_date = visit.date
+        self.orders = orders
+        self.diagnoses = diagnoses
 
-@dataclass(frozen=True)
 class PatientHeaderVM:
-    patient_id: str
-    name: str
-    picture_url: Optional[str]
-    village_prefix: str
+    def __init__(self, patient):
+        self.patient_id = getattr(patient, "patient_id", str(patient.pk))
+        self.name = getattr(patient, "name", str(patient))
+        self.picture_url = getattr(getattr(patient, "picture", None), "url", None)
+        self.village_prefix = str(getattr(patient, "village_prefix", "")) or ""
 
-@dataclass(frozen=True)
 class PharmacyPatientBundleVM:
-    patient: PatientHeaderVM
-    data: List[VisitBundleVM]
+    def __init__(self, patient, data):
+        self.patient = patient
+        self.data = data
