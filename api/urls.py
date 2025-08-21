@@ -25,6 +25,13 @@ urlpatterns = [
     path(
         "patient_records/", include(("api.routes.patient_records", "patient_records"))
     ),
+    path(
+        "pharmacy_orders/", include(("api.routes.pharmacy_orders", "pharmacy_orders"))
+    ),
+    path(
+        "medication_history/",
+        include(("api.routes.medication_history", "medication_history")),
+    ),
 ]
 
 if OFFLINE:
