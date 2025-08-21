@@ -6,7 +6,9 @@ from api.models import MedicationReview, Order
 def get_medication_history_viewmodel(medicine_id: int):
     medication_reviews = MedicationReview.objects.filter(
         medicine_id=medicine_id
-    ).order_by("-date")
+    ).filter(order_status="APPROVED").order_by("-date")
+    if not medication_reviews:
+        return None
 
     medication_history_list = []
 
