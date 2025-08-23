@@ -4,15 +4,11 @@ from api import serializers as APISerializer
 
 
 class FileSerializer(serializers.ModelSerializer):
-    patient = serializers.PrimaryKeyRelatedField(queryset=models.Patient.objects.all())
+    patient_id = serializers.PrimaryKeyRelatedField(
+        source="patient", queryset=models.Patient.objects.all(), write_only=True
+    )
+    patient = APISerializer.PatientSerializer(read_only=True)
 
     class Meta:
         model = models.File
         fields = "__all__"
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation["patient"] = APISerializer.PatientSerializer(
-            instance.patient
-        ).data
-        return representation
