@@ -47,9 +47,13 @@ class FileView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, pk):
-        updatedFile = file_service.update_file(pk, request.data)
-        serializer = FileSerializer(updatedFile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            file = file_service.update_file(pk, request.data)
+        except ConnectionError as e:
+            return Response(
+                {"error": str(e)}, status=status.HTTP_503_SERVICE_UNAVAILABLE
+            )
+        return Response(FileSerializer(file).data)
 
     def delete(self, request, pk):
         file_service.delete_file(pk)
