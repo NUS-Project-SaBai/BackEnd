@@ -27,11 +27,10 @@ urlpatterns = [
         "patient_records/", include(("api.routes.patient_records", "patient_records"))
     ),
     path(
-        "pharmacy_orders/", include(("api.routes.pharmacy_orders", "pharmacy_orders"))
+        "patient_consult/", include(("api.routes.patient_consult", "patient_consult"))
     ),
     path(
-        "medication_history/",
-        include(("api.routes.medication_history", "medication_history")),
+        "vision/", include(("api.routes.patient_vision", "patient_vision"))
     ),
 ]
 
