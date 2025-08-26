@@ -4,23 +4,22 @@ from django.db.models import QuerySet
 from api.models import Visit, Patient, Vitals, Consult, Order
 from api.viewmodels.patient_consult_viewmodel import PatientConsultViewModel
 
+
 def _qs_patient() -> QuerySet:
-    return (
-        Patient.objects
-    )
+    return Patient.objects
+
 
 def _qs_consults(visit_id: int) -> QuerySet:
     return (
-        Consult.objects
-        .filter(visit_id=visit_id)
+        Consult.objects.filter(visit_id=visit_id)
         .select_related("doctor")
         .order_by("date", "id")
     )
 
+
 def _qs_orders_for_visit(visit_id: int) -> QuerySet:
     return (
-        Order.objects
-        .filter(consult__visit_id=visit_id)
+        Order.objects.filter(consult__visit_id=visit_id)
         .select_related(
             "consult",
             "consult__visit",
@@ -29,6 +28,7 @@ def _qs_orders_for_visit(visit_id: int) -> QuerySet:
         )
         .order_by("id")
     )
+
 
 def get_patient_consult_viewmodel(visit_id: int) -> PatientConsultViewModel:
     visit: Visit = get_object_or_404(
@@ -39,13 +39,11 @@ def get_patient_consult_viewmodel(visit_id: int) -> PatientConsultViewModel:
     patient: Patient = _qs_patient().get(pk=visit.patient_id)
 
     vitals: Optional[Vitals] = (
-        Vitals.objects.filter(visit_id=visit_id)
-        .order_by("-id")
-        .first()
+        Vitals.objects.filter(visit_id=visit_id).order_by("-id").first()
     )
 
     consults: List[Consult] = list(_qs_consults(visit_id))
-    orders:   List[Order]   = list(_qs_orders_for_visit(visit_id))
+    orders: List[Order] = list(_qs_orders_for_visit(visit_id))
 
     return PatientConsultViewModel(
         patient=patient,

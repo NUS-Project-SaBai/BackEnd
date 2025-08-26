@@ -29,9 +29,7 @@ urlpatterns = [
     path(
         "patient_consult/", include(("api.routes.patient_consult", "patient_consult"))
     ),
-    path(
-        "vision/", include(("api.routes.patient_vision", "patient_vision"))
-    ),
+    path("vision/", include(("api.routes.patient_vision", "patient_vision"))),
 ]
 
 if OFFLINE:

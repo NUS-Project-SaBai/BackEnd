@@ -4,9 +4,11 @@ from api.models import MedicationReview, Order
 
 # returns a list of medication history view models
 def get_medication_history_viewmodel(medicine_id: int):
-    medication_reviews = MedicationReview.objects.filter(
-        medicine_id=medicine_id
-    ).filter(order_status="APPROVED").order_by("-date")
+    medication_reviews = (
+        MedicationReview.objects.filter(medicine_id=medicine_id)
+        .filter(order_status="APPROVED")
+        .order_by("-date")
+    )
     if not medication_reviews:
         return None
 

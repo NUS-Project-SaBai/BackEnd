@@ -2,14 +2,17 @@ from rest_framework import serializers
 from api.serializers import PatientSerializer
 from api.serializers import VitalsSerializer
 
+
 class DoctorMiniOut(serializers.Serializer):
     nickname = serializers.CharField(allow_null=True, required=False)
+
 
 class ConsultPickOut(serializers.Serializer):
     id = serializers.IntegerField()
     date = serializers.DateTimeField()
     doctor = DoctorMiniOut()
     referred_for = serializers.CharField(allow_null=True, required=False)
+
 
 class PrescriptionRowOut(serializers.Serializer):
     consult_id = serializers.IntegerField(allow_null=True)
@@ -19,7 +22,8 @@ class PrescriptionRowOut(serializers.Serializer):
     notes = serializers.CharField(allow_null=True, required=False)
     status = serializers.CharField(allow_null=True)
 
-class PatientConsultVMOut(serializers.Serializer):
+
+class PatientConsultOutputSerializer(serializers.Serializer):
     patient = PatientSerializer()
     vitals = VitalsSerializer(allow_null=True)
     visit_date = serializers.CharField()

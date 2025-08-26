@@ -11,7 +11,7 @@ class MedicationHistoryView(APIView):
         medicine_id = request.query_params.get("medicine_id")
         if not medicine_id:
             return Response({"error": "Missing medicine_id param"}, status=400)
-        
+
         medication_history = get_medication_history_viewmodel(medicine_id)
         medication_history_serialized = MedicationHistorySerializer(
             medication_history, many=True
