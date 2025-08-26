@@ -5,10 +5,10 @@ from api import serializers as APISerializer
 
 class VitalsSerializer(serializers.ModelSerializer):
     visit_id = serializers.PrimaryKeyRelatedField(
-        source="visit", queryset=models.Visit.objects.all(), write_only=True
+        source="visit",
+        queryset=models.Visit.objects.all(),
     )
-    visit = APISerializer.VisitSerializer(read_only=True)
 
     class Meta:
         model = models.Vitals
-        fields = "__all__"
+        exclude = ("visit",)
