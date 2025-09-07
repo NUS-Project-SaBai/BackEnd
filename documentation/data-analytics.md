@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
 ## 2. Run an Example
 ```bash
-python data_analytics/patientsGender.py
+python dataAnalytics/patientsGender.py
 ```
 This will
 - Load database credentials from your .env file
