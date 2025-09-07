@@ -54,7 +54,7 @@ Do note that the database you are connected to should be the updated one with 23
 2. Push your branch `git push origin data-analytics-<itemID>`
 3. On GitHub, open a <b>Pull Request (PR)</b>
     - <b>Base branch</b>: data-analytics
-    - <b>Compare branch</b>: your `data-analytics-<itemID>
+    - <b>Compare branch</b>: your `data-analytics-<itemID>`
 4. In the PR description, include:
     - what the script does
     - which tables/columns it queries
