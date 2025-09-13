@@ -12,17 +12,20 @@ from api.services.patient_service import (
 )
 
 class PatientView(APIView):
-    last_visit_qs = Visit.objects.filter(patient_id=OuterRef('pk')).order_by('-date')
+    # get visits by patient id, ordered by date desc
+    patient_visits_qs = Visit.objects.filter(patient_id=OuterRef('pk')).order_by('-date')
+    # queryset of patient(s) annotated with their last visit date and id
+    patients_with_last_visit_qs = Patient.objects.annotate(
+            last_visit_date=Subquery(patient_visits_qs.values('date')[:1], output_field=DateField()),
+            last_visit_id=Subquery(patient_visits_qs.values('pk')[:1], output_field=IntegerField()),
+        )
 
     def get(self, request, pk=None):
         if pk:
-            patient = get_object_or_404(Patient, pk=pk)
+            patient = get_object_or_404(self.patients_with_last_visit_qs, pk=pk)
             return Response(PatientSerializer(patient).data)
         
-        patients = Patient.objects.annotate(
-            last_visit_date=Subquery(self.last_visit_qs.values('date')[:1], output_field=DateField()),
-            last_visit_id=Subquery(self.last_visit_qs.values('pk')[:1], output_field=IntegerField()),
-        ).order_by('-last_visit_date', '-pk')
+        patients = self.patients_with_last_visit_qs.order_by('-last_visit_date', '-pk')
 
         name = request.query_params.get("name")
         code = request.query_params.get("village_code")
