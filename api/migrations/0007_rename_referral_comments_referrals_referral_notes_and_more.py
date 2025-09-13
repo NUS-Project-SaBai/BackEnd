@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0006_referrals'),
+        ("api", "0006_referrals"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='referrals',
-            old_name='referral_comments',
-            new_name='referral_notes',
+            model_name="referrals",
+            old_name="referral_comments",
+            new_name="referral_notes",
         ),
         migrations.AddField(
-            model_name='referrals',
-            name='referral_outcome',
+            model_name="referrals",
+            name="referral_outcome",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='referrals',
-            name='referred_for',
+            model_name="referrals",
+            name="referred_for",
             field=models.TextField(blank=True, null=True),
         ),
     ]

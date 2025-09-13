@@ -27,10 +27,8 @@ class Patient(models.Model):
     def clean(self):
         # Ensure that at least one of picture or offline_picture is provided
         if not self.picture and not self.offline_picture:
-            raise ValidationError(
-                ("At least one of 'picture' or 'offline_picture' must be provided.")
-            )
+            raise ValidationError("Either 'picture' or 'offline_picture' is required.")
 
     def save(self, *args, **kwargs):
-        self.clean()  # Call clean() to enforce validation before saving
+        self.full_clean()  # Call clean() to enforce validation before saving
         super(Patient, self).save(*args, **kwargs)

@@ -1,69 +1,49 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from api.models import Referrals
-from api.serializers.referrals_serializer import ReferralSerializer
 from rest_framework import status
-from api.serializers.patient_serializer import PatientSerializer
+
+from api.services import referral_service
+
 
 class ReferralView(APIView):
     def get(self, request, pk=None):
-        if pk is not None:
+        if pk:
             return self.get_object(pk)
-        response = []
-        
-        referrals = Referrals.objects.order_by("-pk")
-        serializer_referral = ReferralSerializer(referrals, many=True) 
 
-        for ref in serializer_referral.data:
-            serializer_patient = PatientSerializer(self.get_patient_from_referral(ref["id"]))
-            date = self.get_date_from_referral(ref["id"])
-            response.append({
-                "patient": serializer_patient.data,
-                "referral": ref,
-                "date": date
-            })
+        referrals = referral_service.list_referrals()
+        response = []
+        for ref in referrals:
+            patient_data = referral_service.serialize_patient_from_referral(ref)
+            date = referral_service.get_date_from_referral(ref)
+            response.append(
+                {
+                    "patient": patient_data,
+                    "referral": referral_service.ReferralSerializer(ref).data,
+                    "date": date,
+                }
+            )
 
         return Response(response)
-    
-    def patch(self, request, pk):
-
-        referral = Referrals.objects.get(pk=pk)
-
-        filtered_request_data = dict(
-            filter(lambda item: item[1] != "", request.data.items())
-        )
-        
-        serializer = ReferralSerializer(referral, data=filtered_request_data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
 
     def get_object(self, pk):
-        referral = Referrals.objects.get(pk=pk)
-        serializer_referral = ReferralSerializer(referral)
-        serializer_patient = PatientSerializer(self.get_patient_from_referral(pk))
-        date = self.get_date_from_referral(pk)
-        return Response({
-            "patient": serializer_patient.data,
-            "referral": serializer_referral.data,
-            "date": date
-        })
-    
-    def get_patient_from_referral(self, pk): #pk = referral ID
-        referral = Referrals.objects.get(pk=pk)
-        consult = referral.consult
-        visit = consult.visit
-        patient = visit.patient
-        return patient
-    
-    def get_date_from_referral(self, pk):
-        referral = Referrals.objects.get(pk=pk)
-        consult = referral.consult
-        return consult.date
-    
+        ref = referral_service.get_referral(pk)
+        return Response(
+            {
+                "patient": referral_service.serialize_patient_from_referral(ref),
+                "referral": referral_service.ReferralSerializer(ref).data,
+                "date": referral_service.get_date_from_referral(ref),
+            }
+        )
+
+    def patch(self, request, pk):
+        referral = referral_service.get_referral(pk)
+        filtered_data = {k: v for k, v in request.data.items() if v != ""}
+        updated = referral_service.update_referral(referral, filtered_data)
+        return Response(referral_service.ReferralSerializer(updated).data)
+
     def post(self, request):
-        serializer = ReferralSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        referral = referral_service.create_referral(request.data)
+        return Response(
+            referral_service.ReferralSerializer(referral).data,
+            status=status.HTTP_201_CREATED,
+        )

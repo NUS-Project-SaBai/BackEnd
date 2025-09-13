@@ -45,6 +45,8 @@ class Vitals(models.Model):
     # Eye vitals
     left_eye_degree = models.TextField(blank=True, null=True)
     right_eye_degree = models.TextField(blank=True, null=True)
+    left_astigmatism = models.CharField(max_length=20, blank=True, null=True)
+    right_astigmatism = models.CharField(max_length=20, blank=True, null=True)
     left_eye_pinhole = models.TextField(blank=True, null=True)
     right_eye_pinhole = models.TextField(blank=True, null=True)
 

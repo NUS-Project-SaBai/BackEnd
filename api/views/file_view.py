@@ -1,63 +1,60 @@
+# api/views/file_view.py
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from api.models import File
+from api.services import file_service
 from api.serializers import FileSerializer
-import os
-import tempfile
-from api.views import utils
-from sabaibiometrics.settings import OFFLINE
+from rest_framework import status
 
 
 class FileView(APIView):
     def get(self, request, pk=None):
         if pk is not None:
-            return self.get_object(pk)
-
-        files = File.objects.all()
+            return Response(file_service.get_file(pk), status=status.HTTP_200_OK)
 
         patient_pk = request.query_params.get("patient_pk", "")
-        if patient_pk:
-            files = files.filter(patient_id=patient_pk)
-
+        include_deleted = request.query_params.get("include_deleted", "").lower() in (
+            "1",
+            "true",
+            "yes",
+        )
+        files = file_service.list_files(
+            patient_pk=patient_pk, include_deleted=include_deleted
+        )
         serializer = FileSerializer(files, many=True)
-        return Response(serializer.data)
-
-    def get_object(self, pk):
-        users = File.objects.get(pk=pk)
-        serializer = FileSerializer(users)
-        return Response(serializer.data)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )
 
     def post(self, request):
-        uploaded_file = request.data.get("file")
-        labeled_filename = request.data.get("file_name")
-        patient_pk = request.data.get("patient_pk")
+        try:
+            uploaded_file = (
+                request.FILES.get("offline_file")
+                or request.FILES.get("file")
+                or request.data.get("file")
+            )
+            labeled_filename = request.data.get("file_name")
+            patient_pk = request.data.get("patient_pk")
 
-        if not uploaded_file:
-            return Response({"error": "No file was uploaded"}, status=400)
-
-        if not labeled_filename:
-            return Response({"error": "No labeled filename provided"}, status=400)
-
-        data = {"patient": patient_pk, "file_name": labeled_filename}
-
-        if OFFLINE:
-            data["offline_file"] = uploaded_file
-        else:
-            data["file_path"] = utils.upload_file(uploaded_file, labeled_filename)
-
-        serializer = FileSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+            description = request.data.get("description")
+            createdFile = file_service.create_file(
+                uploaded_file, labeled_filename, patient_pk, description=description
+            )
+            serializer = FileSerializer(createdFile)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, pk):
-        user = File.objects.get(pk=pk)
-        serializer = FileSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        try:
+            file = file_service.update_file(pk, request.data)
+        except ConnectionError as e:
+            return Response(
+                {"error": str(e)}, status=status.HTTP_503_SERVICE_UNAVAILABLE
+            )
+        return Response(FileSerializer(file).data)
 
     def delete(self, request, pk):
-        user = File.objects.get(pk=pk)
-        user.delete()
-        return Response({"message": "Deleted successfully"})
+        file_service.delete_file(pk)
+        return Response({"message": "Deleted successfully"}, status=status.HTTP_200_OK)

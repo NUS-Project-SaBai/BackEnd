@@ -1,58 +1,46 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Prefetch
+from rest_framework import status
 
-from api.models import MedicationReview, Order
 from api.serializers import MedicationReviewSerializer
+from api.services import medication_review_service
 
 
 class MedicationReviewView(APIView):
     def get(self, request, pk=None):
-        if pk is not None:
-            return self.get_object(pk)
+        if pk:
+            review = medication_review_service.get_medication_review(pk)
+            if not review:
+                return Response({"error": "Not found"}, status=404)
+            return Response(MedicationReviewSerializer(review).data)
 
-        medication_reviews = MedicationReview.objects.all()
-
-        medication_pk = request.query_params.get("medication_pk", "")
-        if medication_pk:
-            medication_reviews = medication_reviews.filter(
-                medicine_id=medication_pk, order_status="APPROVED"
-            )
-
-        medication_reviews.prefetch_related(
-            Prefetch("order", queryset=Order.objects.all())
+        medication_pk = request.query_params.get("medication_pk")
+        reviews = medication_review_service.list_medication_reviews(medication_pk)
+        serializer = MedicationReviewSerializer(
+            reviews, many=True, context={"include_order": True}
         )
-        return Response(
-            MedicationReviewSerializer(
-                medication_reviews, many=True, context={"include_order": True}
-            ).data
-        )
-
-    def get_object(self, pk):
-        medication_history = MedicationReview.objects.filter(pk=pk).first()
-        serializer = MedicationReviewSerializer(medication_history)
         return Response(serializer.data)
 
     def post(self, request):
-        MedicationReviewSerializer.new_entry(request.data)
+        review = medication_review_service.create_medication_review(request.data)
+        return Response(
+            MedicationReviewSerializer(review).data, status=status.HTTP_201_CREATED
+        )
 
     def patch(self, request, pk):
-        medication_history = MedicationReview.objects.get(pk=pk)
-        serializer = MedicationReviewSerializer(
-            medication_history, data=request.data, partial=True
+        review = medication_review_service.get_medication_review(pk)
+        if not review:
+            return Response({"error": "Not found"}, status=404)
+        updated = medication_review_service.update_medication_review(
+            review, request.data
         )
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        return Response(MedicationReviewSerializer(updated).data)
 
     def delete(self, request, pk):
-        medication_history = MedicationReview.objects.get(pk=pk)
-        medication_history.delete()
-        return Response({"message": "Deleted successfully"})
-
-    @staticmethod
-    def add_entry(data):
-        serializer = MedicationReviewSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return serializer.data
+        review = medication_review_service.get_medication_review(pk)
+        if not review:
+            return Response({"error": "Not found"}, status=404)
+        medication_review_service.delete_medication_review(review)
+        return Response(
+            {"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT
+        )

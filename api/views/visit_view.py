@@ -1,44 +1,36 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from api.models import Visit
 from api.serializers import VisitSerializer
+from api.services import visit_service
 
 
 class VisitView(APIView):
     def get(self, request, pk=None):
-        if pk is not None:
-            return self.get_object(pk)
-        visits = Visit.objects.all()
-        patient = request.query_params.get("patient", "")
-        if patient:
-            visits = (
-                visits.select_related("patient")
-                .filter(patient_id=patient)
-                .order_by("-id")
-            )
-        serializer = VisitSerializer(visits, many=True)
-        return Response(serializer.data)
+        if pk:
+            visit = visit_service.get_visit(pk)
+            serializer = VisitSerializer(visit)
+            return Response(serializer.data)
 
-    def get_object(self, pk):
-        visit = Visit.objects.get(pk=pk)
-        serializer = VisitSerializer(visit)
+        patient_id = request.query_params.get("patient")
+        visits = visit_service.list_visits(patient_id)
+        serializer = VisitSerializer(visits, many=True)
         return Response(serializer.data)
 
     def post(self, request):
         serializer = VisitSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        serializer.is_valid(raise_exception=True)
+        visit = visit_service.create_visit(serializer.validated_data)
+        return Response(VisitSerializer(visit).data)
 
     def patch(self, request, pk):
-        visit = Visit.objects.get(pk=pk)
+        visit = visit_service.get_visit(pk)
         serializer = VisitSerializer(visit, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        serializer.is_valid(raise_exception=True)
+        updated_visit = visit_service.update_visit(visit, serializer.validated_data)
+        return Response(VisitSerializer(updated_visit).data)
 
     def delete(self, request, pk):
-        visit = Visit.objects.get(pk=pk)
-        visit.delete()
+        visit = visit_service.get_visit(pk)
+        visit_service.delete_visit(visit)
         return Response({"message": "Deleted successfully"})

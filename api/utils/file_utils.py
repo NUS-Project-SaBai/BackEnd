@@ -1,6 +1,8 @@
-from sabaibiometrics.utils import jwt_decode_token
-from api.models import CustomUser
-from sabaibiometrics.settings import OFFLINE
+"""
+Documentation for Google Drive API:
+https://googleapis.github.io/google-api-python-client/docs/dyn/drive_v3.html
+"""
+
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
 from sabaibiometrics.settings import (
@@ -10,17 +12,6 @@ from sabaibiometrics.settings import (
 import os
 import tempfile
 import requests
-
-
-def get_doctor_id(headers):
-    if "Authorization" in headers:
-        token = headers["Authorization"].split(" ")[1]
-        payload = jwt_decode_token(token)
-        doctor_id = payload.get("sub")
-        return doctor_id
-    elif "doctor" in headers and OFFLINE:
-        auth0_id = CustomUser.objects.get(email=headers["doctor"]).auth0_id
-        return auth0_id
 
 
 SCOPES = ["https://www.googleapis.com/auth/drive"]
@@ -103,3 +94,36 @@ def download_file(url, output_filename):
         raise Exception(
             f"Failed to download file: {response.status_code}, {response.text}"
         )
+
+
+def rename_file(file_url, new_name):
+    """
+    Renames a file on Google Drive.
+
+    Args:
+        file_url (str): The URL of the file to rename.
+        new_name (str): The new name for the file.
+
+    Returns:
+        str: The new URL of the renamed file.
+    """
+    creds = authenticate()
+    service = build("drive", "v3", credentials=creds)
+
+    # Extract file ID from the shared URL
+    try:
+        file_id = file_url.split("/d/")[1].split("/")[0]
+    except IndexError:
+        raise ValueError(
+            "Invalid Google Drive URL format. Please provide a valid sharing link."
+        )
+
+    # Update the file's name
+    updated_file = (
+        service.files().update(fileId=file_id, body={"name": new_name}).execute()
+    )
+
+    if not updated_file or not updated_file.get("id"):
+        raise ConnectionError("Failed to rename file on Google Drive.")
+
+    return f"https://drive.google.com/file/d/{updated_file['id']}/view?usp=sharing"
