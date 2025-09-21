@@ -20,3 +20,7 @@ def edit_village(instance, validated_data):
         setattr(instance, attr, value)
     instance.save()
     return instance
+
+def get_all_villages_including_hidden():
+    """Get all villages including hidden ones for admin management"""
+    return Village.objects.all()

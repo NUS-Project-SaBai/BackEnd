@@ -14,7 +14,15 @@ class VillageView(APIView):
             serializer = VillageSerializer(village)
             return Response(serializer.data)
 
-        villages = village_service.get_all_villages()
+        # Check if admin wants to see all villages including hidden ones
+        include_hidden = request.query_params.get('include_hidden', 'false').lower() == 'true'
+        
+        # Return all villages for admin or only visible villages for normal users
+        if include_hidden:
+            villages = village_service.get_all_villages_including_hidden()
+        else:
+            villages = village_service.get_all_villages()
+            
         serializer = VillageSerializer(villages, many=True)
         return Response(serializer.data)
 
