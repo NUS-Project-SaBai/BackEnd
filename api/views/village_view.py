@@ -14,7 +14,11 @@ class VillageView(APIView):
             serializer = VillageSerializer(village)
             return Response(serializer.data)
 
-        villages = village_service.get_all_villages()
+        include_hidden = request.query_params.get("include_hidden")
+        if include_hidden:
+            villages = village_service.get_all_villages(is_hidden=None)
+        else:
+            villages = village_service.get_all_villages()
         serializer = VillageSerializer(villages, many=True)
         return Response(serializer.data)
 
