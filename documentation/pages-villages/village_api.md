@@ -149,18 +149,6 @@
 
 ### Data Processing Details
 
-#### Processing on the Frontend
-
-- **Where**:  
-  Village selection components, registration forms, and village management interfaces.
-- **How**:
-  - Filtering visible villages for user-facing dropdowns
-  - Formatting village names for display
-  - Using colour codes for visual indicators
-  - Managing village visibility in admin interfaces
-- **Example**:  
-  Village dropdown filters out hidden villages and displays village_name with colour_code as a visual indicator.
-
 #### Processing on the Backend
 
 - **Where**:  
@@ -189,7 +177,7 @@
 
 - **Uniqueness Constraint**: Village names must be unique across all villages (including hidden ones).
 - **Soft Delete**: Villages use the `is_hidden` flag for soft deletion rather than actual deletion.
-- **Color Codes**: The colour_code field is intended for frontend visual representation and should follow standard color format conventions.
+- **Color Codes**: The colour_code field is intended for frontend visual representation and should follow tailwind colour format. For eg. `text-blue-400` and `text-purple-400`
 - **Filtering**: The `include_hidden` query parameter allows admin interfaces to manage hidden villages while keeping them out of regular user interfaces.
 - **Partial Updates**: PATCH requests support partial updates - only send the fields you want to change.
 
