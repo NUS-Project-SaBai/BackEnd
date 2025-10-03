@@ -1,4 +1,5 @@
 from api.models import Visit
+from django.db.models import OuterRef, Subquery, DateField, IntegerField, QuerySet
 from django.shortcuts import get_object_or_404
 
 
@@ -26,3 +27,12 @@ def update_visit(instance, validated_data):
 
 def delete_visit(instance):
     instance.delete()
+
+def annotate_with_last_visit(queryset: QuerySet) -> QuerySet:
+    # get visits by patient id, ordered by date desc
+    patient_visits_qs = Visit.objects.filter(patient_id=OuterRef('pk')).order_by('-date')
+    # queryset of patient(s) annotated with their last visit date and id
+    return queryset.annotate(
+        last_visit_date=Subquery(patient_visits_qs.values('date')[:1], output_field=DateField()),
+        last_visit_id=Subquery(patient_visits_qs.values('pk')[:1], output_field=IntegerField()),
+    )

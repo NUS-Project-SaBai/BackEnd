@@ -1,21 +1,18 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from random import randint
-from django.db.models import OuterRef, Subquery, DateField, IntegerField
 
 from api.models import Patient
-from api.models.visit_model import Visit
 from api.serializers import PatientSerializer
 from api.services import patient_service
+from api.services.visit_service import annotate_with_last_visit
 from sabaibiometrics.settings import (
     ENABLE_FACIAL_RECOGNITION,
     USE_MOCK_FACIAL_RECOGNITION,
 )
 
 
-class PatientSearchView(APIView):
-    patient_visits_qs = Visit.objects.filter(patient_id=OuterRef('pk')).order_by('-date')
-    
+class PatientSearchView(APIView):    
     def post(self, request):
         if ENABLE_FACIAL_RECOGNITION:
             picture = request.data["picture"]
@@ -30,10 +27,7 @@ class PatientSearchView(APIView):
                 "Actual and mocked facial recognition are both not enabled", 503
             )
 
-        patients = patients.annotate(
-            last_visit_date=Subquery(self.patient_visits_qs.values('date')[:1], output_field=DateField()),
-            last_visit_id=Subquery(self.patient_visits_qs.values('pk')[:1], output_field=IntegerField()),
-        )
+        patients = annotate_with_last_visit(patients)
 
         serializer = PatientSerializer(
             patients, many=True, context={"confidence": confidence_dict}
