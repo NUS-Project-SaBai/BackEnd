@@ -2,8 +2,18 @@ from api.models import Village
 from django.shortcuts import get_object_or_404
 
 
-# filter out deleted villages
-def get_all_villages():
+def get_all_villages(include_hidden=False):
+    """Retrieve all Villages filtered by their 'is_hidden' status.
+
+    Parameters
+    ----------
+        is_hidden : bool, optional
+            The visibility status of villages to retrieve. Defaults to False.
+            - If False, retrieves only visible villages.
+            - If True, retrieves all villages regardless of their hidden status.
+    """
+    if include_hidden:
+        return Village.objects.all()
     return Village.objects.filter(is_hidden=False)
 
 
