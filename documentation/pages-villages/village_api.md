@@ -27,7 +27,7 @@
 #### Query Parameters (GET requests)
 
 - **include_hidden**: Optional boolean parameter to include hidden villages in the response.
-  - Type: String ("true" or any value)
+  - Type: String ("true")
   - Example: `/api/v1/villages/?include_hidden=true`
   - Default behavior: Only returns visible villages (is_hidden=false)
 

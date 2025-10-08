@@ -250,4 +250,6 @@ OFFLINE = os.getenv("OFFLINE", "False") == "True"
 BACKEND_API = os.getenv("BACKEND_API")
 
 ENABLE_FACIAL_RECOGNITION = os.getenv("ENABLE_FACIAL_RECOGNITION", "False") == "True"
-USE_MOCK_FACIAL_RECOGNITION = os.getenv("USE_MOCK_FACIAL_RECOGNITION", "False") == "True"
+USE_MOCK_FACIAL_RECOGNITION = (
+    os.getenv("USE_MOCK_FACIAL_RECOGNITION", "False") == "True"
+)
