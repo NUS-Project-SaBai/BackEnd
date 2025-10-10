@@ -16,7 +16,12 @@ class ConsultView(APIView):
             return Response(serializer.data)
 
         visit_key = request.query_params.get("visit")
-        consults = consult_service.list_consults(visit_key)
+        patient_ID = request.query_params.get("patientID")
+        if visit_key:
+            consults = consult_service.list_consults_by_visit_id(visit_key)
+        elif patient_ID:
+            consults = consult_service.list_consults_by_patient_id(patient_ID)
+        
         serializer = ConsultSerializer(consults, many=True)
         return Response(serializer.data)
 

@@ -9,8 +9,8 @@ def get_patient_record_viewmodel(visit_id) -> PatientRecordViewModel:
         return None
 
     patient = visit.patient
-    vitals = vitals_service.list_vitals(visit_id=visit_id).first()
-    consults = consult_service.list_consults(visit_id=visit.pk)
+    vitals = vitals_service.list_vitals_by_visit_id(visit_id=visit_id).first()
+    consults = consult_service.list_consults_by_visit_id(visit_id=visit.pk)
     prescriptions = Order.objects.filter(consult__visit=visit).select_related(
         "medication_review__medicine"
     )

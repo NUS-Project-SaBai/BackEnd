@@ -13,7 +13,11 @@ class VitalsView(APIView):
             return Response(serializer.data)
 
         visit_id = request.query_params.get("visit")
-        vitals_qs = vitals_service.list_vitals(visit_id)
+        patient_id = request.query_params.get("patientID")
+        if visit_id:
+            vitals_qs = vitals_service.list_vitals_by_visit_id(visit_id)
+        elif patient_id:
+            vitals_qs = vitals_service.list_vitals_by_patient_id(patient_id)
         serializer = VitalsSerializer(vitals_qs, many=True)
         return Response(serializer.data)
 
@@ -28,7 +32,7 @@ class VitalsView(APIView):
             vital = vitals_service.get_vitals(pk)
         else:
             visit_id = request.query_params.get("visit")
-            vital = vitals_service.list_vitals(visit_id).first()
+            vital = vitals_service.list_vitals_by_visit_id(visit_id).first()
 
         serializer = VitalsSerializer(vital, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)

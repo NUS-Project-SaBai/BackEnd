@@ -7,10 +7,17 @@ from api.services.orders_service import create_order  # to be created
 from api.services.diagnosis_service import create_diagnosis  # to be created
 
 
-def list_consults(visit_id=None):
+def list_consults_by_visit_id(visit_id=None):
     qs = Consult.objects.all()
     if visit_id:
         qs = qs.filter(visit=visit_id)
+    return qs
+
+
+def list_consults_by_patient_id(patient_id=None):
+    qs = Consult.objects.all()
+    if patient_id:
+        qs = qs.filter(visit__patient__pk=patient_id)
     return qs
 
 

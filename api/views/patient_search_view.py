@@ -5,13 +5,14 @@ from random import randint
 from api.models import Patient
 from api.serializers import PatientSerializer
 from api.services import patient_service
+from api.services.visit_service import annotate_with_last_visit
 from sabaibiometrics.settings import (
     ENABLE_FACIAL_RECOGNITION,
     USE_MOCK_FACIAL_RECOGNITION,
 )
 
 
-class PatientSearchView(APIView):
+class PatientSearchView(APIView):    
     def post(self, request):
         if ENABLE_FACIAL_RECOGNITION:
             picture = request.data["picture"]
@@ -25,6 +26,8 @@ class PatientSearchView(APIView):
             return Response(
                 "Actual and mocked facial recognition are both not enabled", 503
             )
+
+        patients = annotate_with_last_visit(patients)
 
         serializer = PatientSerializer(
             patients, many=True, context={"confidence": confidence_dict}
