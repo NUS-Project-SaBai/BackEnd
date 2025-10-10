@@ -10,3 +10,6 @@ from django.contrib.auth.models import User
 from .user_model import CustomUser
 from .jwks_model import JWKS
 from .file_model import File
+from .glasses_model import Glasses
+from .referral_model import Referrals
+from .village_model import Village

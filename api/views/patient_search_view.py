@@ -1,15 +1,38 @@
-from rest_framework.views import APIView 
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from random import randint
 
 from api.models import Patient
 from api.serializers import PatientSerializer
-from api.utils import facial_recognition
+from api.services import patient_service
+from api.services.visit_service import annotate_with_last_visit
+from sabaibiometrics.settings import (
+    ENABLE_FACIAL_RECOGNITION,
+    USE_MOCK_FACIAL_RECOGNITION,
+)
 
-class PatientSearchView(APIView):
 
+class PatientSearchView(APIView):    
     def post(self, request):
-        face_encoding = facial_recognition.search_faceprint(request.data['picture'])
-        ls = list(face_encoding.keys())
-        patients = Patient.objects.filter(face_encodings__in=ls)
-        serializer = PatientSerializer(patients, many=True, context={'confidence':face_encoding})
-        return Response(serializer.data)
+        if ENABLE_FACIAL_RECOGNITION:
+            picture = request.data["picture"]
+            patients, confidence_dict = patient_service.search_patients_by_face(picture)
+        elif USE_MOCK_FACIAL_RECOGNITION:  # just select first 3 patients
+            patients = Patient.objects.all()[0:3]
+            confidence_dict = {}
+            for patient in patients:
+                confidence_dict[patient.face_encodings] = randint(1, 99) / 100
+        else:
+            return Response(
+                "Actual and mocked facial recognition are both not enabled", 503
+            )
+
+        patients = annotate_with_last_visit(patients)
+
+        serializer = PatientSerializer(
+            patients, many=True, context={"confidence": confidence_dict}
+        )
+        response = Response(serializer.data)
+        if USE_MOCK_FACIAL_RECOGNITION:
+            response.headers["x-is-mock-data"] = "True"
+        return response

@@ -1,6 +1,7 @@
 from .medication_review_view import MedicationReviewView
 from .medication_view import MedicationView
 from .consult_view import ConsultView
+from .pdf_consult_view import PdfConsultView
 from .patient_view import PatientView
 from .patient_search_view import PatientSearchView
 from .visit_view import VisitView
@@ -10,3 +11,6 @@ from .orders_view import OrderView
 from .diagnosis_view import DiagnosisView
 from .test_view import TestView
 from .file_view import FileView
+from .glasses_view import GlassesView
+from .referral_view import ReferralView
+from .village_view import VillageView

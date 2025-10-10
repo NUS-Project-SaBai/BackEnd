@@ -4,7 +4,7 @@ from api.models import File
 from django.db.utils import IntegrityError
 import requests
 from sabaibiometrics.settings import CLOUDINARY_URL
-from api.views import utils
+from api.utils import doctor_utils
 
 
 class Command(BaseCommand):
@@ -15,7 +15,9 @@ class Command(BaseCommand):
             files = File.objects.all()
             for file in files:
                 if file.offline_file:
-                    file_url = utils.upload_file(file.offline_file.path, file.file_name)
+                    file_url = doctor_utils.upload_file(
+                        file.offline_file.path, file.file_name
+                    )
                     file.file_path = file_url
                     file.save()
             self.stdout.write("Files uploaded successfully")

@@ -27,12 +27,17 @@ google-api-python-client="2.142.0"
 django-extensions = "==3.2.3"
 boto3 = "==1.34.21"
 botocore = "==1.34.118"
+black = "*"
+pre-commit = "*"
+reportlab = "*"
 
 [dev-packages]
 
 [scripts]
 test = "python manage.py test"
 start = "python manage.py start"
+makemigrations = "python manage.py makemigrations"
+migrate = "python manage.py migrate"
 download_images = "python manage.py download_images"
 upload_images = "python manage.py upload_images"
 offline = "python manage.py offline"

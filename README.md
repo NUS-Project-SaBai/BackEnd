@@ -13,9 +13,9 @@
 
 2. Set up postgreSQL Database
 
-   - Install PostgreSQL 15 if not already installed. https://www.postgresql.org/download/
+   - Install **PostgreSQL 15** if not already installed. https://www.postgresql.org/download/
    - Create a new PostgreSQL database for Project SaBai.
-      - After launching the setup wizard, select all 4 components to install.
+      - After launching the setup wizard, **select all 4 components to install**.
       - Select default location when prompted for location.
       - Remember your PostgreSQL password.
       - Open pgAdmin 4 after PostgreSQL installation.
@@ -33,7 +33,7 @@ Assuming that you have successfully cloned the repository into your system and a
 
 We will be using Pipenv. <https://pipenv.pypa.io/en/latest/>
 
-Note: For Mac users, in the following commands you may have to use `python3` instead of `python`.
+Note: **For Mac users**, in the following commands you may have to use `python3` instead of `python`, and `pip3` instead of `pip`.
 
 Run this command if you have yet to install it:
 
@@ -53,13 +53,15 @@ To use the virtual environment, run:
 pipenv shell
 ```
 
-To exit from the virtual environment, run:
+FYI, **Don't run it**. To exit from the virtual environment, run:
 
 ```bash
 exit
 ```
 
 ### Install dependencies
+
+If you had exited from the virtual environment, run `pipenv shell` to use the virtual environment again.
 
 To install the dependencies, run:
 

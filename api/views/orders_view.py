@@ -1,112 +1,34 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db import transaction
-from api.models import Order, MedicationReview, Medication, Diagnosis
-from api.serializers import OrderSerializer, MedicationReviewSerializer, DiagnosisSerializer
-from api.views import MedicationView
-from django.utils import timezone
-from api.views.utils import get_doctor_id
+
+from api.models import Order, Diagnosis
+from api.serializers import OrderSerializer, DiagnosisSerializer
+from api.services import orders_service
 
 
 class OrderView(APIView):
-
     def get(self, request, pk=None):
-        if pk is not None:
-            return self.get_object(pk)
-        orders = Order.objects.all()
-        
-        order_status = request.query_params.get("order_status", "")
+        if pk:
+            data = orders_service.get_order_by_id(pk)
+            return Response(data, status=status.HTTP_200_OK)
+
+        order_status = request.query_params.get("order_status")
         if order_status:
-            orders = orders.filter(
-                medication_review__order_status=order_status)
-            orders = orders.select_related('medication_review')
-            consult_ids = orders.values_list('consult_id', flat=True)
+            data = orders_service.get_orders_with_embedded_diagnoses(order_status)
+            return Response(data, status=status.HTTP_200_OK)
 
-            diagnoses = Diagnosis.objects.filter(consult_id__in=consult_ids)
-            diagnoses_serializer = DiagnosisSerializer(diagnoses, many=True)
-            order_serializer = OrderSerializer(orders, many=True)
-            return Response({"orders": order_serializer.data, "diagnoses": diagnoses_serializer.data})
-        order_serializer = OrderSerializer(orders, many=True)
-        return Response(order_serializer.data)
-
-    def get_object(self, pk):
-        order = Order.objects.get(pk=pk)
-        serializer = OrderSerializer(order)
-        return Response(serializer.data)
+        data = orders_service.get_all_orders()
+        return Response(data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        return OrderView.add(request.data)
+        order = orders_service.create_order(request.data)
+        return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
 
     def patch(self, request, pk):
         order = Order.objects.get(pk=pk)
-        if (
-            order.medication_review.order_status == "APPROVED"
-            or order.medication_review.order_status == "CANCELLED"
-        ):
-            return Response(
-                {
-                    f"message": "Order already is already {order.medication_review.order_status}"
-                }
-            )
-        order_status = request.data.get("order_status")
-
-        if order_status == "PENDING":
-            serializer = OrderSerializer(
-                order, data=request.data, partial=True)
-        elif order_status == "CANCELLED":
-            serializer = MedicationReviewSerializer(
-                order.medication_review, data=request.data, partial=True
-            )
-        elif order_status == "APPROVED":
-            medication_review_data = {
-                "approval": get_doctor_id(request.headers),
-                "quantity_remaining": order.medication_review.medicine.quantity
-                + order.medication_review.quantity_changed,
-                "order_status": order_status,
-                "date": timezone.now(),
-            }
-            if medication_review_data["quantity_remaining"] < 0:
-                return Response(
-                    {"error": "Medicine stock cannot be negative."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            
-            serializer = MedicationReviewSerializer(
-                order.medication_review, data=medication_review_data, partial=True
-            )
-        else:
-            raise ValueError("Invalid order status")
-
-        if serializer.is_valid(raise_exception=True):
-            with transaction.atomic():
-                if order_status == "APPROVED":
-                    MedicationView().update_quantity(
-                        quantityChange=order.medication_review.quantity_changed,
-                        pk=order.medication_review.medicine.pk,
-                    )
-                serializer.save()
-            return Response(serializer.data)
+        return orders_service.update_order_status(order, request.data, request.headers)
 
     def delete(self, request, pk):
-        order = Order.objects.get(pk=pk)
-        order.delete()
+        Order.objects.get(pk=pk).delete()
         return Response({"message": "Deleted successfully"})
-
-    @staticmethod
-    def add(order_data):
-        quantity = int(order_data["quantity"])
-        medicine = Medication.objects.get(pk=order_data["medicine"])
-        medication_review_data = {
-            "quantity_changed": -quantity,
-            "quantity_remaining": medicine.quantity - quantity,
-            "medicine": medicine,
-            "order_status": "PENDING",
-        }
-        medication_review = MedicationReview.objects.create(
-            **medication_review_data)
-        order_data["medication_review"] = medication_review.pk
-        serializer = OrderSerializer(data=order_data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
