@@ -13,6 +13,7 @@ class OrderMiniSerializer(serializers.Serializer):
     medication_name = serializers.CharField()
     medication_code = serializers.CharField()
     quantity_changed = serializers.IntegerField()
+    is_low_stock = serializers.BooleanField()
     notes = serializers.CharField()
 
 
