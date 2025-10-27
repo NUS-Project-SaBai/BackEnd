@@ -1,7 +1,7 @@
 class PharmacyOrderVM:
     def __init__(self, order):
         medicine = order.medication_review.medicine if order.medication_review else None
-        self.id = medicine.id if medicine else None
+        self.order_id = order.id
         self.medication_name = medicine.medicine_name if medicine else None
         self.medication_code = medicine.code if medicine else None
         self.quantity_changed = (
