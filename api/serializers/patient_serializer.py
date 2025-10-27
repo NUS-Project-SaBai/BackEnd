@@ -12,7 +12,7 @@ class PatientSerializer(serializers.ModelSerializer):
     # Explicitly declare these to allow DRF to pass them through to the model
     picture = serializers.ImageField(required=False, allow_null=True)
     offline_picture = serializers.ImageField(required=False, allow_null=True)
-    
+
     last_visit_date = serializers.DateTimeField(read_only=True)
     last_visit_id = serializers.IntegerField(read_only=True)
 
@@ -38,7 +38,7 @@ class PatientSerializer(serializers.ModelSerializer):
             "filter_string",
             "confidence",
             "last_visit_date",
-            "last_visit_id"
+            "last_visit_id",
         ]
 
     def get_patient_id(self, obj):
@@ -57,7 +57,7 @@ class PatientSerializer(serializers.ModelSerializer):
         elif obj.picture:
             return f"{CLOUDINARY_URL}/{obj.picture}"
         return None
-    
+
     # def get_last_visit_date(self, obj):
     #     return obj.last_visit_date
 
