@@ -9,6 +9,10 @@ class PharmacyOrderVM:
             if order.medication_review
             else None
         )
+        self.is_low_stock = (
+            medicine.warning_quantity != None
+            and medicine.quantity < medicine.warning_quantity
+        )
         self.notes = order.notes
 
 
