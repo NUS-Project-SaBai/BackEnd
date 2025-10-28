@@ -6,9 +6,9 @@ from sabaibiometrics.settings import AUTH0_ISSUER, AUTH0_AUDIENCE
 
 
 def jwt_get_username_from_payload_handler(payload):
-    auth0_id = payload.get("sub")
-    authenticate(remote_user=auth0_id)
-    return auth0_id
+    username = payload.get("username")
+    authenticate(username=username)
+    return username
 
 
 def jwt_decode_token(token):
