@@ -2,8 +2,6 @@ import os
 
 import requests
 
-from api.models.user_model import CustomUser
-
 AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
 AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
@@ -68,7 +66,6 @@ def update_auth0_user(auth0_id, **kwargs):
         data["email"] = kwargs["email"]
     if "password" in kwargs:
         data["password"] = kwargs["password"]
-    data["blocked"] = False
 
     # Handle user_metadata fields
     user_metadata = {}
@@ -82,14 +79,19 @@ def update_auth0_user(auth0_id, **kwargs):
 
     try:
         # cannot update username, password and email simultaneously in Auth0
+        # so we need to make separate requests
         if "username" in data:
             response = requests.patch(
                 url, json={"username": data["username"]}, headers=headers
             )
+            if response.status_code >= 400:
+                raise Exception(
+                    f"Auth0 update failed: {response.json().get('message')}"
+                )
             data.pop("username")
         if len(data.values()) > 0:
             response = requests.patch(url, json=data, headers=headers)
-            if response.status_code != 200:
+            if response.status_code >= 400:
                 raise Exception(
                     f"Auth0 update failed: {response.json().get('message')}"
                 )

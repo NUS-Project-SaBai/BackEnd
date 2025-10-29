@@ -4,6 +4,7 @@ from rest_framework import status
 
 from api.services import user_service
 from api.serializers import UserSerializer
+from api.auth_decorators import require_admin
 
 
 class UnlockUserView(APIView):
@@ -12,16 +13,9 @@ class UnlockUserView(APIView):
     POST /api/users/{username}/unlock/
     """
 
+    @require_admin
     def post(self, request, username):
         """Unlock a user account."""
-        if not request.user.is_authenticated:
-            return Response({"error": "Authentication required"}, status=401)
-
-        if getattr(request.user, "role", "member") != "admin":
-            return Response(
-                {"error": "Only admin users can unlock accounts"}, status=403
-            )
-
         user = user_service.filter_users(username=username).first()
 
         if not user:

@@ -39,8 +39,8 @@ def create_user_with_auth0(user_data):
     role = user_data.get("role", "member")
 
     # Validate required fields
-    if not email or not password:
-        return None, "Email and/or password is missing"
+    if not username or not email or not password:
+        return None, "Username, email or password is missing"
 
     # Create user in Auth0
     try:
@@ -120,12 +120,10 @@ def delete_user_with_auth0(user):
     auth0_id = user.auth0_id
     if auth0_id:
         try:
-            if delete_auth0_user(auth0_id):
-                print("Auth0 user deleted")
-            else:
-                print("Auth0 deletion returned non-success")
+            delete_auth0_user(auth0_id)
         except Exception as e:
             print(f"Failed to delete user from Auth0: {str(e)}")
+            raise e
 
     user.delete()
 
