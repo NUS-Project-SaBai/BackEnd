@@ -44,8 +44,11 @@ class UserView(APIView):
             )
 
         user = user_service.get_user(pk)
-        updated_user = user_service.update_user_with_auth0(user, request.data)
-        return Response(UserSerializer(updated_user).data)
+        try:
+            updated_user = user_service.update_user_with_auth0(user, request.data)
+            return Response(UserSerializer(updated_user).data)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         if not request.user.is_authenticated:

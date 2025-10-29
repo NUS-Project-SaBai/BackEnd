@@ -83,18 +83,22 @@ def update_user_with_auth0(user, user_data):
     """
     serializer = UserSerializer(user, data=user_data, partial=True)
     serializer.is_valid(raise_exception=True)
+
+    auth0_id = user.auth0_id
+    if not auth0_id:
+        raise Exception("Error updating user: missing auth0_id")
+
+    # Update Auth0 with validated data (only fields that changed)
+    data = {
+        k: v
+        for k, v in serializer.validated_data.items()
+        if getattr(user, k, None) != v
+    }
+    if user_data.get("password"):
+        data["password"] = user_data["password"]
+    update_auth0_user(auth0_id, **data)
+
     updated_user = serializer.save()
-
-    # Update role in Auth0 if provided
-    auth0_id = updated_user.auth0_id
-    role = user_data.get("role")
-    if auth0_id and role:
-        try:
-            update_auth0_user(auth0_id, role)
-        except Exception as e:
-            # Log but don't fail the request
-            print(f"Failed to update Auth0 user: {str(e)}")
-
     return updated_user
 
 
