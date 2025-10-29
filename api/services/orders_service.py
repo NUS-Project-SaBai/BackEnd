@@ -89,7 +89,7 @@ def update_order_status(order, request_data, request_headers):
 
         if new_quantity < 0:
             return Response(
-                {"msg": "Medicine stock cannot be negative."},
+                {"error": "Medicine stock cannot be negative."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
