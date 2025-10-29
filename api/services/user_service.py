@@ -8,6 +8,10 @@ def list_users():
     return User.objects.all()
 
 
+def filter_users(**filters):
+    return User.objects.filter(**filters)
+
+
 def get_user(pk):
     return get_object_or_404(User, pk=pk)
 

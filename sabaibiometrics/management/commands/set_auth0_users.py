@@ -45,8 +45,9 @@ class Command(BaseCommand):
                     CustomUser.objects.create_user(
                         auth0_id=f'{user["user_id"]}',
                         email=f'{user["email"]}',
-                        username=f'{user["user_id"]}',
+                        username=f'{user["username"]}',
                         nickname=f'{user["nickname"]}',
+                        role=user.get("user_metadata", {}).get("role", "member"),
                     )
                 except IntegrityError:
                     continue

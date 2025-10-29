@@ -1,5 +1,7 @@
 import os
 
+import requests
+
 AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
 AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
@@ -19,18 +21,26 @@ def get_auth0_token():
     return response.json()["access_token"]
 
 
-def create_auth0_user(email, password, role):
+def create_auth0_user(username, nickname, email, password, role):
     token = get_auth0_token()
     url = f"https://{AUTH0_DOMAIN}/api/v2/users"
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     data = {
+        "username": username,
+        "nickname": nickname,
         "email": email,
         "password": password,
         "connection": "Username-Password-Authentication",
         "user_metadata": {"role": role},
     }
-    response = requests.post(url, json=data, headers=headers)
-    return response.json()
+    print(data)
+    try:
+        response = requests.post(url, json=data, headers=headers)
+        print("Auth0 user created:", response.json())
+        return response.json()
+    except requests.RequestException as e:
+        print("Error creating Auth0 user:", e)
+        return {"error": str(e)}
 
 
 def update_auth0_user(auth0_id, role=None):

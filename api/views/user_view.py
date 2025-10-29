@@ -20,7 +20,7 @@ class UserView(APIView):
             user = user_service.get_user(pk)
             return Response(UserSerializer(user).data)
 
-        users = user_service.list_users()
+        users = user_service.filter_users(**request.query_params.dict())
         return Response(UserSerializer(users, many=True).data)
 
     def post(self, request):
@@ -32,15 +32,19 @@ class UserView(APIView):
                 {"error": "Only admin users can perform this action"}, status=403
             )
 
+        username = request.data.get("username")
+        nickname = request.data.get("nickname", username)
         email = request.data.get("email")
         password = request.data.get("password")
         role = request.data.get("role", "member")
 
         if not email or not password:
-            return Response({"error": "Email and password are required"}, status=400)
+            return Response({"error": "Email and/or password is missing"}, status=400)
 
         try:
-            auth0_response = create_auth0_user(email, password, role)
+            auth0_response = create_auth0_user(
+                username, nickname, email, password, role
+            )
             auth0_id = auth0_response.get("user_id")
             if not auth0_id:
                 raise Exception("Auth0 did not return a user_id")
