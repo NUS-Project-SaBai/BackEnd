@@ -32,7 +32,9 @@ class VisitBundleVM:
 
 class PatientHeaderVM:
     def __init__(self, patient):
-        self.patient_id = getattr(patient, "patient_id", str(patient.pk))
+        self.patient_id = getattr(
+            patient, "patient_id", f"{patient.village_prefix}{patient.pk:04d}"
+        )
         self.name = getattr(patient, "name", str(patient))
         self.picture_url = getattr(getattr(patient, "picture", None), "url", None)
         self.village_prefix = str(getattr(patient, "village_prefix", "")) or ""
