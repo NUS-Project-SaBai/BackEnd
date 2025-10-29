@@ -1,5 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from api.utils.auth0_utils import (
+    create_auth0_user,
+    update_auth0_user,
+    delete_auth0_user,
+)
+from api.serializers import UserSerializer
 
 User = get_user_model()
 
@@ -16,16 +22,110 @@ def get_user(pk):
     return get_object_or_404(User, pk=pk)
 
 
+def create_user_with_auth0(user_data):
+    """
+    Create a user in both Auth0 and the local database.
+
+    Args:
+        user_data: Dictionary with username, nickname, email, password, role
+
+    Returns:
+        tuple: (user, error) - user object if successful, error message if failed
+    """
+    username = user_data.get("username")
+    nickname = user_data.get("nickname", username)
+    email = user_data.get("email")
+    password = user_data.get("password")
+    role = user_data.get("role", "member")
+
+    # Validate required fields
+    if not email or not password:
+        return None, "Email and/or password is missing"
+
+    # Create user in Auth0
+    try:
+        auth0_response = create_auth0_user(username, nickname, email, password, role)
+        auth0_id = auth0_response.get("user_id")
+        if not auth0_id:
+            return None, "Auth0 did not return a user_id"
+    except Exception as e:
+        return None, f"Failed to create user in Auth0: {str(e)}"
+
+    # Create user in local database
+    data = user_data.copy()
+    data["auth0_id"] = auth0_id
+    serializer = UserSerializer(data=data)
+
+    if not serializer.is_valid():
+        # If local creation fails, we should ideally delete from Auth0
+        # but for now just return the error
+        return None, serializer.errors
+
+    user = serializer.save()
+    return user, None
+
+
 def create_user(validated_data):
+    """Create a user directly (for internal use or migrations)"""
     return User.objects.create(**validated_data)
 
 
+def update_user_with_auth0(user, user_data):
+    """
+    Update a user in both the local database and Auth0.
+
+    Args:
+        user: User instance to update
+        user_data: Dictionary with fields to update
+
+    Returns:
+        User object
+    """
+    serializer = UserSerializer(user, data=user_data, partial=True)
+    serializer.is_valid(raise_exception=True)
+    updated_user = serializer.save()
+
+    # Update role in Auth0 if provided
+    auth0_id = updated_user.auth0_id
+    role = user_data.get("role")
+    if auth0_id and role:
+        try:
+            update_auth0_user(auth0_id, role)
+        except Exception as e:
+            # Log but don't fail the request
+            print(f"Failed to update Auth0 user: {str(e)}")
+
+    return updated_user
+
+
 def update_user(user, validated_data):
+    """Update a user directly (for internal use)"""
     for attr, value in validated_data.items():
         setattr(user, attr, value)
     user.save()
     return user
 
 
+def delete_user_with_auth0(user):
+    """
+    Delete a user from both Auth0 and the local database.
+
+    Args:
+        user: User instance to delete
+    """
+    auth0_id = user.auth0_id
+    if auth0_id:
+        try:
+            if delete_auth0_user(auth0_id):
+                print("Auth0 user deleted")
+            else:
+                print("Auth0 deletion returned non-success")
+        except Exception as e:
+            print(f"Failed to delete user from Auth0: {str(e)}")
+
+    user.delete()
+
+
 def delete_user(user):
+    """Delete a user directly (for internal use)"""
     user.delete()
