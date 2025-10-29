@@ -40,6 +40,7 @@ class Command(BaseCommand):
             users_headers = {"Authorization": f"Bearer {token}"}
             response = requests.get(users_url, headers=users_headers)
             users = response.json()
+            auth0_ids = set(user["user_id"] for user in users)
             for user in users:
                 try:
                     CustomUser.objects.create_user(
@@ -51,5 +52,9 @@ class Command(BaseCommand):
                     )
                 except IntegrityError:
                     continue
+
+            for user in CustomUser.objects.all():
+                if user.auth0_id not in auth0_ids:
+                    user.delete()
         except IntegrityError:
             self.stdout.write("Default users already exist")
