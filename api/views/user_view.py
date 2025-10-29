@@ -50,17 +50,8 @@ class UserView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):
-        if not request.user.is_authenticated:
-            return Response({"error": "Authentication required"}, status=401)
-
-        if getattr(request.user, "role", "member") != "admin":
-            return Response(
-                {"error": "Only admin users can perform this action"}, status=403
-            )
-
-        user = user_service.get_user(pk)
-        user_service.delete_user_with_auth0(user)
+    def delete(self):
+        """Disable delete user functionality. Issue with foreign key constraints."""
         return Response(
-            {"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT
+            {"message": "User deletion is disabled"}, status=status.HTTP_400_BAD_REQUEST
         )

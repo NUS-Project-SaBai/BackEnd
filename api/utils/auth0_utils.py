@@ -33,7 +33,7 @@ def create_auth0_user(username, nickname, email, password, role):
         "email": email,
         "password": password,
         "connection": "Username-Password-Authentication",
-        "user_metadata": {"role": role},
+        "user_metadata": {"role": role, "is_locked": False},
     }
     try:
         response = requests.post(url, json=data, headers=headers)
@@ -48,7 +48,7 @@ def update_auth0_user(auth0_id, **kwargs):
 
     Args:
         auth0_id: The Auth0 user ID
-        **kwargs: Any fields to update (username, nickname, email, password, role, etc.)
+        **kwargs: Any fields to update (username, nickname, email, password, role, is_locked, etc.)
 
     Returns:
         dict: Auth0 API response
@@ -66,8 +66,17 @@ def update_auth0_user(auth0_id, **kwargs):
         data["email"] = kwargs["email"]
     if "password" in kwargs:
         data["password"] = kwargs["password"]
+    data["blocked"] = False
+
+    # Handle user_metadata fields
+    user_metadata = {}
     if "role" in kwargs:
-        data["user_metadata"] = {"role": kwargs["role"]}
+        user_metadata["role"] = kwargs["role"]
+    if "is_locked" in kwargs:
+        user_metadata["is_locked"] = kwargs["is_locked"]
+
+    if user_metadata:
+        data["user_metadata"] = user_metadata
 
     try:
         # cannot update username, password and email simultaneously in Auth0

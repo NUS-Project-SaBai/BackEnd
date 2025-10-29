@@ -7,3 +7,4 @@ class CustomUser(AbstractUser):
     nickname = models.CharField(max_length=255)
     ROLE_CHOICES = [("admin", "Admin"), ("member", "Member")]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="member")
+    is_locked = models.BooleanField(default=False)

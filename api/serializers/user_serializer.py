@@ -5,4 +5,12 @@ from api import models
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomUser
-        fields = ["id", "auth0_id", "username", "email", "nickname", "role"]
+        fields = [
+            "id",
+            "auth0_id",
+            "username",
+            "email",
+            "nickname",
+            "role",
+            "is_locked",
+        ]
