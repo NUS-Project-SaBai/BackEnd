@@ -1,14 +1,13 @@
 import json
 import jwt
 from api.models import JWKS
-from django.contrib.auth import authenticate
 from sabaibiometrics.settings import AUTH0_ISSUER, AUTH0_AUDIENCE
 
 
 def jwt_get_username_from_payload_handler(payload):
-    username = payload.get("username")
-    authenticate(username=username)
-    return username
+    # Return the auth0_id (sub claim) from the JWT payload
+    # The custom Auth0JWTAuthentication will handle looking up the user
+    return payload.get("sub")
 
 
 def jwt_decode_token(token):
