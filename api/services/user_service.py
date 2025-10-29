@@ -11,11 +11,11 @@ User = get_user_model()
 
 
 def list_users():
-    return User.objects.all()
+    return User.objects.all().order_by("nickname")
 
 
 def filter_users(**filters):
-    return User.objects.filter(**filters)
+    return User.objects.filter(**filters).order_by("nickname")
 
 
 def get_user(pk):

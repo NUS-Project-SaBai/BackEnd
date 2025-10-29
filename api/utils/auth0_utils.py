@@ -29,6 +29,7 @@ def create_auth0_user(username, nickname, email, password, role):
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     data = {
         "username": username,
+        "name": nickname,
         "nickname": nickname,
         "email": email,
         "password": password,
@@ -62,6 +63,7 @@ def update_auth0_user(auth0_id, **kwargs):
         data["username"] = kwargs["username"]
     if "nickname" in kwargs:
         data["nickname"] = kwargs["nickname"]
+        data["name"] = kwargs["nickname"]
     if "email" in kwargs:
         data["email"] = kwargs["email"]
     if "password" in kwargs:
