@@ -36,22 +36,35 @@ class Command(BaseCommand):
 
             response = requests.post(token_url, headers=token_headers, data=token_data)
             token = response.json()["access_token"]
-            users_url = f'https://{os.getenv("AUTH0_DOMAIN")}/api/v2/users'
+            users_url = f'https://{os.getenv("AUTH0_DOMAIN")}/api/v2/users?include_totals=true&page='
+
+            # AUTH0 limits the number of users retured
+            # TODO: PROPER EXPORT: https://auth0.com/docs/manage-users/user-migration/bulk-user-exports
             users_headers = {"Authorization": f"Bearer {token}"}
-            response = requests.get(users_url, headers=users_headers)
-            users = response.json()
-            auth0_ids = set(user["user_id"] for user in users)
+            users = []
+            for curPage in range(0, 20):
+                response = requests.get(users_url + str(curPage), headers=users_headers)
+                users.extend(response.json()["users"])
+                if len(response.json()["users"]) < 50:
+                    break
+            auth0_ids = set(user["user_did"] for user in users)
+
             for user in users:
-                try:
-                    CustomUser.objects.create_user(
-                        auth0_id=f'{user["user_id"]}',
-                        email=f'{user["email"]}',
-                        username=f'{user["username"]}',
-                        nickname=f'{user["nickname"]}',
-                        role=user.get("user_metadata", {}).get("role", "member"),
-                    )
-                except IntegrityError:
-                    continue
+                db_user, is_created = CustomUser.objects.get_or_create(
+                    auth0_id=user["user_id"],
+                    defaults={
+                        "email": user["email"],
+                        "username": user["username"],
+                        "nickname": user["nickname"],
+                        "role": user.get("user_metadata", {}).get("role", "member"),
+                    },
+                )
+                if not is_created:
+                    db_user.email = user["email"]
+                    db_user.username = user["username"]
+                    db_user.nickname = user["nickname"]
+                    db_user.role = user.get("user_metadata", {}).get("role", "member")
+                    db_user.save()
 
             for user in CustomUser.objects.all():
                 if user.auth0_id not in auth0_ids:
