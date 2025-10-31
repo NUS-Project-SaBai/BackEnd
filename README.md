@@ -2,16 +2,23 @@
 
 1. Prerequisities
 
-   Before proceeding with the installation, ensure that the following prerequisites are met:
+   Before proceeding with the setup, ensure that the following prerequisites are met:
 
-   - PostgreSQL 15 is installed on your system.
    - Python version 3.12 is available in your environment. (ONLY 3.12)
+      - For first timers, you may need to first install python, then a Python virtualenv management tool. Follow [documentation/basic-setup.md](documentation/basic-setup.md).
+   - PostgreSQL 15 is installed on your system.
+    - If you followed the basic setup above, you can simply use brew to install PostgreSQL 15:
+      ```
+      brew install postgresql@15
+      brew services start postgresql@15
+      ```
 
+2. Clone our repository:
    ```bash
    git clone https://github.com/NUS-Project-SaBai/BackEnd/
    ```
 
-2. Set up postgreSQL Database
+3. Set up postgreSQL Database
 
    - Install **PostgreSQL 15** if not already installed. https://www.postgresql.org/download/
    - Create a new PostgreSQL database for Project SaBai.
@@ -23,7 +30,7 @@
       - Right click "Databases" and go to Create > Database.
       - Enter "Sabai" as the database name and press "Save" to successfully create the local database.
 
-3. Configure Database Settings
+4. Configure Database Settings
 
    Navigate to the Backend directory and create a .env file if it is not present. Copy the content from `.env.example` and update the database configuration settings to match your PostgreSQL database credentials. Cloudinary credentials is in the Key Credentials doc.
 
