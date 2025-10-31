@@ -41,7 +41,7 @@ source .zshrc
 
 https://docs.python-guide.org/starting/install3/win/#setuptools-pip
 
-# Installing a Python virtualenvironment manager
+# Installing a Python virtual environment manager
 
 [The guide](https://docs.python-guide.org/dev/virtualenvs/#virtualenvironments-ref) is slightly outdated for Python versions after 3.12, [as explained here](https://docs.brew.sh/Homebrew-and-Python?utm._source=chatgpt.com#pep-668-and-virtual-environments). Instead of `pip install --user pipenv`, do:
 ```
@@ -53,4 +53,16 @@ pipenv --verison
 ```
 > `pipenv, version 2025.0.4`
 
-Now that pipenv is available, you can use it to manage different Python versions for each project, enclosed in virtual environments. For Project Sabai, we will be using Python 3.12.
+Now that pipenv is available, you can use it to manage different Python packages for each project, enclosed in a virtual environment. 
+
+# Installling a Python version manager
+
+Next you need a Python version manager. pipenv works with pyenv, so we'll get that:
+```
+brew install pyenv
+```
+For Project Sabai, we will be using Python 3.12. Simply attempt to create a pipenv virtualenv in your project directory, and it will prompt you to install Python 3.12 with pyenv:
+```
+pipenv --python 3.12
+```
+Accept the prompts, and you should be good to go.
