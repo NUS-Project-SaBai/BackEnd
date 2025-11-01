@@ -47,7 +47,7 @@ class Command(BaseCommand):
                 users.extend(response.json()["users"])
                 if len(response.json()["users"]) < 50:
                     break
-            auth0_ids = set(user["user_did"] for user in users)
+            auth0_ids = set(user["user_id"] for user in users)
 
             for user in users:
                 db_user, is_created = CustomUser.objects.get_or_create(
