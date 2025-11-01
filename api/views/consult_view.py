@@ -21,7 +21,7 @@ class ConsultView(APIView):
             consults = consult_service.list_consults_by_visit_id(visit_key)
         elif patient_ID:
             consults = consult_service.list_consults_by_patient_id(patient_ID)
-        
+
         serializer = ConsultSerializer(consults, many=True)
         return Response(serializer.data)
 

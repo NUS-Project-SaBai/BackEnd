@@ -12,7 +12,7 @@ from sabaibiometrics.settings import (
 )
 
 
-class PatientSearchView(APIView):    
+class PatientSearchView(APIView):
     def post(self, request):
         if ENABLE_FACIAL_RECOGNITION:
             picture = request.data["picture"]

@@ -9,10 +9,11 @@ class PatientMiniSerializer(serializers.Serializer):
 
 
 class OrderMiniSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+    order_id = serializers.IntegerField()
     medication_name = serializers.CharField()
     medication_code = serializers.CharField()
     quantity_changed = serializers.IntegerField()
+    is_low_stock = serializers.BooleanField()
     notes = serializers.CharField()
 
 

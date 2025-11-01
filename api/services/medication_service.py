@@ -7,7 +7,7 @@ from api.services.medication_review_service import create_medication_review
 
 
 def list_medications():
-    return Medication.objects.all()
+    return Medication.objects.all().order_by("medicine_name")
 
 
 def get_medication(pk):
@@ -61,6 +61,9 @@ def update_medication(pk, update_data, doctor_id):
         "quantity": new_quantity,
         "notes": update_data.get("notes", medication.notes),
         "code": update_data.get("code", medication.code),
+        "warning_quantity": update_data.get(
+            "warning_quantity", medication.warning_quantity
+        ),
     }
 
     serializer = MedicationSerializer(medication, data=data, partial=True)

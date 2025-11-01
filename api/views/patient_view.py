@@ -46,10 +46,11 @@ class PatientView(APIView):
     def patch(self, request, pk):
         patient = get_object_or_404(Patient, pk=pk)
         data = extract_and_clean_picture(request.data.copy())
+        face_encoding = generate_face_encoding(data)
 
         serializer = PatientSerializer(patient, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(face_encodings=face_encoding)
         return Response(serializer.data)
 
     def delete(self, request, pk):

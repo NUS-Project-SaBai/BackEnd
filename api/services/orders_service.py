@@ -73,7 +73,7 @@ def update_order_status(order, request_data, request_headers):
 
     if order.medication_review.order_status in ["APPROVED", "CANCELLED"]:
         return Response(
-            {"message": f"Order is already {order.medication_review.order_status}"},
+            {"error": f"Order is already {order.medication_review.order_status}"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
