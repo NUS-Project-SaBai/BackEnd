@@ -1,10 +1,11 @@
 # api/views/file_view.py
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from api.services import file_service
-from api.serializers import FileSerializer
 from rest_framework import status
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from api.serializers import FileSerializer
+from api.services import file_service
 
 
 class FileView(APIView):
@@ -27,22 +28,25 @@ class FileView(APIView):
             status=status.HTTP_200_OK,
         )
 
-    def post(self, request):
+    def post(self, request: Request):
         try:
-            uploaded_file = (
-                request.FILES.get("offline_file")
-                or request.FILES.get("file")
-                or request.data.get("file")
+            uploaded_files = request.FILES.getlist("files") or request.data.getlist(
+                "files"
             )
-            labeled_filename = request.data.get("file_name")
             patient_pk = request.data.get("patient_pk")
 
             description = request.data.get("description")
-            createdFile = file_service.create_file(
-                uploaded_file, labeled_filename, patient_pk, description=description
+            createdFilenames = []
+            for file in uploaded_files:
+                createdFilenames.append(
+                    file_service.create_file(
+                        file, file.name, patient_pk, description=description
+                    ).file_name
+                )
+            return Response(
+                f"Uploaded {len(createdFilenames)} files:\n{len(createdFilenames)}",
+                status=status.HTTP_201_CREATED,
             )
-            serializer = FileSerializer(createdFile)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
