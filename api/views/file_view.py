@@ -30,21 +30,15 @@ class FileView(APIView):
 
     def post(self, request: Request):
         try:
-            uploaded_files = request.FILES.getlist("files") or request.data.getlist(
-                "files"
-            )
+            uploaded_files = request.FILES.getlist("files")
             patient_pk = request.data.get("patient_pk")
 
-            description = request.data.get("description")
-            createdFilenames = []
-            for file in uploaded_files:
-                createdFilenames.append(
-                    file_service.create_file(
-                        file, file.name, patient_pk, description=description
-                    ).file_name
-                )
+            created_filenames = file_service.create_files(
+                uploaded_files,
+                patient_pk,
+            )
             return Response(
-                f"Uploaded {len(createdFilenames)} files:\n{len(createdFilenames)}",
+                f"Uploaded {len(created_filenames)} files:\n{'\n'.join(created_filenames)}",
                 status=status.HTTP_201_CREATED,
             )
         except ValueError as e:
