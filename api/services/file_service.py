@@ -1,8 +1,12 @@
 # api/services/files.py
 
+from typing import NamedTuple
+
 from django.conf import settings
+from django.core.files import File as DjangoFileType
 
 from api.models import File
+from api.models.patient_model import Patient
 from api.serializers import FileSerializer
 from api.utils import file_utils
 
@@ -23,30 +27,53 @@ def get_file(pk):
     return FileSerializer(file).data
 
 
-def create_file(
-    uploaded_file, labeled_filename, patient_pk, description: str | None = None
+def create_files(
+    files: list[DjangoFileType],
+    patient_pk: str,
 ):
-    if not uploaded_file:
+    # throw error when patient_pk is empty or doesn't exists
+    if patient_pk.strip() == "" or not Patient.objects.filter(pk=patient_pk).exists():
+        raise ValueError(f"Invalid patient {patient_pk}")
+    invalid_files = validate_files(files)
+    if len(invalid_files) > 0:
+        raise ValueError(
+            f"""Invalid Files:\n
+            {"\n".join(map(
+                lambda invalid_file: f'{invalid_file.file.name} \
+                    - {invalid_file.error}', invalid_files))}
+            """
+        )
+
+    created_filenames = []
+    for file in files:
+        data = {"patient_id": patient_pk, "file_name": file.name}
+
+        if settings.OFFLINE:
+            data["offline_file"] = file
+        else:
+            data["file_path"] = file_utils.upload_files(file, file.name)
+
+        serializer = FileSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        created_filenames.append(serializer.save().file_name)
+    return created_filenames
+
+
+InvalidFileItem = NamedTuple(
+    "InvalidFileItem", [("file", DjangoFileType), ("error", str)]
+)
+
+
+def validate_files(files: list[DjangoFileType]) -> list[InvalidFileItem]:
+    if len(files) == 0:
         raise ValueError("No file was uploaded")
-    if not labeled_filename:
-        raise ValueError("No labeled filename provided")
-
-    data = {
-        "patient_id": patient_pk,
-        "file_name": labeled_filename,
-    }
-    if description is not None:
-        data["description"] = description
-
-    if settings.OFFLINE:
-        data["offline_file"] = uploaded_file
-    else:
-        data["file_path"] = file_utils.upload_file(uploaded_file, labeled_filename)
-
-    serializer = FileSerializer(data=data)
-    serializer.is_valid(raise_exception=True)
-    createdFile = serializer.save()
-    return createdFile
+    invalid_files: list[InvalidFileItem] = []
+    for file in files:
+        if file.name.strip() == "":
+            invalid_files.append(InvalidFileItem(file=file, error="No name provided"))
+        if file.size > 26214400:  # 25mb
+            invalid_files.append(InvalidFileItem(file=file, error="File is too large!"))
+    return invalid_files
 
 
 def update_file(pk, data):
