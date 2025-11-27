@@ -29,6 +29,7 @@ def get_file(pk):
 
 def create_files(
     files: list[DjangoFileType],
+    descriptions: list[str],
     patient_pk: str,
 ):
     # throw error when patient_pk is empty or doesn't exists
@@ -45,8 +46,12 @@ def create_files(
         )
 
     created_filenames = []
-    for file in files:
-        data = {"patient_id": patient_pk, "file_name": file.name}
+    for file, description in zip(files, descriptions):
+        data = {
+            "patient_id": patient_pk,
+            "file_name": file.name,
+            "description": description,
+        }
 
         if settings.OFFLINE:
             data["offline_file"] = file
