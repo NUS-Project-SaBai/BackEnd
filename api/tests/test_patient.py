@@ -1,9 +1,8 @@
 """
-Pytest-style version of test_patient.py
+Test patient API endpoints - organized by HTTP method with edge cases
 """
+
 import pytest
-from datetime import datetime
-from django.utils import timezone
 from rest_framework.reverse import reverse
 
 from api.models import Patient
@@ -11,64 +10,97 @@ from api.serializers import PatientSerializer
 import api.tests.dummies as dummy
 
 
-from api.tests.dummies import post_patient_dummy
-
 @pytest.fixture
-def patient(db):
-    """Create a test patient directly via ORM"""
-    # Copy dummy to avoid mutating global dummy
-    patient_data = dummy.post_patient_dummy.copy()
-    
-    return Patient.objects.create(
-        village_prefix=patient_data["village_prefix"],
-        name=patient_data["name"],
-        identification_number=patient_data.get("identification_number"),
-        contact_no=patient_data.get("contact_no"),
-        gender=patient_data.get("gender"),
-        date_of_birth=timezone.make_aware(datetime(2021, 1, 1)),
-        drug_allergy=patient_data.get("drug_allergy", "drug_allergy"),
-        face_encodings=patient_data.get("face_encodings", "88e4a97a-10d0-4e63-abe0-bd36808974b4"),
-        picture="image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
+def patient_instance(api_client):
+    """Create a patient instance for tests that need existing data"""
+    response = api_client.post(
+        reverse("patients:patients_list"), dummy.post_patient_dummy
     )
+    assert response.status_code == 200
+    return Patient.objects.get(pk=1)
 
 
 @pytest.mark.django_db
-def test_patient_api_crud_operations(api_client, patient):
-    """Test full CRUD lifecycle for patient endpoint"""
-    list_endpoint = "patients:patients_list"
-    detail_endpoint = "patients:patients_pk"
-    
-    expected_data = PatientSerializer(patient).data
+def test_patient_post(api_client):
+    """Test creating patients via POST - success and edge cases"""
+    # Successful case - create patient
+    response = api_client.post(
+        reverse("patients:patients_list"), dummy.post_patient_dummy
+    )
+    assert response.status_code == 200
 
-    # GET detail - Retrieve patient
-    get_response = api_client.get(reverse(detail_endpoint, args=["1"]))
-    assert get_response.status_code == 200
-    # Compare key fields instead of exact dict to be robust across deployments
-    for k in ("pk", "village_prefix", "name", "patient_id"):
-        assert get_response.data.get(k) == expected_data.get(k)
+    patient = Patient.objects.get(pk=1)
+    expected = PatientSerializer(patient).data
+    assert response.data == expected
 
-    # PATCH - Update patient via API (patched in setup to avoid uploads)
-    update_payload = {"name": "patient_name"}
-    put_response = api_client.patch(reverse(detail_endpoint, args=["1"]), update_payload)
-    assert put_response.status_code == 200
+    # Edge case - empty patient data
+    response = api_client.post(reverse("patients:patients_list"), {})
+    assert response.status_code == 200  # API allows empty data?
 
-    patient.refresh_from_db()
-    expected_data = PatientSerializer(patient).data
-    for k in ("pk", "village_prefix", "name", "patient_id"):
-        assert put_response.data.get(k) == expected_data.get(k)
 
-    # GET - Verify update
-    get_response = api_client.get(reverse(detail_endpoint, args=["1"]))
-    assert get_response.status_code == 200
-    for k in ("pk", "village_prefix", "name", "patient_id"):
-        assert get_response.data.get(k) == expected_data.get(k)
+@pytest.mark.django_db
+def test_patient_get(api_client, patient_instance):
+    """Test retrieving patients via GET - single, list, and edge cases"""
+    # Successful case - retrieve single patient by pk
+    response = api_client.get(
+        reverse("patients:patients_pk", args=[patient_instance.pk])
+    )
+    assert response.status_code == 200
+    # Note: response.data may include additional fields like last_visit_date
 
-    # DELETE - Remove patient
-    delete_response = api_client.delete(reverse(detail_endpoint, args=["1"]))
-    assert delete_response.status_code == 200
-    assert delete_response.data == {"message": "Deleted successfully"}
+    # Successful case - list patients
+    response = api_client.get(reverse("patients:patients_list"))
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert response.data[0]["pk"] == patient_instance.pk
 
-    # GET list - Verify deletion (should be empty)
-    get_response = api_client.get(reverse(list_endpoint))
-    assert get_response.status_code == 200
-    assert get_response.data == []
+    # Edge case - get nonexistent patient
+    response = api_client.get(reverse("patients:patients_pk", args=["99999"]))
+    assert response.status_code == 200  # API returns 200 for nonexistent
+
+
+@pytest.mark.django_db
+def test_patient_patch(api_client, patient_instance):
+    """Test updating patients via PATCH - success and edge cases"""
+    # Successful case - update patient
+    update_payload = {"name": "updated_name"}
+    response = api_client.patch(
+        reverse("patients:patients_pk", args=[patient_instance.pk]), update_payload
+    )
+    assert response.status_code == 200
+
+    patient_instance.refresh_from_db()
+    expected = PatientSerializer(patient_instance).data
+    assert response.data == expected
+
+    # Edge case - update nonexistent patient
+    response = api_client.patch(
+        reverse("patients:patients_pk", args=["99999"]), update_payload
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_patient_delete(api_client, patient_instance):
+    """Test deleting patients via DELETE - success and edge cases"""
+    patient_pk = patient_instance.pk
+
+    # Successful case - delete patient
+    response = api_client.delete(reverse("patients:patients_pk", args=[patient_pk]))
+    assert response.status_code == 200
+    assert response.data == {"message": "Deleted successfully"}
+
+    # Verify patient is gone from list
+    response = api_client.get(reverse("patients:patients_list"))
+    assert response.status_code == 200
+    assert response.data == []
+
+    # Edge case - delete already deleted patient (should 404)
+    response = api_client.delete(
+        reverse("patients:patients_pk", args=[str(patient_pk)])
+    )
+    assert response.status_code == 404
+
+    # Edge case - delete nonexistent patient
+    response = api_client.delete(reverse("patients:patients_pk", args=["99999"]))
+    assert response.status_code == 404

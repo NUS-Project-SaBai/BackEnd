@@ -11,6 +11,15 @@ from api.models import CustomUser, Patient
 from api.serializers import PatientSerializer
 from rest_framework.response import Response
 
+# Import common model fixtures so they're available to all tests
+from api.tests.fixtures import (
+    patient,
+    visit,
+    consult,
+    consult_and_medication,
+    patient_and_visit,
+)  # noqa: F401
+
 
 @pytest.fixture
 def setup_test_environment(settings, monkeypatch):

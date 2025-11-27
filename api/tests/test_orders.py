@@ -1,107 +1,97 @@
 """
-Pytest-style version of test_orders.py
+Test orders API endpoints - organized by HTTP method with edge cases
 """
+
 import pytest
-from datetime import datetime
-from django.utils import timezone
 from rest_framework.reverse import reverse
 
-from api.models import Patient, Visit, Order
+from api.models import Order
 from api.serializers import OrderSerializer
 import api.tests.dummies as dummy
 
 
 @pytest.fixture
-def patient(db):
-    """Create a test patient"""
-    return Patient.objects.create(
-        village_prefix=dummy.post_patient_dummy.get("village_prefix", "VPF"),
-        name=dummy.post_patient_dummy.get("name", "patient_name"),
-        identification_number=dummy.post_patient_dummy.get("identification_number"),
-        contact_no=dummy.post_patient_dummy.get("contact_no"),
-        gender=dummy.post_patient_dummy.get("gender", "gender"),
-        date_of_birth=timezone.make_aware(
-            datetime.fromisoformat(dummy.post_patient_dummy.get("date_of_birth"))
-        ),
-        drug_allergy=dummy.post_patient_dummy.get("drug_allergy", "drug_allergy"),
-        face_encodings=dummy.post_patient_dummy.get("face_encodings", ""),
-        picture=dummy.post_patient_dummy.get("picture", "image/upload/v1/dummy.jpg"),
-    )
-
-
-@pytest.fixture
-def visit(patient):
-    """Create a test visit"""
-    return Visit.objects.create(
-        patient=patient,
-        date=timezone.make_aware(
-            datetime.fromisoformat(dummy.post_visit_dummy.get("date"))
-        ),
-        status=dummy.post_visit_dummy.get("status"),
-    )
-
-
-@pytest.fixture
-def consult_and_medication(api_client, visit, test_user):
-    """Create consult and medication via API calls (as in original setUp)"""
-    # Create consult under expected wrapper and include doctor header
-    consult_response = api_client.post(
-        reverse("consults:consults_list"),
-        {"consult": dummy.post_consult_dummy},
-        HTTP_DOCTOR=test_user.email
-    )
-    assert consult_response.status_code == 201
-    
-    # Create medication with doctor header
-    medication_response = api_client.post(
-        reverse("medication:medications_list"),
-        dummy.post_medication_dummy,
-        HTTP_DOCTOR=test_user.email
-    )
-    assert medication_response.status_code == 201
-    
-    return consult_response, medication_response
+def order_instance(api_client, consult_and_medication):
+    """Create an order instance for tests that need existing data"""
+    response = api_client.post(reverse("orders:orders_list"), dummy.post_order_dummy)
+    assert response.status_code == 201
+    return Order.objects.get(pk=response.data["id"])
 
 
 @pytest.mark.django_db
-def test_orders_api_crud_operations(api_client, consult_and_medication):
-    """Test full CRUD lifecycle for orders endpoint"""
-    list_endpoint = "orders:orders_list"
-    detail_endpoint = "orders:orders_pk"
-    
-    # POST - Create order
-    post_response = api_client.post(reverse(list_endpoint), dummy.post_order_dummy)
-    assert post_response.status_code == 201
+def test_orders_post(api_client, consult_and_medication):
+    """Test creating orders via POST - success and edge cases"""
+    # Successful case - create order
+    response = api_client.post(reverse("orders:orders_list"), dummy.post_order_dummy)
+    assert response.status_code == 201
     expected = OrderSerializer(Order.objects.get(pk=1)).data
-    assert post_response.data == expected
+    assert response.data == expected
 
-    # GET - Retrieve order
-    get_response = api_client.get(reverse(detail_endpoint, args=["1"]))
-    assert get_response.status_code == 200
-    expected = OrderSerializer(Order.objects.get(pk=1)).data
-    assert get_response.data == expected
+    # Edge case - empty order data
+    response = api_client.post(reverse("orders:orders_list"), {})
+    assert response.status_code in [400, 500]  # Should fail validation
 
-    # PATCH - Update order status
-    put_response = api_client.patch(
-        reverse(detail_endpoint, args=["1"]), 
-        {"order_status": "PENDING"}
+
+@pytest.mark.django_db
+def test_orders_get(api_client, order_instance):
+    """Test retrieving orders via GET - single, list, and edge cases"""
+    # Successful case - retrieve single order by pk
+    response = api_client.get(
+        reverse("orders:orders_pk", args=[str(order_instance.pk)])
     )
-    assert put_response.status_code == 200
-    expected = OrderSerializer(Order.objects.get(pk=1)).data
-    assert put_response.data == expected
+    assert response.status_code == 200
+    expected = OrderSerializer(order_instance).data
+    assert response.data == expected
 
-    # GET - Verify update
-    get_response = api_client.get(reverse(detail_endpoint, args=["1"]))
-    assert get_response.status_code == 200
-    expected = OrderSerializer(Order.objects.get(pk=1)).data
-    assert get_response.data == expected
+    # Successful case - list orders
+    response = api_client.get(reverse("orders:orders_list"))
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert response.data[0]["id"] == order_instance.pk
 
-    # DELETE - Remove order
-    delete_response = api_client.delete(reverse(detail_endpoint, args=["1"]))
-    assert delete_response.status_code == 200
-    assert delete_response.data == {"message": "Deleted successfully"}
+    # Edge case - get nonexistent order
+    response = api_client.get(reverse("orders:orders_pk", args=["99999"]))
+    assert response.status_code == 404
 
-    # GET list - Verify deletion
-    get_response = api_client.get(reverse(list_endpoint))
-    assert get_response.status_code == 200
-    assert get_response.data == []
+
+@pytest.mark.django_db
+def test_orders_patch(api_client, order_instance):
+    """Test updating orders via PATCH - success and edge cases"""
+    # Successful case - update order status
+    update_payload = {"order_status": "PENDING"}
+    response = api_client.patch(
+        reverse("orders:orders_pk", args=[str(order_instance.pk)]), update_payload
+    )
+    assert response.status_code == 200
+    expected = OrderSerializer(order_instance).data
+    assert response.data == expected
+
+    # Edge case - update nonexistent order
+    response = api_client.patch(
+        reverse("orders:orders_pk", args=["99999"]), update_payload
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_orders_delete(api_client, order_instance):
+    """Test deleting orders via DELETE - success and edge cases"""
+    order_pk = order_instance.pk
+
+    # Successful case - delete order
+    response = api_client.delete(reverse("orders:orders_pk", args=[str(order_pk)]))
+    assert response.status_code == 200
+    assert response.data == {"message": "Deleted successfully"}
+
+    # Verify order is gone from list
+    response = api_client.get(reverse("orders:orders_list"))
+    assert response.status_code == 200
+    assert response.data == []
+
+    # Edge case - delete already deleted order (should 404)
+    response = api_client.delete(reverse("orders:orders_pk", args=[str(order_pk)]))
+    assert response.status_code == 404
+
+    # Edge case - delete nonexistent order
+    response = api_client.delete(reverse("orders:orders_pk", args=["99999"]))
+    assert response.status_code == 404

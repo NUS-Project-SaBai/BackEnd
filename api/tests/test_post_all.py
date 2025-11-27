@@ -26,7 +26,7 @@ def test_post_all_endpoints(api_client, test_user):
     create_consult = api_client.post(
         reverse("consults:consults_list"),
         {"consult": dummy.post_consult_dummy},
-        HTTP_DOCTOR=test_user.email,
+        headers={"doctor": test_user.email},
     )
     assert create_consult.status_code == 201
 
@@ -38,7 +38,7 @@ def test_post_all_endpoints(api_client, test_user):
     create_medication = api_client.post(
         reverse("medication:medications_list"),
         dummy.post_medication_dummy,
-        HTTP_DOCTOR=test_user.email,
+        headers={"doctor": test_user.email},
     )
     assert create_medication.status_code == 201
 

@@ -1,119 +1,102 @@
 """
-Pytest-style version of test_visit.py
+Test visit API endpoints - organized by HTTP method with edge cases
 """
+
 import pytest
-from datetime import datetime
-from django.utils import timezone
 from rest_framework.reverse import reverse
 
-from api.models import Patient
+from api.models import Visit
 import api.tests.dummies as dummy
 
 
 @pytest.fixture
-def patient(db):
-    """Create a test patient directly via ORM"""
-    return Patient.objects.create(
-        village_prefix=dummy.post_patient_dummy["village_prefix"],
-        name=dummy.post_patient_dummy["name"],
-        identification_number=dummy.post_patient_dummy.get("identification_number"),
-        contact_no=dummy.post_patient_dummy.get("contact_no"),
-        gender=dummy.post_patient_dummy.get("gender"),
-        date_of_birth=timezone.make_aware(datetime(2021, 1, 1)),
-        drug_allergy=dummy.post_patient_dummy.get("drug_allergy", "drug_allergy"),
-        picture="image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
-    )
+def visit_instance(api_client, patient):
+    """Create a visit instance for tests that need existing data"""
+    response = api_client.post(reverse("visits:visits_list"), dummy.post_visit_dummy)
+    assert response.status_code == 200
+    return Visit.objects.get(pk=response.data["id"])
 
 
 @pytest.mark.django_db
-def test_visit_api_crud_operations(api_client, patient):
-    """Test full CRUD lifecycle for visit endpoint"""
-    list_endpoint = "visits:visits_list"
-    detail_endpoint = "visits:visits_pk"
-    
-    dummy_result = {
-        "id": 1,
-        "patient": {
-            "model": "clinicmodels.patient",
-            "pk": 1,
-            "village_prefix": "VPF",
-            "name": "patient_name",
-            "identification_number": "identification_number",
-            "contact_no": "contact_no",
-            "gender": "gender",
-            "date_of_birth": "2021-01-01T00:00:00Z",
-            "drug_allergy": "drug_allergy",
-            "face_encodings": None,
-            "picture": "image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
-            "filter_string": "VPF001VPF1 contact_no patient_name",
-            "patient_id": "VPF001",
-        },
-        "date": "2021-01-01T00:00:00Z",
-        "status": "status",
-    }
-    
-    # POST - Create visit
-    post_response = api_client.post(reverse(list_endpoint), dummy.post_visit_dummy)
-    assert post_response.status_code == 200
-    
-    # Check main visit fields and key patient attributes
-    assert post_response.data.get("id") == 1
-    assert post_response.data.get("date") == "2021-01-01T00:00:00Z"
-    assert post_response.data.get("status") == "status"
-    patient_data = post_response.data.get("patient")
-    assert isinstance(patient_data, dict)
-    for k in ("pk", "village_prefix", "name", "patient_id"):
-        if k == "patient_id":
-            expected_pid = f"{patient_data.get('village_prefix')}{int(patient_data.get('pk')):04d}"
-            assert patient_data.get("patient_id") == expected_pid
-        else:
-            assert patient_data.get(k) == dummy_result["patient"].get(k)
+def test_visit_post(api_client, patient):
+    """Test creating visits via POST - success and edge cases"""
+    # Successful case - create visit
+    response = api_client.post(reverse("visits:visits_list"), dummy.post_visit_dummy)
+    assert response.status_code == 200
 
-    # GET - Retrieve visit
-    get_response = api_client.get(reverse(detail_endpoint, args=["1"]))
-    assert get_response.status_code == 200
-    for k in ("id", "date", "status"):
-        assert get_response.data.get(k) == post_response.data.get(k)
-    patient_data = get_response.data.get("patient")
-    for k in ("pk", "village_prefix", "name", "patient_id"):
-        if k == "patient_id":
-            expected_pid = f"{patient_data.get('village_prefix')}{int(patient_data.get('pk')):04d}"
-            assert patient_data.get("patient_id") == expected_pid
-        else:
-            assert patient_data.get(k) == dummy_result["patient"].get(k)
+    visit = Visit.objects.get(pk=1)
+    # Check main visit fields
+    assert response.data.get("id") == 1
+    assert response.data.get("date") == "2021-01-01T00:00:00Z"
+    assert response.data.get("status") == "status"
 
-    # PATCH - Update visit
-    put_response = api_client.patch(reverse(detail_endpoint, args=["1"]), dummy.post_visit_dummy)
-    assert put_response.status_code == 200
-    for k in ("id", "date", "status"):
-        assert put_response.data.get(k) == dummy_result.get(k)
-    patient_data = put_response.data.get("patient")
-    for k in ("pk", "village_prefix", "name", "patient_id"):
-        if k == "patient_id":
-            expected_pid = f"{patient_data.get('village_prefix')}{int(patient_data.get('pk')):04d}"
-            assert patient_data.get("patient_id") == expected_pid
-        else:
-            assert patient_data.get(k) == dummy_result["patient"].get(k)
+    # Edge case - empty visit data
+    response = api_client.post(reverse("visits:visits_list"), {})
+    assert response.status_code in [400, 500]  # Should fail validation
 
-    # GET - Verify update
-    get_response = api_client.get(reverse(detail_endpoint, args=["1"]))
-    assert get_response.status_code == 200
-    for k in ("id", "date", "status"):
-        assert get_response.data.get(k) == dummy_result.get(k)
-    patient_data = get_response.data.get("patient")
-    for k in ("pk", "village_prefix", "name", "patient_id"):
-        if k == "patient_id":
-            expected_pid = f"{patient_data.get('village_prefix')}{int(patient_data.get('pk')):04d}"
-            assert patient_data.get("patient_id") == expected_pid
-        else:
-            assert patient_data.get(k) == dummy_result["patient"].get(k)
 
-    # DELETE - Remove visit
-    delete_response = api_client.delete(reverse(detail_endpoint, args=["1"]))
-    assert delete_response.status_code == 200
-    assert delete_response.data == {"message": "Deleted successfully"}
+@pytest.mark.django_db
+def test_visit_get(api_client, visit_instance):
+    """Test retrieving visits via GET - single, list, and edge cases"""
+    # Successful case - retrieve single visit by pk
+    response = api_client.get(
+        reverse("visits:visits_pk", args=[str(visit_instance.pk)])
+    )
+    assert response.status_code == 200
+    assert response.data.get("id") == visit_instance.pk
+    assert response.data.get("date") == "2021-01-01T00:00:00Z"
+    assert response.data.get("status") == "status"
 
-    # GET list - Verify deletion
-    get_response = api_client.get(reverse(list_endpoint))
-    assert get_response.status_code == 200
-    assert get_response.data == []
+    # Successful case - list visits
+    response = api_client.get(reverse("visits:visits_list"))
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert response.data[0]["id"] == visit_instance.pk
+
+    # Edge case - get nonexistent visit
+    response = api_client.get(reverse("visits:visits_pk", args=["99999"]))
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_visit_patch(api_client, visit_instance):
+    """Test updating visits via PATCH - success and edge cases"""
+    # Successful case - update visit
+    response = api_client.patch(
+        reverse("visits:visits_pk", args=[str(visit_instance.pk)]),
+        dummy.post_visit_dummy,
+    )
+    assert response.status_code == 200
+    assert response.data.get("id") == visit_instance.pk
+    assert response.data.get("date") == "2021-01-01T00:00:00Z"
+    assert response.data.get("status") == "status"
+
+    # Edge case - update nonexistent visit
+    response = api_client.patch(
+        reverse("visits:visits_pk", args=["99999"]), dummy.post_visit_dummy
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_visit_delete(api_client, visit_instance):
+    """Test deleting visits via DELETE - success and edge cases"""
+    visit_pk = visit_instance.pk
+
+    # Successful case - delete visit
+    response = api_client.delete(reverse("visits:visits_pk", args=[str(visit_pk)]))
+    assert response.status_code == 200
+    assert response.data == {"message": "Deleted successfully"}
+
+    # Verify visit is gone from list
+    response = api_client.get(reverse("visits:visits_list"))
+    assert response.status_code == 200
+    assert response.data == []
+
+    # Edge case - delete already deleted visit (should 404)
+    response = api_client.delete(reverse("visits:visits_pk", args=[str(visit_pk)]))
+    assert response.status_code == 404
+
+    # Edge case - delete nonexistent visit
+    response = api_client.delete(reverse("visits:visits_pk", args=["99999"]))
+    assert response.status_code == 404

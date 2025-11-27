@@ -1,104 +1,116 @@
 """
-Pytest-style version of test_diagnosis.py
+Test diagnosis API endpoints - organized by HTTP method with edge cases
 """
+
 import pytest
-from datetime import datetime
-from django.utils import timezone
 from rest_framework.reverse import reverse
 
-from api.models import Patient, Visit, Consult, Diagnosis
+from api.models import Diagnosis
 from api.serializers import DiagnosisSerializer
 import api.tests.dummies as dummy
 
 
 @pytest.fixture
-def patient(db):
-    """Create a test patient"""
-    return Patient.objects.create(
-        village_prefix=dummy.post_patient_dummy.get("village_prefix", "VPF"),
-        name=dummy.post_patient_dummy.get("name", "patient_name"),
-        identification_number=dummy.post_patient_dummy.get("identification_number"),
-        contact_no=dummy.post_patient_dummy.get("contact_no"),
-        gender=dummy.post_patient_dummy.get("gender", "gender"),
-        date_of_birth=timezone.make_aware(
-            datetime.fromisoformat(dummy.post_patient_dummy.get("date_of_birth"))
-        ),
-        drug_allergy=dummy.post_patient_dummy.get("drug_allergy", "drug_allergy"),
-        face_encodings=dummy.post_patient_dummy.get("face_encodings", ""),
-        picture=dummy.post_patient_dummy.get("picture", "image/upload/v1/dummy.jpg"),
-    )
-
-
-@pytest.fixture
-def visit(patient):
-    """Create a test visit"""
-    return Visit.objects.create(
-        patient=patient,
-        date=timezone.make_aware(
-            datetime.fromisoformat(dummy.post_visit_dummy.get("date"))
-        ),
-        status=dummy.post_visit_dummy.get("status"),
-    )
-
-
-@pytest.fixture
-def consult(visit, test_user):
-    """Create a test consult"""
-    return Consult.objects.create(
-        visit=visit,
-        date=timezone.make_aware(
-            datetime.fromisoformat(dummy.post_consult_dummy.get("date"))
-        ),
-        doctor=test_user,
-        past_medical_history=dummy.post_consult_dummy.get("past_medical_history"),
-        consultation=dummy.post_consult_dummy.get("consultation"),
-        plan=dummy.post_consult_dummy.get("plan"),
-        referred_for=dummy.post_consult_dummy.get("referred_for"),
-        referral_notes=dummy.post_consult_dummy.get("referral_notes"),
-        remarks=dummy.post_consult_dummy.get("remarks"),
-    )
-
-
-@pytest.mark.django_db
-def test_diagnosis_api_crud_operations(api_client, consult):
-    """Test full CRUD lifecycle for diagnosis endpoint"""
-    list_endpoint = "diagnosis:diagnosis_list"
-    detail_endpoint = "diagnosis:diagnosis_pk"
-    
-    # DiagnosisSerializer expects a `consult_id` field for input
+def diagnosis_instance(api_client, consult):
+    """Create a diagnosis instance for tests that need existing data"""
     diagnosis_data = {
-        "consult_id": consult.id,
+        "consult_id": consult,
         "details": dummy.post_diagnosis_dummy.get("details"),
         "category": dummy.post_diagnosis_dummy.get("category"),
     }
+    response = api_client.post(reverse("diagnosis:diagnosis_list"), diagnosis_data)
+    assert response.status_code == 201
+    return Diagnosis.objects.get(pk=response.data["id"])
 
-    # POST - Create diagnosis
-    post_response = api_client.post(reverse(list_endpoint), diagnosis_data)
-    assert post_response.status_code == 201
+
+@pytest.mark.django_db
+def test_diagnosis_post(api_client, consult):
+    """Test creating diagnoses via POST - success and edge cases"""
+    # Successful case - create diagnosis
+    diagnosis_data = {
+        "consult_id": consult,
+        "details": dummy.post_diagnosis_dummy.get("details"),
+        "category": dummy.post_diagnosis_dummy.get("category"),
+    }
+    response = api_client.post(reverse("diagnosis:diagnosis_list"), diagnosis_data)
+    assert response.status_code == 201
     expected = DiagnosisSerializer(Diagnosis.objects.get(pk=1)).data
-    assert post_response.data == expected
+    assert response.data == expected
 
-    # GET - Retrieve diagnosis
-    get_response = api_client.get(reverse(detail_endpoint, args=["1"]))
-    assert get_response.status_code == 200
-    assert get_response.data == expected
+    # Edge case - empty diagnosis data
+    response = api_client.post(reverse("diagnosis:diagnosis_list"), {})
+    assert response.status_code in [400, 500]  # Should fail validation
 
-    # PATCH - Update diagnosis
-    put_response = api_client.patch(reverse(detail_endpoint, args=["1"]), diagnosis_data)
-    assert put_response.status_code == 200
-    assert put_response.data == expected
 
-    # GET - Verify update
-    get_response = api_client.get(reverse(detail_endpoint, args=["1"]))
-    assert get_response.status_code == 200
-    assert get_response.data == expected
+@pytest.mark.django_db
+def test_diagnosis_get(api_client, diagnosis_instance):
+    """Test retrieving diagnoses via GET - single, list, and edge cases"""
+    # Successful case - retrieve single diagnosis by pk
+    response = api_client.get(
+        reverse("diagnosis:diagnosis_pk", args=[str(diagnosis_instance.pk)])
+    )
+    assert response.status_code == 200
+    expected = DiagnosisSerializer(diagnosis_instance).data
+    assert response.data == expected
 
-    # DELETE - Remove diagnosis
-    delete_response = api_client.delete(reverse(detail_endpoint, args=["1"]))
-    assert delete_response.status_code == 204
-    assert delete_response.data == {"message": "Deleted successfully"}
+    # Successful case - list diagnoses
+    response = api_client.get(reverse("diagnosis:diagnosis_list"))
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert response.data[0]["id"] == diagnosis_instance.pk
 
-    # GET list - Verify deletion
-    get_response = api_client.get(reverse(list_endpoint))
-    assert get_response.status_code == 200
-    assert get_response.data == []
+    # Edge case - get nonexistent diagnosis
+    response = api_client.get(reverse("diagnosis:diagnosis_pk", args=["99999"]))
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_diagnosis_patch(api_client, diagnosis_instance, consult):
+    """Test updating diagnoses via PATCH - success and edge cases"""
+    # Successful case - update diagnosis
+    diagnosis_data = {
+        "consult_id": consult,
+        "details": dummy.post_diagnosis_dummy.get("details"),
+        "category": dummy.post_diagnosis_dummy.get("category"),
+    }
+    response = api_client.patch(
+        reverse("diagnosis:diagnosis_pk", args=[str(diagnosis_instance.pk)]),
+        diagnosis_data,
+    )
+    assert response.status_code == 200
+    expected = DiagnosisSerializer(diagnosis_instance).data
+    assert response.data == expected
+
+    # Edge case - update nonexistent diagnosis
+    response = api_client.patch(
+        reverse("diagnosis:diagnosis_pk", args=["99999"]), diagnosis_data
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_diagnosis_delete(api_client, diagnosis_instance):
+    """Test deleting diagnoses via DELETE - success and edge cases"""
+    diagnosis_pk = diagnosis_instance.pk
+
+    # Successful case - delete diagnosis
+    response = api_client.delete(
+        reverse("diagnosis:diagnosis_pk", args=[str(diagnosis_pk)])
+    )
+    assert response.status_code == 204
+    assert response.data == {"message": "Deleted successfully"}
+
+    # Verify diagnosis is gone from list
+    response = api_client.get(reverse("diagnosis:diagnosis_list"))
+    assert response.status_code == 200
+    assert response.data == []
+
+    # Edge case - delete already deleted diagnosis (should 404)
+    response = api_client.delete(
+        reverse("diagnosis:diagnosis_pk", args=[str(diagnosis_pk)])
+    )
+    assert response.status_code == 404
+
+    # Edge case - delete nonexistent diagnosis
+    response = api_client.delete(reverse("diagnosis:diagnosis_pk", args=["99999"]))
+    assert response.status_code == 404
