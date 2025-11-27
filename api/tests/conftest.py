@@ -10,6 +10,7 @@ from rest_framework.test import APIClient
 from api.models import CustomUser, Patient
 from api.serializers import PatientSerializer
 from rest_framework.response import Response
+from api.tests.custom_api_client import CustomAPIClient
 
 # Import common model fixtures so they're available to all tests
 from api.tests.fixtures import (
@@ -131,6 +132,6 @@ def test_user(db, setup_test_environment):
 @pytest.fixture
 def api_client(test_user):
     """Create an authenticated API client"""
-    client = APIClient()
+    client = CustomAPIClient()
     client.force_authenticate(user=test_user)
     return client
