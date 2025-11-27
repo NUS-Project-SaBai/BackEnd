@@ -51,7 +51,7 @@ class FileView(APIView):
             created_filenames = file_service.create_files(
                 uploaded_files,
                 descriptions,
-                patient_pk,
+                patient_pk if type(patient_pk) == int else int(patient_pk),
             )
             return Response(
                 f"Uploaded {len(created_filenames)} files:\n{'\n'.join(created_filenames)}",

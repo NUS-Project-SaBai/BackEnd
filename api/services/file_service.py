@@ -89,21 +89,18 @@ def get_patient_files(patient_pk: int, is_deleted: bool = None):
 def create_files(
     files: list[DjangoFileType],
     descriptions: list[str],
-    patient_pk: str,
+    patient_pk: int,
 ):
-    # throw error when patient_pk is empty or doesn't exists
-    if patient_pk.strip() == "" or not Patient.objects.filter(pk=patient_pk).exists():
+    if not Patient.objects.filter(pk=patient_pk).exists():
         raise ValueError(f"Invalid patient {patient_pk}")
     invalid_files = validate_files(files)
     if len(invalid_files) > 0:
         raise ValueError(
-            f"""Invalid Files:\n
-            {"\n".join(map(
-                lambda invalid_file: f'{invalid_file.file.name} \
-                    - {invalid_file.error}', invalid_files))}
-            """
+            "Invalid Files:\n"
+            + "\n".join(f"{item.file.name} - {item.error}" for item in invalid_files)
         )
-
+    if len(files) != len(descriptions):
+        raise ValueError("Number of files and descriptions must match")
     created_filenames = []
     for file, description in zip(files, descriptions):
         data = {
@@ -115,7 +112,7 @@ def create_files(
         if settings.OFFLINE:
             data["offline_file"] = file
         else:
-            data["file_path"] = file_utils.upload_files(file, file.name)
+            data["file_path"] = file_utils.upload_file(file, file.name)
 
         serializer = FileSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -135,7 +132,7 @@ def validate_files(files: list[DjangoFileType]) -> list[InvalidFileItem]:
     for file in files:
         if file.name.strip() == "":
             invalid_files.append(InvalidFileItem(file=file, error="No name provided"))
-        if file.size > 26214400:  # 25mb
+        if file.size > 26214400:  # 25MB
             invalid_files.append(InvalidFileItem(file=file, error="File is too large!"))
     return invalid_files
 
