@@ -13,7 +13,7 @@
 
 ### Overview
 - **Description**:  
-  Returns file information grouped by patient in an Upload envelope format. Can filter by patient_pk and deleted status.
+  Returns file information grouped by patient. Can filter by patient_pk and deleted status.
 - **HTTP Method**:  
   GET
 
@@ -96,7 +96,7 @@
 
 #### Data Fetched by the Frontend
 - **Complete Data Set**:  
-  Returns an array of Upload objects, each containing:
+  Returns an array of PatientFiles objects, each containing:
   - **patient**: Complete patient object with all fields (pk, name, village_prefix, date_of_birth, etc.)
   - **files**: Array of file objects, each with:
     - id
@@ -110,7 +110,7 @@
   
 #### Data Used by the Frontend
 - **Relevant Data Subset**:  
-  From each Upload object:
+  From each PatientFiles object:
   - **patient.patient_id**: Patient identifier
   - **files[]**: Array of files for that patient
     - id
@@ -134,14 +134,14 @@
 
 #### Processing on the Backend
 - **Where**:  
-  Processing is done in file_view (view layer) and file_service (service layer), with UploadSerializer and FileSerializer
+  Processing is done in file_view (view layer) and file_service (service layer), with PatientFilesSerializer and FileSerializer
 - **How**:  
   - Query params `patient_pk` and `deleted` are parsed and validated
   - `deleted` parameter is converted: "all" → None, "true" → True, "false" → False
-  - If `patient_pk` provided: `file_service.get_patient_upload()` returns single Upload dict in a list
-  - If no `patient_pk`: `file_service.list_patient_uploads()` groups all files by patient and returns list of Upload dicts
-  - UploadSerializer serializes the data with nested PatientSerializer and FileSerializer (many=True)
-  - Response always returns an array of Upload objects for consistency
+  - If `patient_pk` provided: `file_service.get_patient_files()` returns single PatientFiles dict in a list
+  - If no `patient_pk`: `file_service.list_patient_files()` groups all files by patient and returns list of PatientFiles dicts
+  - PatientFilesSerializer serializes the data with nested PatientSerializer and FileSerializer (many=True)
+  - Response always returns an array of PatientFiles objects for consistency
 
 
 ---

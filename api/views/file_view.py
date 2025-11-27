@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.serializers import FileSerializer
-from api.serializers.upload_serializer import UploadSerializer
+from api.serializers.patient_files_serializer import PatientFilesSerializer
 from api.services import file_service
 
 
@@ -25,19 +25,21 @@ class FileView(APIView):
             )
         is_deleted = deleted_mapping[deleted_param]
 
-        # If a patient_pk is provided, return single Upload object in a list
+        # If a patient_pk is provided, return single PatientFiles object in a list
         if patient_pk:
-            payload = file_service.get_patient_upload(
+            payload = file_service.get_patient_files(
                 patient_pk=patient_pk, is_deleted=is_deleted
             )
             return Response(
-                UploadSerializer([payload], many=True).data, status=status.HTTP_200_OK
+                PatientFilesSerializer([payload], many=True).data,
+                status=status.HTTP_200_OK,
             )
 
-        # Otherwise, return list of Upload objects (files grouped by patient)
-        uploads = file_service.list_patient_uploads(is_deleted=is_deleted)
+        # Otherwise, return list of PatientFiles objects (files grouped by patient)
+        patient_files = file_service.list_patient_files(is_deleted=is_deleted)
         return Response(
-            UploadSerializer(uploads, many=True).data, status=status.HTTP_200_OK
+            PatientFilesSerializer(patient_files, many=True).data,
+            status=status.HTTP_200_OK,
         )
 
     def post(self, request: Request):

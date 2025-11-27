@@ -40,9 +40,9 @@ def get_file(pk):
     return FileSerializer(file).data
 
 
-def list_patient_uploads(patient_pks: list[int] = None, is_deleted: bool = None):
+def list_patient_files(patient_pks: list[int] = None, is_deleted: bool = None):
     """
-    Returns a list of Upload objects (patient + their files).
+    Returns a list of PatientFiles objects (patient + their files).
     If patient_pks is None, groups all files by their patient.
     """
     from collections import defaultdict
@@ -67,15 +67,17 @@ def list_patient_uploads(patient_pks: list[int] = None, is_deleted: bool = None)
     patient_map = {p.pk: p for p in patients}
 
     # Build list of {patient, files} dicts
-    uploads = []
+    patient_files_list = []
     for patient_id, file_list in patient_files_map.items():
         if patient_id in patient_map:
-            uploads.append({"patient": patient_map[patient_id], "files": file_list})
+            patient_files_list.append(
+                {"patient": patient_map[patient_id], "files": file_list}
+            )
 
-    return uploads
+    return patient_files_list
 
 
-def get_patient_upload(patient_pk: int, is_deleted: bool = None):
+def get_patient_files(patient_pk: int, is_deleted: bool = None):
     """
     Returns a dict with patient instance and filtered files queryset for that patient.
     """
