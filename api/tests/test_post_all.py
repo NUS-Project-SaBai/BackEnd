@@ -4,7 +4,7 @@ Pytest-style version of test_post_all.py
 import pytest
 from django.urls import reverse
 
-import api.tests.dummy as dummy
+import api.tests.dummies as dummy
 
 
 @pytest.mark.django_db

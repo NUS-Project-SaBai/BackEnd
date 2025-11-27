@@ -4,7 +4,7 @@ Pytest-style version of test_medication.py
 import pytest
 from rest_framework.reverse import reverse
 
-import api.tests.dummy as dummy
+import api.tests.dummies as dummy
 
 
 @pytest.mark.django_db

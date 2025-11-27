@@ -6,7 +6,7 @@ from rest_framework.reverse import reverse
 
 from api.models import Vitals
 from api.serializers import VitalsSerializer
-import api.tests.dummy as dummy
+import api.tests.dummies as dummy
 
 
 @pytest.fixture

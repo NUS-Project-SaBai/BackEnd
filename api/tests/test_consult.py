@@ -9,7 +9,7 @@ from rest_framework.reverse import reverse
 
 from api.models import Patient, Visit, Consult
 from api.serializers import ConsultSerializer
-import api.tests.dummy as dummy
+import api.tests.dummies as dummy
 
 
 @pytest.fixture

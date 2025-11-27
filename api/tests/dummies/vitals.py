@@ -1,0 +1,18 @@
+post_vitals_dummy = {
+    "visit_id": 1,
+    "height": 100,
+    "weight": 100,
+    "systolic": 100,
+    "diastolic": 100,
+    "temperature": 37,
+    "diabetes_mellitus": "Yes",
+    "heart_rate": 100,
+    "urine_test": "True",
+    "hemocue_count": 100,
+    "blood_glucose": 100,
+    "left_eye_degree": "+4",
+    "right_eye_degree": "+4",
+    "left_eye_pinhole": "+23",
+    "right_eye_pinhole": "+23",
+    "others": "others",
+}

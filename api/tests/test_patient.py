@@ -8,8 +8,10 @@ from rest_framework.reverse import reverse
 
 from api.models import Patient
 from api.serializers import PatientSerializer
-import api.tests.dummy as dummy
+import api.tests.dummies as dummy
 
+
+from api.tests.dummies import post_patient_dummy
 
 @pytest.fixture
 def patient(db):
