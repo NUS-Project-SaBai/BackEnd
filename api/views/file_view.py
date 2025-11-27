@@ -31,10 +31,12 @@ class FileView(APIView):
     def post(self, request: Request):
         try:
             uploaded_files = request.FILES.getlist("files")
+            descriptions = request.data.getlist("descriptions")
             patient_pk = request.data.get("patient_pk")
 
             created_filenames = file_service.create_files(
                 uploaded_files,
+                descriptions,
                 patient_pk,
             )
             return Response(
