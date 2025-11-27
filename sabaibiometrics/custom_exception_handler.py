@@ -8,7 +8,7 @@ def custom_exception_handler(exc, context):
     # Call REST framework's default exception handler first,
     # to get the standard error response.
     response = drf_exception_handler(exc, context)
-    print(exc, context)
+    print(exc, context, flush=True)
 
     # Now add the HTTP status code to the response.
     if isinstance(exc, ObjectDoesNotExist):
