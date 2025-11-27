@@ -9,7 +9,7 @@ from .vitals_view import VitalsView
 from .user_view import UserView
 from .orders_view import OrderView
 from .diagnosis_view import DiagnosisView
-from .test_view import TestView
+from .test_view import HelloView
 from .file_view import FileView
 from .glasses_view import GlassesView
 from .referral_view import ReferralView

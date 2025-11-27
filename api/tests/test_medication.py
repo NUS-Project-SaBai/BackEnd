@@ -1,57 +1,62 @@
-from api.tests.test_setup import TestSetup
-from api.tests.dummy import post_medication_dummy
+"""
+Pytest-style version of test_medication.py
+"""
+import pytest
 from rest_framework.reverse import reverse
 
+import api.tests.dummy as dummy
 
-class TestMedicationAPI(TestSetup):
-    def test_API(self):
-        post_response = self.client.post(
-            reverse("medications_list"),
-            post_medication_dummy,
-        )
-        self.assertEqual(post_response.status_code, 200)
-        self.assertEqual(
-            post_response.data,
-            {"id": 1, **post_medication_dummy},
-        )
 
-        # GET
-        get_response = self.client.get(reverse("medications_detail", args=["1"]))
-        self.assertEqual(get_response.status_code, 200)
-        self.assertEqual(
-            get_response.data,
-            {"id": 1, **post_medication_dummy},
-        )
+@pytest.mark.django_db
+def test_medication_api_crud_operations(api_client, test_user):
+    """Test full CRUD lifecycle for medication endpoint"""
+    list_endpoint = "medication:medications_list"
+    detail_endpoint = "medication:medications_pk"
+    
+    # POST - Create medication with doctor header
+    post_response = api_client.post(
+        reverse(list_endpoint),
+        dummy.post_medication_dummy,
+        HTTP_DOCTOR=test_user.email,
+    )
+    assert post_response.status_code == 201
+    
+    # Medication serializer returns medication fields; approval is write-only
+    expected_post = {
+        "id": 1,
+        "medicine_name": dummy.post_medication_dummy["medicine_name"],
+        "quantity": dummy.post_medication_dummy["quantity"],
+        "notes": dummy.post_medication_dummy["notes"],
+        "code": None,
+        "warning_quantity": None,
+    }
+    assert post_response.data == expected_post
 
-        # PATCH
-        put_response = self.client.patch(
-            reverse("medications_detail", args=["1"]),
-            post_medication_dummy,
-        )
-        self.assertEqual(put_response.status_code, 200)
-        self.assertEqual(
-            put_response.data,
-            {"id": 1, **post_medication_dummy},
-        )
+    # GET - Retrieve medication
+    get_response = api_client.get(reverse(detail_endpoint, args=["1"]))
+    assert get_response.status_code == 200
+    assert get_response.data == expected_post
 
-        # GET
-        get_response = self.client.get(reverse("medications_detail", args=["1"]))
-        self.assertEqual(get_response.status_code, 200)
-        self.assertEqual(
-            get_response.data,
-            {"id": 1, **post_medication_dummy},
-        )
+    # PATCH - Update medication with doctor header
+    put_response = api_client.patch(
+        reverse(detail_endpoint, args=["1"]),
+        dummy.post_medication_dummy,
+        HTTP_DOCTOR=test_user.email,
+    )
+    assert put_response.status_code == 200
+    assert put_response.data == expected_post
 
-        # DELETE
+    # GET - Verify update
+    get_response = api_client.get(reverse(detail_endpoint, args=["1"]))
+    assert get_response.status_code == 200
+    assert get_response.data == expected_post
 
-        delete_response = self.client.delete(reverse("medications_detail", args=["1"]))
-        self.assertEqual(delete_response.status_code, 200)
-        self.assertEqual(delete_response.data, {"message": "Deleted successfully"})
+    # DELETE - Remove medication
+    delete_response = api_client.delete(reverse(detail_endpoint, args=["1"]))
+    assert delete_response.status_code == 200
+    assert delete_response.data == {"message": "Deleted successfully"}
 
-        # GET
-        get_response = self.client.get(reverse("medications_list"))
-        self.assertEqual(get_response.status_code, 200)
-        self.assertEqual(
-            get_response.data,
-            [],
-        )
+    # GET list - Verify deletion
+    get_response = api_client.get(reverse(list_endpoint))
+    assert get_response.status_code == 200
+    assert get_response.data == []

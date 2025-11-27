@@ -9,10 +9,10 @@ post_patient_dummy = {
     "picture": "image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
 }
 
-post_visit_dummy = {"patient": 1, "date": "2021-01-01", "status": "status"}
+post_visit_dummy = {"patient_id": 1, "date": "2021-01-01", "status": "status"}
 
 post_vitals_dummy = {
-    "visit": 1,
+    "visit_id": 1,
     "height": 100,
     "weight": 100,
     "systolic": 100,
@@ -31,9 +31,9 @@ post_vitals_dummy = {
 }
 
 post_consult_dummy = {
-    "visit": 1,
+    "visit_id": 1,
     "date": "2021-01-01",
-    "doctor": 1,
+    "doctor_id": 1,
     "past_medical_history": "past_medical_history",
     "consultation": "consultation",
     "plan": "plan",
@@ -43,7 +43,7 @@ post_consult_dummy = {
 }
 
 post_diagnosis_dummy = {
-    "consult": 1,
+    "consult_id": 1,
     "details": "consult_details",
     "category": "consult_category",
 }
@@ -52,12 +52,14 @@ post_medication_dummy = {
     "medicine_name": "medicine_name",
     "quantity": 1,
     "notes": "notes",
+    # tests expect an approval field to be present when creating medication
+    "approval": 1,
 }
 
 post_order_dummy = {
     "medicine": 1,
     "quantity": 100,
-    "consult": 1,
+    "consult_id": 1,
     "notes": "order_notes",
     "remark": "order_remark",
     "order_status": "status",

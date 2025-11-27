@@ -1,205 +1,118 @@
-from api.tests.test_setup import TestSetup
-import api.tests.dummy as dummy
+"""
+Pytest-style version of test_consult.py
+"""
+
+import pytest
+from datetime import datetime
+from django.utils import timezone
 from rest_framework.reverse import reverse
 
+from api.models import Patient, Visit, Consult
+from api.serializers import ConsultSerializer
+import api.tests.dummy as dummy
 
-class TestConsultAPI(TestSetup):
-    def setUp(self):
-        super().setUp()
-        self.client.post(
-            reverse("patients_list"),
-            dummy.post_patient_dummy,
-        )
-        self.client.post("/visits", dummy.post_visit_dummy)
 
-    def test_API(self):
-        post_response = self.client.post(
-            reverse("consults_list"),
-            dummy.post_consult_dummy,
-        )
-        self.assertEqual(post_response.status_code, 200)
-        self.assertEqual(
-            post_response.data,
-            {
-                "id": 1,
-                "visit": {
-                    "id": 1,
-                    "patient": {
-                        "model": "clinicmodels.patient",
-                        "pk": 1,
-                        "village_prefix": "VPF",
-                        "name": "patient_name",
-                        "identification_number": "identification_number",
-                        "contact_no": "contact_no",
-                        "gender": "gender",
-                        "date_of_birth": "2021-01-01T00:00:00Z",
-                        "drug_allergy": "drug_allergy",
-                        "face_encodings": None,
-                        "picture": "image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
-                        "filter_string": "VPF001VPF1 contact_no patient_name",
-                        "patient_id": "VPF001",
-                    },
-                    "date": "2021-01-01T00:00:00Z",
-                    "status": "status",
-                },
-                "doctor": {
-                    "auth0_id": "1",
-                    "username": "test_user",
-                    "email": f"{self.user.email}",
-                },
-                "prescriptions": [],
-                "date": "2021-01-01T00:00:00Z",
-                "past_medical_history": "past_medical_history",
-                "consultation": "consultation",
-                "plan": "plan",
-                "referred_for": "referred_for",
-                "referral_notes": "referral_notes",
-                "remarks": "remarks",
-            },
-        )
+@pytest.fixture
+def patient(db):
+    """Create a test patient"""
+    return Patient.objects.create(
+        village_prefix=dummy.post_patient_dummy.get("village_prefix", "VPF"),
+        name=dummy.post_patient_dummy.get("name", "patient_name"),
+        identification_number=dummy.post_patient_dummy.get("identification_number"),
+        contact_no=dummy.post_patient_dummy.get("contact_no"),
+        gender=dummy.post_patient_dummy.get("gender", "gender"),
+        date_of_birth=timezone.make_aware(
+            datetime.fromisoformat(dummy.post_patient_dummy.get("date_of_birth"))
+        ),
+        drug_allergy=dummy.post_patient_dummy.get("drug_allergy", "drug_allergy"),
+        face_encodings=dummy.post_patient_dummy.get("face_encodings", ""),
+        picture=dummy.post_patient_dummy.get("picture", "image/upload/v1/dummy.jpg"),
+    )
 
-        # GET
-        get_response = self.client.get(reverse("consults_detail", args=["1"]))
-        self.assertEqual(get_response.status_code, 200)
-        self.assertEqual(
-            get_response.data,
-            {
-                "id": 1,
-                "visit": {
-                    "id": 1,
-                    "patient": {
-                        "model": "clinicmodels.patient",
-                        "pk": 1,
-                        "village_prefix": "VPF",
-                        "name": "patient_name",
-                        "identification_number": "identification_number",
-                        "contact_no": "contact_no",
-                        "gender": "gender",
-                        "date_of_birth": "2021-01-01T00:00:00Z",
-                        "drug_allergy": "drug_allergy",
-                        "face_encodings": None,
-                        "picture": "image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
-                        "filter_string": "VPF001VPF1 contact_no patient_name",
-                        "patient_id": "VPF001",
-                    },
-                    "date": "2021-01-01T00:00:00Z",
-                    "status": "status",
-                },
-                "doctor": {
-                    "auth0_id": "1",
-                    "username": "test_user",
-                    "email": f"{self.user.email}",
-                },
-                "prescriptions": [],
-                "date": "2021-01-01T00:00:00Z",
-                "past_medical_history": "past_medical_history",
-                "consultation": "consultation",
-                "plan": "plan",
-                "referred_for": "referred_for",
-                "referral_notes": "referral_notes",
-                "remarks": "remarks",
-            },
-        )
 
-        # PATCH
-        put_response = self.client.patch(
-            reverse("consults_detail", args=["1"]),
-            dummy.post_consult_dummy,
-        )
-        self.assertEqual(put_response.status_code, 200)
-        self.assertEqual(
-            put_response.data,
-            {
-                "id": 1,
-                "visit": {
-                    "id": 1,
-                    "patient": {
-                        "model": "clinicmodels.patient",
-                        "pk": 1,
-                        "village_prefix": "VPF",
-                        "name": "patient_name",
-                        "identification_number": "identification_number",
-                        "contact_no": "contact_no",
-                        "gender": "gender",
-                        "date_of_birth": "2021-01-01T00:00:00Z",
-                        "drug_allergy": "drug_allergy",
-                        "face_encodings": None,
-                        "picture": "image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
-                        "filter_string": "VPF001VPF1 contact_no patient_name",
-                        "patient_id": "VPF001",
-                    },
-                    "date": "2021-01-01T00:00:00Z",
-                    "status": "status",
-                },
-                "doctor": {
-                    "auth0_id": "1",
-                    "username": "test_user",
-                    "email": f"{self.user.email}",
-                },
-                "prescriptions": [],
-                "date": "2021-01-01T00:00:00Z",
-                "past_medical_history": "past_medical_history",
-                "consultation": "consultation",
-                "plan": "plan",
-                "referred_for": "referred_for",
-                "referral_notes": "referral_notes",
-                "remarks": "remarks",
-            },
-        )
+@pytest.fixture
+def visit(patient):
+    """Create a test visit"""
+    return Visit.objects.create(
+        patient=patient,
+        date=timezone.make_aware(
+            datetime.fromisoformat(dummy.post_visit_dummy.get("date"))
+        ),
+        status=dummy.post_visit_dummy.get("status"),
+    )
 
-        # GET
-        get_response = self.client.get(reverse("consults_detail", args=["1"]))
-        self.assertEqual(get_response.status_code, 200)
-        self.assertEqual(
-            get_response.data,
-            {
-                "id": 1,
-                "visit": {
-                    "id": 1,
-                    "patient": {
-                        "model": "clinicmodels.patient",
-                        "pk": 1,
-                        "village_prefix": "VPF",
-                        "name": "patient_name",
-                        "identification_number": "identification_number",
-                        "contact_no": "contact_no",
-                        "gender": "gender",
-                        "date_of_birth": "2021-01-01T00:00:00Z",
-                        "drug_allergy": "drug_allergy",
-                        "face_encodings": None,
-                        "picture": "image/upload/v1715063294/ghynewr4gdhkuttombwc.jpg",
-                        "filter_string": "VPF001VPF1 contact_no patient_name",
-                        "patient_id": "VPF001",
-                    },
-                    "date": "2021-01-01T00:00:00Z",
-                    "status": "status",
-                },
-                "doctor": {
-                    "auth0_id": "1",
-                    "username": "test_user",
-                    "email": f"{self.user.email}",
-                },
-                "prescriptions": [],
-                "date": "2021-01-01T00:00:00Z",
-                "past_medical_history": "past_medical_history",
-                "consultation": "consultation",
-                "plan": "plan",
-                "referred_for": "referred_for",
-                "referral_notes": "referral_notes",
-                "remarks": "remarks",
-            },
+
+@pytest.mark.django_db
+class TestConsultAPIPytest:
+    """Pytest-style consult API test (for comparison with unittest version)"""
+    
+    def test_consult_crud_operations(self, api_client, visit, test_user):
+        """Test full CRUD lifecycle for consult endpoint"""
+        # POST - Create consult
+        post_response = api_client.post(
+            reverse("consults:consults_list"),
+            {"consult": dummy.post_consult_dummy},
+            HTTP_DOCTOR=test_user.email,
         )
+        assert post_response.status_code == 201
+        expected = ConsultSerializer(Consult.objects.get(pk=1)).data
+        assert post_response.data == expected
 
-        # DELETE
+        # GET - Retrieve consult
+        get_response = api_client.get(reverse("consults:consults_pk", args=["1"]))
+        assert get_response.status_code == 200
+        expected = ConsultSerializer(Consult.objects.get(pk=1)).data
+        assert get_response.data == expected
 
-        delete_response = self.client.delete(reverse("consults_detail", args=["1"]))
-        self.assertEqual(delete_response.status_code, 200)
-        self.assertEqual(delete_response.data, {"message": "Deleted successfully"})
-
-        # GET
-        get_response = self.client.get(reverse("consults_list"))
-        self.assertEqual(get_response.status_code, 200)
-        self.assertEqual(
-            get_response.data,
-            [],
+        # PATCH - Update consult
+        put_response = api_client.patch(
+            reverse("consults:consults_pk", args=["1"]),
+            {"consult": dummy.post_consult_dummy},
+            HTTP_DOCTOR=test_user.email,
         )
+        assert put_response.status_code == 200
+        expected = ConsultSerializer(Consult.objects.get(pk=1)).data
+        assert put_response.data == expected
+
+        # GET - Verify update
+        get_response = api_client.get(reverse("consults:consults_pk", args=["1"]))
+        assert get_response.status_code == 200
+        expected = ConsultSerializer(Consult.objects.get(pk=1)).data
+        assert get_response.data == expected
+
+        # DELETE - Remove consult
+        delete_response = api_client.delete(reverse("consults:consults_pk", args=["1"]))
+        assert delete_response.status_code == 204
+        assert delete_response.data == {"message": "Deleted successfully"}
+
+        # GET list - Verify deletion
+        get_response = api_client.get(reverse("consults:consults_list") + "?visit=1")
+        assert get_response.status_code == 200
+        assert get_response.data == []
+
+
+# Alternative: function-based test (even more concise)
+@pytest.mark.django_db
+def test_consult_api_function_style(api_client, visit, test_user):
+    """Same test as above, but as a plain function instead of class method"""
+    # POST
+    post_response = api_client.post(
+        reverse("consults:consults_list"),
+        {"consult": dummy.post_consult_dummy},
+        HTTP_DOCTOR=test_user.email,
+    )
+    assert post_response.status_code == 201
+    
+    consult = Consult.objects.get(pk=1)
+    expected = ConsultSerializer(consult).data
+    assert post_response.data == expected
+    
+    # GET
+    get_response = api_client.get(reverse("consults:consults_pk", args=["1"]))
+    assert get_response.status_code == 200
+    assert get_response.data == expected
+    
+    # DELETE
+    delete_response = api_client.delete(reverse("consults:consults_pk", args=["1"]))
+    assert delete_response.status_code == 204
+    assert delete_response.data == {"message": "Deleted successfully"}
