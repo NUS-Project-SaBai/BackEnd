@@ -9,5 +9,5 @@ class Diagnosis(models.Model):
     consult = models.ForeignKey(
         Consult, on_delete=models.SET_NULL, blank=True, null=True
     )
-    details = models.TextField(blank=True, null=True)
-    category = models.CharField(max_length=255, blank=True, null=True)
+    details = models.TextField()
+    category = models.CharField(max_length=255)

@@ -48,7 +48,7 @@ def custom_exception_handler(exc, context):
             logger.exception(f"Unhandled exception [{error_id}]")
 
         return Response(
-            {"error": str(exc), "error_id": error_id},
+            {"error": f"Unknown server error ({error_id})", "error_id": error_id},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 

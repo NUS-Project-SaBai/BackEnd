@@ -11,46 +11,63 @@ from typing import Dict, Any, List
 from django.utils import timezone
 
 import api.tests.dummies as dummy
-from api.models import Patient, Visit
-from api.models.consult_model import Consult
+from api.models import Patient, Visit, Consult, Medication
 
 
-def _collect(prefix: str) -> List[Dict[str, Any]]:
-    """Return a list of dummy dicts from the `dummy` module whose name
-    starts with `prefix`, ordered lexicographically (which matches
-    numeric suffix ordering for our names like post_x_dummy_1, _2...)
+def _collect(prefix: str, **overrides) -> List[Dict[str, Any]]:
+    """
+    Collect dummy dicts from the `dummy` module whose names start with `prefix`,
+    ordered lexicographically (which matches numeric suffix ordering for our names like
+    post_x_dummy_1, _2...). Apply any overrides to each dummy.
+
+
+    Args:
+        prefix (str): The prefix to filter dummy names.
+        **overrides: Key-value pairs to override in each dummy. None will remove the key.
+    Returns:
+        List[Dict[str, Any]]: List of dummy dicts with applied overrides.
+
     """
     names = sorted([n for n in dir(dummy) if n.startswith(prefix)])
-    return [getattr(dummy, n) for n in names]
+    # Return a copy of each dummy to avoid mutating the original
+    dummies: list[dict] = [getattr(dummy, n).copy() for n in names]
+    if overrides:
+        for d in dummies:
+            for key, value in overrides.items():
+                if value is None:
+                    d.pop(key, None)
+                else:
+                    d[key] = value
+    return dummies
 
 
-# Payload accessors (return the dummies "as-is")
-def patient_payloads() -> List[Dict[str, Any]]:
-    return _collect("post_patient_dummy")
+# Payload accessors (return the dummies "as-is", applying any overrides to all)
+def patient_payloads(**overrides) -> List[Dict[str, Any]]:
+    return _collect("post_patient_dummy", **overrides)
 
 
-def visit_payloads() -> List[Dict[str, Any]]:
-    return _collect("post_visit_dummy")
+def visit_payloads(**overrides) -> List[Dict[str, Any]]:
+    return _collect("post_visit_dummy", **overrides)
 
 
-def consult_payloads() -> List[Dict[str, Any]]:
-    return _collect("post_consult_dummy")
+def consult_payloads(**overrides) -> List[Dict[str, Any]]:
+    return _collect("post_consult_dummy", **overrides)
 
 
-def diagnosis_payloads() -> List[Dict[str, Any]]:
-    return _collect("post_diagnosis_dummy")
+def diagnosis_payloads(**overrides) -> List[Dict[str, Any]]:
+    return _collect("post_diagnosis_dummy", **overrides)
 
 
-def medication_payloads() -> List[Dict[str, Any]]:
-    return _collect("post_medication_dummy")
+def medication_payloads(**overrides) -> List[Dict[str, Any]]:
+    return _collect("post_medication_dummy", **overrides)
 
 
-def order_payloads() -> List[Dict[str, Any]]:
-    return _collect("post_order_dummy")
+def order_payloads(**overrides) -> List[Dict[str, Any]]:
+    return _collect("post_order_dummy", **overrides)
 
 
-def vitals_payloads() -> List[Dict[str, Any]]:
-    return _collect("post_vitals_dummy")
+def vitals_payloads(**overrides) -> List[Dict[str, Any]]:
+    return _collect("post_vitals_dummy", **overrides)
 
 
 # ORM batch creators that create objects using the dummy payloads in order
@@ -127,4 +144,13 @@ def create_consults_from_dummies(visits: List[Visit]) -> List[Consult]:
             remarks=payload.get("remarks"),
         )
         created.append(consult)
+    return created
+
+
+def create_medications_from_dummies() -> List[Consult]:
+    """Create medications using `medication_payloads`."""
+    created: List[Consult] = []
+    for payload in medication_payloads():
+        medication = Medication.objects.create(**payload)
+        created.append(medication)
     return created

@@ -1,10 +1,5 @@
 This files lists the unchecked test cases:
 
-api/tests/test_diagnosis.py — test_diagnosis_post(api_client, consult)
-api/tests/test_diagnosis.py — test_diagnosis_get(api_client, diagnosis_instance)
-api/tests/test_diagnosis.py — test_diagnosis_patch(api_client, diagnosis_instance, consult)
-api/tests/test_diagnosis.py — test_diagnosis_delete(api_client, diagnosis_instance)
-
 api/tests/test_orders.py — test_orders_post(api_client, consult_and_medication)
 api/tests/test_orders.py — test_orders_get(api_client, order_instance)
 api/tests/test_orders.py — test_orders_patch(api_client, order_instance)

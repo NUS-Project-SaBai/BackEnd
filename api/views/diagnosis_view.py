@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.core.exceptions import ObjectDoesNotExist
 
 from api.serializers import DiagnosisSerializer
 from api.services import diagnosis_service
@@ -12,12 +13,18 @@ class DiagnosisView(APIView):
             diagnosis = diagnosis_service.get_diagnosis(pk)
             if not diagnosis:
                 return Response(
-                    {"error": "Not found"}, status=status.HTTP_404_NOT_FOUND
+                    {"error": "Cannot find diagnosis"}, status=status.HTTP_404_NOT_FOUND
                 )
             serializer = DiagnosisSerializer(diagnosis)
             return Response(serializer.data)
 
         consult_id = request.query_params.get("consult")
+        if (
+            not isinstance(consult_id, int)
+            and consult_id is not None
+            and not consult_id.isdigit()
+        ):
+            raise ValueError("Invalid consult ID")
         diagnoses = diagnosis_service.list_diagnoses(consult_id)
         serializer = DiagnosisSerializer(diagnoses, many=True)
         return Response(serializer.data)
@@ -31,7 +38,9 @@ class DiagnosisView(APIView):
     def patch(self, request, pk):
         diagnosis = diagnosis_service.get_diagnosis(pk)
         if not diagnosis:
-            return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Cannot find diagnosis"}, status=status.HTTP_404_NOT_FOUND
+            )
         updated_data = diagnosis_service.update_diagnosis(diagnosis, request.data)
         return Response(updated_data)
 

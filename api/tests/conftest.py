@@ -23,6 +23,7 @@ from api.tests.fixtures import (
     consult_and_medication,
     patient_and_visit,
     patients_many,
+    medications_many,
     visit_factory,
     medication_api,
     consult_factory,

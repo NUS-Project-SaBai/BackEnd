@@ -21,6 +21,7 @@ from api.tests.factories import (
     create_patients_from_dummies,
     create_visits_from_dummies,
     create_consults_from_dummies,
+    create_medications_from_dummies,
 )
 
 
@@ -127,6 +128,12 @@ def patient_and_visit(api_client):
 # ----------------------
 # Additional ORM test data
 # ----------------------
+
+
+@pytest.fixture
+def medications_many(db):
+    """Create a medication instance for tests that need existing data"""
+    return create_medications_from_dummies()
 
 
 @pytest.fixture

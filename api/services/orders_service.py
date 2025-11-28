@@ -51,6 +51,8 @@ def get_orders_with_embedded_diagnoses(order_status):
 
 
 def create_order(order_data):
+    if not isinstance(order_data.get("quantity"), int):
+        raise ValueError("Invalid medicine quantity")
     quantity = int(order_data["quantity"])
     medicine = Medication.objects.get(pk=order_data["medicine"])
     medication_review_data = {

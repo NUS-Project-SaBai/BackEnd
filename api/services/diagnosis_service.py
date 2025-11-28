@@ -1,6 +1,5 @@
 from api.models import Diagnosis
 from api.serializers import DiagnosisSerializer
-from rest_framework.response import Response
 
 
 def list_diagnoses(consult_id=None):
