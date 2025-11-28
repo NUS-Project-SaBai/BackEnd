@@ -13,7 +13,7 @@ class OrderView(APIView):
             data = orders_service.get_order_by_id(pk)
             return Response(data, status=status.HTTP_200_OK)
 
-        order_status = request.query_params.get("order_status")
+        order_status = request.query_params.get("order_status", "").upper()
         if order_status:
             data = orders_service.get_orders_with_embedded_diagnoses(order_status)
             return Response(data, status=status.HTTP_200_OK)
