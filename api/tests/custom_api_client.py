@@ -32,7 +32,7 @@ class CustomAPIClient(APIClient):
             if field not in response.data:
                 raise AssertionError(
                     f"Error response (status {response.status_code}) missing required field: '"
-                    f"{field}'. Response data: {response.data}"
+                    f"{field}'. Response data: {response.data}",
                 )
 
     def get(self, *args, **kwargs):

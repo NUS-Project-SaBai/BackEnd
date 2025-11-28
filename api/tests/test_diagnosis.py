@@ -8,15 +8,17 @@ from rest_framework.reverse import reverse
 from api.models import Diagnosis
 from api.serializers import DiagnosisSerializer
 import api.tests.dummies as dummy
+from api.tests.factories import diagnosis_payloads
 
 
 @pytest.fixture
 def diagnosis_instance(api_client, consult):
     """Create a diagnosis instance for tests that need existing data"""
+    payload = diagnosis_payloads()[0]
     diagnosis_data = {
-        "consult_id": consult,
-        "details": dummy.post_diagnosis_dummy.get("details"),
-        "category": dummy.post_diagnosis_dummy.get("category"),
+        "consult_id": consult.pk,
+        "details": payload.get("details"),
+        "category": payload.get("category"),
     }
     response = api_client.post(reverse("diagnosis:diagnosis_list"), diagnosis_data)
     assert response.status_code == 201
@@ -27,10 +29,11 @@ def diagnosis_instance(api_client, consult):
 def test_diagnosis_post(api_client, consult):
     """Test creating diagnoses via POST - success and edge cases"""
     # Successful case - create diagnosis
+    payload = diagnosis_payloads()[0]
     diagnosis_data = {
-        "consult_id": consult,
-        "details": dummy.post_diagnosis_dummy.get("details"),
-        "category": dummy.post_diagnosis_dummy.get("category"),
+        "consult_id": consult.pk,
+        "details": payload.get("details"),
+        "category": payload.get("category"),
     }
     response = api_client.post(reverse("diagnosis:diagnosis_list"), diagnosis_data)
     assert response.status_code == 201
@@ -68,10 +71,11 @@ def test_diagnosis_get(api_client, diagnosis_instance):
 def test_diagnosis_patch(api_client, diagnosis_instance, consult):
     """Test updating diagnoses via PATCH - success and edge cases"""
     # Successful case - update diagnosis
+    payload = diagnosis_payloads()[0]
     diagnosis_data = {
-        "consult_id": consult,
-        "details": dummy.post_diagnosis_dummy.get("details"),
-        "category": dummy.post_diagnosis_dummy.get("category"),
+        "consult_id": consult.pk,
+        "details": payload.get("details"),
+        "category": payload.get("category"),
     }
     response = api_client.patch(
         reverse("diagnosis:diagnosis_pk", args=[str(diagnosis_instance.pk)]),

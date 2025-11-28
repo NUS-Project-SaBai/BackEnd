@@ -8,12 +8,14 @@ from rest_framework.reverse import reverse
 from api.models import Vitals
 from api.serializers import VitalsSerializer
 import api.tests.dummies as dummy
+from api.tests.factories import vitals_payloads
 
 
 @pytest.fixture
 def vitals_instance(api_client, patient_and_visit):
     """Create a vitals instance for tests that need existing data"""
-    response = api_client.post(reverse("vitals:vitals_list"), dummy.post_vitals_dummy)
+    payload = vitals_payloads()[0]
+    response = api_client.post(reverse("vitals:vitals_list"), payload)
     assert response.status_code == 200
     return Vitals.objects.get(pk=response.data["id"])
 
@@ -22,7 +24,8 @@ def vitals_instance(api_client, patient_and_visit):
 def test_vitals_post(api_client, patient_and_visit):
     """Test creating vitals via POST - success and edge cases"""
     # Successful case - create vitals
-    response = api_client.post(reverse("vitals:vitals_list"), dummy.post_vitals_dummy)
+    payload = vitals_payloads()[0]
+    response = api_client.post(reverse("vitals:vitals_list"), payload)
     assert response.status_code == 200
     expected = VitalsSerializer(Vitals.objects.get(pk=1)).data
     assert response.data == expected
@@ -60,18 +63,17 @@ def test_vitals_get(api_client, vitals_instance):
 def test_vitals_patch(api_client, vitals_instance):
     """Test updating vitals via PATCH - success and edge cases"""
     # Successful case - update vitals
+    payload = vitals_payloads()[0]
     response = api_client.patch(
         reverse("vitals:vitals_pk", args=[str(vitals_instance.pk)]),
-        dummy.post_vitals_dummy,
+        payload,
     )
     assert response.status_code == 200
     expected = VitalsSerializer(vitals_instance).data
     assert response.data == expected
 
     # Edge case - update nonexistent vitals
-    response = api_client.patch(
-        reverse("vitals:vitals_pk", args=["99999"]), dummy.post_vitals_dummy
-    )
+    response = api_client.patch(reverse("vitals:vitals_pk", args=["99999"]), payload)
     assert response.status_code == 404
 
 

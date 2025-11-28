@@ -5,15 +5,16 @@ Test medication API endpoints - organized by HTTP method with edge cases
 import pytest
 from rest_framework.reverse import reverse
 
-import api.tests.dummies as dummy
+from api.tests.factories import medication_payloads
 
 
 @pytest.fixture
 def medication_instance(api_client, test_user):
     """Create a medication instance for tests that need existing data"""
+    payload = medication_payloads()[0]
     response = api_client.post(
         reverse("medication:medications_list"),
-        dummy.post_medication_dummy,
+        payload,
         headers={"doctor": test_user.email},
     )
     assert response.status_code == 201
@@ -25,10 +26,11 @@ def medication_instance(api_client, test_user):
 @pytest.mark.django_db
 def test_medication_post(api_client, test_user):
     """Test creating medications via POST - success and edge cases"""
+    payload = medication_payloads()[0]
     # Successful case - create medication
     response = api_client.post(
         reverse("medication:medications_list"),
-        dummy.post_medication_dummy,
+        payload,
         headers={"doctor": test_user.email},
     )
     assert response.status_code == 201
@@ -36,9 +38,9 @@ def test_medication_post(api_client, test_user):
     # Medication serializer returns medication fields; approval is write-only
     expected_post = {
         "id": 1,
-        "medicine_name": dummy.post_medication_dummy["medicine_name"],
-        "quantity": dummy.post_medication_dummy["quantity"],
-        "notes": dummy.post_medication_dummy["notes"],
+        "medicine_name": payload["medicine_name"],
+        "quantity": payload["quantity"],
+        "notes": payload["notes"],
         "code": None,
         "warning_quantity": None,
     }
@@ -47,7 +49,7 @@ def test_medication_post(api_client, test_user):
     # Edge case - missing doctor header
     response = api_client.post(
         reverse("medication:medications_list"),
-        dummy.post_medication_dummy,
+        payload,
     )
     assert response.status_code in [400, 403, 500]  # Should fail without doctor
 
@@ -63,6 +65,7 @@ def test_medication_post(api_client, test_user):
 @pytest.mark.django_db
 def test_medication_get(api_client, medication_instance):
     """Test retrieving medications via GET - single, list, and edge cases"""
+    payload = medication_payloads()[0]
     # Successful case - retrieve single medication by pk
     response = api_client.get(
         reverse("medication:medications_pk", args=[str(medication_instance)])
@@ -70,9 +73,9 @@ def test_medication_get(api_client, medication_instance):
     assert response.status_code == 200
     expected = {
         "id": medication_instance,
-        "medicine_name": dummy.post_medication_dummy["medicine_name"],
-        "quantity": dummy.post_medication_dummy["quantity"],
-        "notes": dummy.post_medication_dummy["notes"],
+        "medicine_name": payload["medicine_name"],
+        "quantity": payload["quantity"],
+        "notes": payload["notes"],
         "code": None,
         "warning_quantity": None,
     }
@@ -92,18 +95,19 @@ def test_medication_get(api_client, medication_instance):
 @pytest.mark.django_db
 def test_medication_patch(api_client, medication_instance, test_user):
     """Test updating medications via PATCH - success and edge cases"""
+    payload = medication_payloads()[0]
     # Successful case - update medication
     response = api_client.patch(
         reverse("medication:medications_pk", args=[str(medication_instance)]),
-        dummy.post_medication_dummy,
+        payload,
         headers={"doctor": test_user.email},
     )
     assert response.status_code == 200
     expected = {
         "id": medication_instance,
-        "medicine_name": dummy.post_medication_dummy["medicine_name"],
-        "quantity": dummy.post_medication_dummy["quantity"],
-        "notes": dummy.post_medication_dummy["notes"],
+        "medicine_name": payload["medicine_name"],
+        "quantity": payload["quantity"],
+        "notes": payload["notes"],
         "code": None,
         "warning_quantity": None,
     }
@@ -112,7 +116,7 @@ def test_medication_patch(api_client, medication_instance, test_user):
     # Edge case - update nonexistent medication
     response = api_client.patch(
         reverse("medication:medications_pk", args=["99999"]),
-        dummy.post_medication_dummy,
+        payload,
         headers={"doctor": test_user.email},
     )
     assert response.status_code == 404

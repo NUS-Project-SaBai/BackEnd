@@ -14,12 +14,20 @@ from api.tests.custom_api_client import CustomAPIClient
 
 # Import common model fixtures so they're available to all tests
 from api.tests.fixtures import (
+    all_dummy_patients,
     patient,
+    all_dummy_visits,
     visit,
     consult,
+    consult_id,
     consult_and_medication,
     patient_and_visit,
-)  # noqa: F401
+    patients_many,
+    visit_factory,
+    medication_api,
+    consult_factory,
+    full_patient_setup,
+)
 
 
 @pytest.fixture

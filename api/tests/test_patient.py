@@ -8,14 +8,14 @@ from rest_framework.reverse import reverse
 from api.models import Patient
 from api.serializers import PatientSerializer
 import api.tests.dummies as dummy
+from api.tests.factories import patient_payloads
 
 
 @pytest.fixture
 def patient_instance(api_client):
     """Create a patient instance for tests that need existing data"""
-    response = api_client.post(
-        reverse("patients:patients_list"), dummy.post_patient_dummy
-    )
+    payload = patient_payloads()[0]
+    response = api_client.post(reverse("patients:patients_list"), payload)
     assert response.status_code == 200
     return Patient.objects.get(pk=1)
 
@@ -24,9 +24,8 @@ def patient_instance(api_client):
 def test_patient_post(api_client):
     """Test creating patients via POST - success and edge cases"""
     # Successful case - create patient
-    response = api_client.post(
-        reverse("patients:patients_list"), dummy.post_patient_dummy
-    )
+    payload = patient_payloads()[0]
+    response = api_client.post(reverse("patients:patients_list"), payload)
     assert response.status_code == 200
 
     patient = Patient.objects.get(pk=1)

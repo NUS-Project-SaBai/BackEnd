@@ -7,12 +7,14 @@ from rest_framework.reverse import reverse
 
 from api.models import Visit
 import api.tests.dummies as dummy
+from api.tests.factories import visit_payloads
 
 
 @pytest.fixture
 def visit_instance(api_client, patient):
     """Create a visit instance for tests that need existing data"""
-    response = api_client.post(reverse("visits:visits_list"), dummy.post_visit_dummy)
+    payload = visit_payloads()[0]
+    response = api_client.post(reverse("visits:visits_list"), payload)
     assert response.status_code == 200
     return Visit.objects.get(pk=response.data["id"])
 
@@ -21,7 +23,8 @@ def visit_instance(api_client, patient):
 def test_visit_post(api_client, patient):
     """Test creating visits via POST - success and edge cases"""
     # Successful case - create visit
-    response = api_client.post(reverse("visits:visits_list"), dummy.post_visit_dummy)
+    payload = visit_payloads()[0]
+    response = api_client.post(reverse("visits:visits_list"), payload)
     assert response.status_code == 200
 
     visit = Visit.objects.get(pk=1)
@@ -62,9 +65,10 @@ def test_visit_get(api_client, visit_instance):
 def test_visit_patch(api_client, visit_instance):
     """Test updating visits via PATCH - success and edge cases"""
     # Successful case - update visit
+    payload = visit_payloads()[0]
     response = api_client.patch(
         reverse("visits:visits_pk", args=[str(visit_instance.pk)]),
-        dummy.post_visit_dummy,
+        payload,
     )
     assert response.status_code == 200
     assert response.data.get("id") == visit_instance.pk
@@ -72,9 +76,7 @@ def test_visit_patch(api_client, visit_instance):
     assert response.data.get("status") == "status"
 
     # Edge case - update nonexistent visit
-    response = api_client.patch(
-        reverse("visits:visits_pk", args=["99999"]), dummy.post_visit_dummy
-    )
+    response = api_client.patch(reverse("visits:visits_pk", args=["99999"]), payload)
     assert response.status_code == 404
 
 

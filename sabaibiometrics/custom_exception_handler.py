@@ -2,6 +2,7 @@ import logging
 import uuid
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.http.response import Http404
 from rest_framework.views import exception_handler as drf_exception_handler
 from rest_framework.response import Response
 from rest_framework import status, serializers
@@ -14,7 +15,7 @@ def custom_exception_handler(exc, context):
     # Call REST framework's default exception handler first,
     # to get the standard error response.
     response = drf_exception_handler(exc, context)
-    print(exc, context, flush=True)
+    print(type(exc), exc, context, flush=True)
 
     # Now add the HTTP status code to the response.
     if isinstance(exc, ObjectDoesNotExist):
@@ -26,6 +27,8 @@ def custom_exception_handler(exc, context):
             {"error": readable_codes(exc.get_codes())},
             status=status.HTTP_400_BAD_REQUEST,
         )
+    elif isinstance(exc, Http404):
+        return Response({"error": str(exc)}, status=status.HTTP_404_NOT_FOUND)
     elif response is None:
         # Unhandled exception: generate a correlation id and log with traceback
         error_id = str(uuid.uuid4())
@@ -52,7 +55,14 @@ def custom_exception_handler(exc, context):
     return response
 
 
-code_names = {"null": "Missing", "invalid": "Invalid", "required": "Missing"}
+code_names = {
+    "null": "Missing",
+    "invalid": "Invalid",
+    "required": "Missing",
+    "incorrect_type": "Invalid",
+    "does_not_exist": "Cannot find",
+    "not_found": "Cannot find",
+}
 
 
 def readable_codes(codes) -> str:

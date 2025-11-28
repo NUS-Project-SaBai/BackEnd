@@ -1,4 +1,4 @@
-post_vitals_dummy = {
+post_vitals_dummy_1 = {
     "visit_id": 1,
     "height": 100,
     "weight": 100,
@@ -15,4 +15,39 @@ post_vitals_dummy = {
     "left_eye_pinhole": "+23",
     "right_eye_pinhole": "+23",
     "others": "others",
+}
+
+
+post_vitals_dummy_2 = {
+    "visit_id": 1,
+    "height": 170,
+    "weight": 70,
+    "systolic": 120,
+    "diastolic": 80,
+    "temperature": 36.6,
+    "diabetes_mellitus": "No",
+    "heart_rate": 72,
+    "urine_test": "False",
+    "hemocue_count": 12,
+    "blood_glucose": 90,
+    "left_eye_degree": "+0.5",
+    "right_eye_degree": "+0.5",
+    "others": "none",
+}
+
+post_vitals_dummy_3 = {
+    "visit_id": 2,
+    "height": 165,
+    "weight": 68,
+    "systolic": 118,
+    "diastolic": 76,
+    "temperature": 36.7,
+    "diabetes_mellitus": "No",
+    "heart_rate": 70,
+    "urine_test": "False",
+    "hemocue_count": 11,
+    "blood_glucose": 95,
+    "left_eye_degree": "+0.25",
+    "right_eye_degree": "+0.25",
+    "others": "patient2",
 }

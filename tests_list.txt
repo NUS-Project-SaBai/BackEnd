@@ -1,0 +1,33 @@
+This files lists the unchecked test cases:
+
+api/tests/test_diagnosis.py — test_diagnosis_post(api_client, consult)
+api/tests/test_diagnosis.py — test_diagnosis_get(api_client, diagnosis_instance)
+api/tests/test_diagnosis.py — test_diagnosis_patch(api_client, diagnosis_instance, consult)
+api/tests/test_diagnosis.py — test_diagnosis_delete(api_client, diagnosis_instance)
+
+api/tests/test_orders.py — test_orders_post(api_client, consult_and_medication)
+api/tests/test_orders.py — test_orders_get(api_client, order_instance)
+api/tests/test_orders.py — test_orders_patch(api_client, order_instance)
+api/tests/test_orders.py — test_orders_delete(api_client, order_instance)
+
+api/tests/test_patient.py — test_patient_post(api_client)
+api/tests/test_patient.py — test_patient_get(api_client, patient_instance)
+api/tests/test_patient.py — test_patient_patch(api_client, patient_instance)
+api/tests/test_patient.py — test_patient_delete(api_client, patient_instance)
+
+api/tests/test_medication.py — test_medication_post(api_client, test_user)
+api/tests/test_medication.py — test_medication_get(api_client, medication_instance)
+api/tests/test_medication.py — test_medication_patch(api_client, medication_instance, test_user)
+api/tests/test_medication.py — test_medication_delete(api_client, medication_instance)
+
+api/tests/test_vitals.py — test_vitals_post(api_client, patient_and_visit)
+api/tests/test_vitals.py — test_vitals_get(api_client, vitals_instance)
+api/tests/test_vitals.py — test_vitals_patch(api_client, vitals_instance)
+api/tests/test_vitals.py — test_vitals_delete(api_client, vitals_instance)
+
+api/tests/test_visit.py — test_visit_post(api_client, patient)
+api/tests/test_visit.py — test_visit_get(api_client, visit_instance)
+api/tests/test_visit.py — test_visit_patch(api_client, visit_instance)
+api/tests/test_visit.py — test_visit_delete(api_client, visit_instance)
+
+api/tests/test_post_all.py — test_post_all_endpoints(api_client, test_user)
