@@ -6,7 +6,7 @@ from rest_framework.test import APIClient
 from rest_framework.response import Response
 
 
-class CustomAPIClient(APIClient):
+class CustomAPITestClient(APIClient):
     """
     Extended APIClient that validates error responses contain expected fields
     """
@@ -41,19 +41,46 @@ class CustomAPIClient(APIClient):
         return response
 
     def post(self, *args, **kwargs):
+        self._ensure_multipart_for_files(args, kwargs)
         response = super().post(*args, **kwargs)
         self._validate_error_response(response)
         return response
 
     def put(self, *args, **kwargs):
+        self._ensure_multipart_for_files(args, kwargs)
         response = super().put(*args, **kwargs)
         self._validate_error_response(response)
         return response
 
     def patch(self, *args, **kwargs):
+        self._ensure_multipart_for_files(args, kwargs)
         response = super().patch(*args, **kwargs)
         self._validate_error_response(response)
         return response
+
+    def _ensure_multipart_for_files(self, args, kwargs):
+        """If the request payload contains file-like objects, set
+        `format='multipart'` so DRF test client encodes the request
+        correctly. This centralizes detection logic used by POST/PUT/PATCH.
+        """
+        data = kwargs.get("data", None)
+        if data is None and len(args) >= 2:
+            data = args[1]
+
+        try:
+            from django.core.files.uploadedfile import UploadedFile
+
+            has_file = False
+            if isinstance(data, dict):
+                for v in data.values():
+                    if isinstance(v, UploadedFile) or hasattr(v, "read"):
+                        has_file = True
+                        break
+            if has_file and "format" not in kwargs:
+                kwargs["format"] = "multipart"
+        except Exception:
+            # Fail silently; test can still set format explicitly
+            pass
 
     def delete(self, *args, **kwargs):
         response = super().delete(*args, **kwargs)

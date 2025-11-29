@@ -2,25 +2,35 @@
 Common model fixtures for tests.
 Centralizes patient, visit, and other model creation to avoid duplication.
 """
+__all__ = [
+    "all_dummy_patients",
+    "patient",
+    "all_dummy_visits",
+    "visit",
+    "consult",
+    "consult_id",
+    "consult_and_medication",
+    "patient_and_visit",
+    "medications_many",
+    "patients_many",
+    "visit_factory",
+    "medication_api",
+    "consult_factory",
+    "full_patient_setup",
+]
 
 import pytest
-from datetime import datetime
 from django.utils import timezone
 from rest_framework.reverse import reverse
 
-from api.models import Patient, Visit, Consult
-import api.tests.dummies as dummy
+from api.models import Visit, Consult
 from api.tests.factories import (
     patient_payloads,
     visit_payloads,
     consult_payloads,
-    diagnosis_payloads,
     medication_payloads,
-    order_payloads,
-    vitals_payloads,
     create_patients_from_dummies,
     create_visits_from_dummies,
-    create_consults_from_dummies,
     create_medications_from_dummies,
 )
 
