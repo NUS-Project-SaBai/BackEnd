@@ -1,15 +1,13 @@
 """
-Test consult API endpoints - organized by HTTP method with edge cases
+POST tests for consults
 """
 
-from typing import Iterable
 import pytest
 from rest_framework.reverse import reverse
 
-import api.tests.dummies as dummy
-from api.tests.factories import consult_payloads, order_payloads, diagnosis_payloads
 from api.models import Consult, Diagnosis, Order
 from api.serializers import ConsultSerializer
+from api.tests.factories import consult_payloads, order_payloads, diagnosis_payloads
 
 
 def create_consult_payload(visit_id, include_orders=True, include_diagnoses=True):
@@ -25,7 +23,7 @@ def create_consult_payload(visit_id, include_orders=True, include_diagnoses=True
 
 
 @pytest.mark.django_db
-def test_consult_post(api_client, visit, test_user):
+def test_consults_post_SuccessCreate(api_client, visit, test_user):
     """Test creating consults via POST - success and edge cases"""
     payload = create_consult_payload(
         visit.pk, include_orders=False, include_diagnoses=False
@@ -96,7 +94,7 @@ def test_consult_post(api_client, visit, test_user):
 
 
 @pytest.mark.django_db
-def test_consult_post_payload(api_client, visit, test_user, medications_many):
+def test_consults_post_PayloadEdgeCases(api_client, visit, test_user, medications_many):
     """Test creating consults via POST - various payload edge cases"""
     base_payload = create_consult_payload(visit.pk)
     assert Diagnosis.objects.all().count() == 0, "Non-Empty Diagnosis Table"
@@ -181,130 +179,3 @@ def test_consult_post_payload(api_client, visit, test_user, medications_many):
     assert response.data["error"].startswith("Missing")
     assert response.data["error"].find("category") != -1
     assert Consult.objects.all().count() == num_consults_before
-
-
-@pytest.mark.django_db
-def test_consult_get_pk(api_client, consult):
-    """Test retrieving consults via GET - single"""
-    # Successful case - retrieve single consult by pk
-    response = api_client.get(reverse("consults:consults_pk", args=[str(consult.pk)]))
-    assert response.status_code == 200
-    expected = ConsultSerializer(consult).data
-    assert response.data == expected
-
-    # Edge case - get nonexistent consult
-    response = api_client.get(reverse("consults:consults_pk", args=["99999"]))
-    assert response.status_code == 404
-    assert response.data.get("error") == "Consult not found"
-
-
-@pytest.mark.django_db
-def test_consult_get_all(api_client, consult):
-    """Test retrieving consults via GET - list all"""
-    # Successful case - list all consults
-    response = api_client.get(reverse("consults:consults_list"))
-    assert response.status_code == 200
-    assert len(response.data) == 1
-    assert response.data[0]["id"] == consult.pk
-
-
-@pytest.mark.django_db
-def test_consult_get_visit(api_client, consult, visit):
-    """Test retrieving consults via GET - list"""
-    # Successful case - list consults by visit
-    response = api_client.get(
-        reverse("consults:consults_list") + f"?visit_id={consult.visit.id}"
-    )
-    assert response.status_code == 200
-    assert len(response.data) == 1
-    assert response.data[0]["id"] == consult.pk
-
-    # Edge case - list consults by visit with no consults, valid but empty list
-    response = api_client.get(reverse("consults:consults_list") + f"?visit_id=99999")
-    assert response.status_code == 200
-    assert response.data == []
-
-
-@pytest.mark.django_db
-def test_consult_get_patient(api_client, consult, visit):
-    """Test retrieving consults via GET - list by patient_id"""
-    # Successful case - list consults by patient_id
-    response = api_client.get(
-        reverse("consults:consults_list") + f"?patient_id={visit.patient.pk}"
-    )
-    assert response.status_code == 200
-    assert len(response.data) == 1
-    assert response.data[0]["id"] == consult.pk
-
-    # Edge case - list consults by patient_id (no consults)
-    response = api_client.get(reverse("consults:consults_list") + f"?patient_id=99999")
-    assert response.status_code == 200
-    assert response.data == []
-
-
-@pytest.mark.django_db
-def test_consult_patch(api_client, consult, test_user):
-    """Test updating consults via PATCH - success and edge cases"""
-    payload = consult_payloads()[0]
-    # Successful case - update consult
-    updated_dummy = dict(payload)
-    response = api_client.patch(
-        reverse("consults:consults_pk", args=[str(consult.pk)]),
-        {"consult": updated_dummy},
-        headers={"doctor": test_user.email},
-    )
-    assert response.status_code == 200
-
-    consult.refresh_from_db()
-    expected = ConsultSerializer(consult).data
-    assert response.data == expected
-
-    # Edge case - update nonexistent consult
-    response = api_client.patch(
-        reverse("consults:consults_pk", args=["99999"]),
-        {"consult": updated_dummy},
-        headers={"doctor": test_user.email},
-    )
-    assert response.status_code == 404
-    assert response.data.get("error") == "Consult not found"
-
-
-@pytest.mark.django_db
-def test_consult_delete(api_client, consult):
-    """Test deleting consults via DELETE - success and edge cases"""
-    visit_id = consult.visit.pk
-    consult_id = consult.pk
-
-    # Successful case - delete consult
-    response = api_client.delete(
-        reverse("consults:consults_pk", args=[str(consult_id)])
-    )
-    assert response.status_code == 204
-    assert response.data == {"message": "Deleted successfully"}
-
-    # Verify consult is gone from list
-    response = api_client.get(
-        reverse("consults:consults_list") + f"?visit_id={visit_id}"
-    )
-    assert response.status_code == 200
-    assert response.data == []
-
-    response = api_client.get(reverse("consults:consults_pk", args=[str(consult_id)]))
-    assert response.status_code == 404
-    assert response.data.get("error") == "Consult not found"
-
-    # Edge case - delete already deleted consult (should 404)
-    response = api_client.delete(
-        reverse("consults:consults_pk", args=[str(consult_id)])
-    )
-    assert (
-        response.status_code == 404
-        and response.data.get("error") == "Consult not found"
-    )
-
-    # Edge case - delete nonexistent consult
-    response = api_client.delete(reverse("consults:consults_pk", args=["99999"]))
-    assert (
-        response.status_code == 404
-        and response.data.get("error") == "Consult not found"
-    )
