@@ -27,8 +27,8 @@ def test_medications_delete_RemovesAndEdgeCases(api_client, medication_instance)
     response = api_client.delete(
         reverse("medication:medications_pk", args=[str(medication_pk)])
     )
-    assert response.status_code == 500
+    assert response.status_code == 404
 
     # Edge case - delete nonexistent medication
     response = api_client.delete(reverse("medication:medications_pk", args=["99999"]))
-    assert response.status_code == 500
+    assert response.status_code == 404

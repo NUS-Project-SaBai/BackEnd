@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.db.models import Sum
+from django.shortcuts import get_object_or_404
 
 from api.models import Medication, MedicationReview
 from api.serializers import MedicationSerializer
@@ -11,7 +12,7 @@ def list_medications():
 
 
 def get_medication(pk):
-    return Medication.objects.filter(pk=pk).first()
+    return get_object_or_404(Medication, pk=pk)
 
 
 def get_medication_with_pending(pk, order_status):

@@ -1,15 +1,5 @@
 This files lists the unchecked test cases:
 
-api/tests/test_patient.py — test_patient_post(api_client)
-api/tests/test_patient.py — test_patient_get(api_client, patient_instance)
-api/tests/test_patient.py — test_patient_patch(api_client, patient_instance)
-api/tests/test_patient.py — test_patient_delete(api_client, patient_instance)
-
-api/tests/test_medication.py — test_medication_post(api_client, test_user)
-api/tests/test_medication.py — test_medication_get(api_client, medication_instance)
-api/tests/test_medication.py — test_medication_patch(api_client, medication_instance, test_user)
-api/tests/test_medication.py — test_medication_delete(api_client, medication_instance)
-
 api/tests/test_vitals.py — test_vitals_post(api_client, patient_and_visit)
 api/tests/test_vitals.py — test_vitals_get(api_client, vitals_instance)
 api/tests/test_vitals.py — test_vitals_patch(api_client, vitals_instance)
