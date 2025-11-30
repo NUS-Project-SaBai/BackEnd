@@ -4,7 +4,12 @@ jobs:
   test_project:
     runs-on: ubuntu-latest
     env:
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      # Fixed dummy values for CI to avoid missing-secret failures.
+      # These are safe for CI runs and are not production secrets.
+      SECRET_KEY: "ci-secret-key-please-change"
+      CLOUDINARY_CLOUD_NAME: "demo_cloud"
+      CLOUDINARY_API_KEY: "demo_api_key"
+      CLOUDINARY_API_SECRET: "demo_api_secret"
       # Use the temporary sqlite DB when running pytest
       TEMP_DB: "True"
 
@@ -22,4 +27,4 @@ jobs:
       - name: Run tests with pytest
         run: |
           # Run pytest directly so the command exists in the virtualenv
-          pipenv run test
+          pipenv run pytest -q
