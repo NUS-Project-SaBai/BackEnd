@@ -5,6 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      # Use the temporary sqlite DB when running pytest
+      TEMP_DB: "True"
 
     steps:
       - uses: actions/checkout@v4
