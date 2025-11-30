@@ -1,5 +1,5 @@
 name: Django_tests
-on: [pull_request, push]
+on: [pull_request]
 jobs:
   test_project:
     runs-on: ubuntu-latest
