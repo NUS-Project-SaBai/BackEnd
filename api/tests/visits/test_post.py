@@ -18,7 +18,8 @@ def test_visits_post_SuccessCreate(api_client, patient):
     assert response.status_code == 200
 
     visit = Visit.objects.get(pk=1)
-    # Check main visit fields
+    assert visit.patient.id == patient.id
+    # Check main visit fields, previously nothing in database.
     assert response.data.get("id") == 1
     assert response.data.get("date") == "2021-01-01T00:00:00Z"
     assert response.data.get("status") == "status"
