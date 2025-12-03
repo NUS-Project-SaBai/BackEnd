@@ -1,6 +1,7 @@
 # API Documentation Template
 
 ---
+
 - **Frontend Location**:  
   Header component in the patient consultation page under records.
 
@@ -9,28 +10,41 @@
 
 ---
 
-## API Endpoint: `/upload/`
+## API Endpoint: `/files/`
 
 ### Overview
+
 - **Description**:  
-  Uploads a file to either the offline server, or to google drive. file info is then saved in db
+  Uploads one or more files for a patient. In online mode, files are uploaded to Google Drive and the `file_path` is stored; in offline mode, files are saved locally and `offline_file` is stored.
 - **HTTP Method**:  
   POST
+- **File Validation**:
+  - Maximum file size: 25MB per file
+  - File name cannot be empty or whitespace only
 
 ---
 
 ### Request Details
 
 #### Query Parameters
+
 - None
+
 #### Request Body
-- **Structure**:  
-  ```json
-  {
-    "file": "some file data",
-    "filename": "patientIdentifier-currentDate-documentName",
-    "patient_pk": 1
-  }
+
+- **Content-Type**: `multipart/form-data`
+- **Fields**:
+
+  - `files`: array of files (supports multiple)
+  - `descriptions`: array of strings (one per file)
+  - `patient_pk`: integer (patient ID)
+
+  Example (pseudo):
+
+  ```
+  files: [<file1>, <file2>]
+  descriptions: ["X-ray", "Lab report"]
+  patient_pk: 1
   ```
 
 ---
@@ -38,67 +52,57 @@
 ### Response Details
 
 #### Response Structure
-- **Status Codes**:  
+
+- **Status Codes**:
   - 500: Internal Server Error: Uncaught error in system (VERY BAD)
-  - 400: Bad Request: Request Data issue
-  - 200: OK: All's good
-- **Sample Response**:  
-  (Sample cannot be obtained as file upload not possible with debug page)
+  - 400: Bad Request: Request Data issue (invalid patient, no files, empty file name, file too large)
+  - 201: Created: Files uploaded successfully
+- **Sample Success Response** (201):
+  ```
+  "Uploaded 2 files:\nTT001-2025-02-17-X-ray.png\nTT001-2025-02-17-LabReport.pdf"
+  ```
+- **Sample Error Response** (400):
+  ```json
+  {
+    "error": "Invalid patient 999"
+  }
+  ```
+  or
+  ```json
+  {
+    "error": "Invalid Files:\n\nfile.pdf - File is too large!\nimage.png - No name provided"
+  }
+  ```
 
 #### Data Fetched by the Frontend
-- **Complete Data Set**:  
-  All File Fields
-  - file_path
-  - offline_file
-  - file_name
-  - created_at
 
-  + Patient Fields (for patient associated with File)
-  ```json
-  "patient": {
-      "model": "clinicmodels.patient",
-      "pk": 1,
-      "village_prefix": "TT",
-      "name": "john doe",
-      "identification_number": "",
-      "contact_no": "",
-      "gender": "Female",
-      "date_of_birth": "2025-02-14T00:00:00Z",
-      "poor": "No",
-      "bs2": "No",
-      "sabai": "No",
-      "drug_allergy": "None",
-      "face_encodings": "",
-      "picture": "http://localhost:8080/media/offline_pictures/patient_screenshot_EzAGLoT.jpg",
-      "filter_string": "TT0001TT1  john doe",
-      "patient_id": "TT0001",
-      "confidence": ""
-    }
-  ```
-  
-#### Data Used by the Frontend
-  None: Data in response is for debugging purposes, not production use
+- Not applicable: POST returns a confirmation string for UX feedback.
+  Use subsequent `GET /files/?patient_pk=...` to fetch uploaded file metadata.
 
 ---
 
 ### Data Processing Details
 
 #### Processing on the Frontend
+
 - **Where**:  
   under the `uploadFile` function, ...
-- **How**: 
+- **How**:
   - document name is labelled: labeledDocumentName = `${patientIdentifier}-${currentDate}-${documentName}`;
-  - Data on the file (e.g. file_name, patient_pk, current_date etc.) is put together in a FormData component 
+  - Data on the file (e.g. file_name, patient_pk, current_date etc.) is put together in a FormData component
 
 #### Processing on the Backend
+
 - **Where**:  
-  All processing is done in the file_view, with the help of file_serializer
-- **How**:  
-  - File info is put into a dictionary
-  - Depending on whether the system is in offline or online mode, the file is either saved directly into the db, or uploaded, then the file_path is stored
-  - Serialiser serialises, then saves into db.
+  View: `api/views/file_view.py` (POST); Service: `api/services/file_service.py`
+- **How**:
+  - Extracts `files`, `descriptions`, and `patient_pk` from `multipart/form-data`
+  - Validates arrays lengths and patient existence
+  - Uploads to Google Drive or saves offline based on mode
+  - Persists `File` records; returns a summary string of created filenames
 
 ---
 
 ### Additional Notes
-- **If Any**:  
+
+- **If Any**:
