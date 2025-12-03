@@ -11,16 +11,19 @@ class ConsultView(APIView):
         if pk:
             consult = consult_service.get_consult(pk)
             if not consult:
-                return Response({"error": "Not found"}, status=404)
+                return Response({"error": "Consult not found"}, status=404)
             serializer = ConsultSerializer(consult)
             return Response(serializer.data)
 
-        visit_key = request.query_params.get("visit")
-        patient_ID = request.query_params.get("patientID")
+        visit_key = request.query_params.get("visit_id")
+        patient_id = request.query_params.get("patient_id")
         if visit_key:
             consults = consult_service.list_consults_by_visit_id(visit_key)
-        elif patient_ID:
-            consults = consult_service.list_consults_by_patient_id(patient_ID)
+        elif patient_id:
+            consults = consult_service.list_consults_by_patient_id(patient_id)
+        else:
+            # Fallback to list all consults when no filters provided
+            consults = consult_service.list_consults_by_visit_id(None)
 
         serializer = ConsultSerializer(consults, many=True)
         return Response(serializer.data)
@@ -32,7 +35,7 @@ class ConsultView(APIView):
     def patch(self, request, pk):
         consult = consult_service.get_consult(pk)
         if not consult:
-            return Response({"error": "Not found"}, status=404)
+            return Response({"error": "Consult not found"}, status=404)
         serializer = ConsultSerializer(consult, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -41,7 +44,7 @@ class ConsultView(APIView):
     def delete(self, request, pk):
         consult = consult_service.get_consult(pk)
         if not consult:
-            return Response({"error": "Not found"}, status=404)
+            return Response({"error": "Consult not found"}, status=404)
         consult.delete()
         return Response(
             {"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT

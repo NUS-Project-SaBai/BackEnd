@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-class TestView(APIView):
+class HelloView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):

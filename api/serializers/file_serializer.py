@@ -1,14 +1,21 @@
 from rest_framework import serializers
 from api import models
-from api import serializers as APISerializer
 
 
 class FileSerializer(serializers.ModelSerializer):
     patient_id = serializers.PrimaryKeyRelatedField(
-        source="patient", queryset=models.Patient.objects.all(), write_only=True
+        source="patient", queryset=models.Patient.objects.all()
     )
-    patient = APISerializer.PatientSerializer(read_only=True)
 
     class Meta:
         model = models.File
-        fields = "__all__"
+        fields = [
+            "id",
+            "patient_id",
+            "file_path",
+            "offline_file",
+            "file_name",
+            "description",
+            "created_at",
+            "is_deleted",
+        ]

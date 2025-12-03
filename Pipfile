@@ -32,9 +32,11 @@ pre-commit = "*"
 reportlab = "*"
 
 [dev-packages]
+pytest = "*"
+pytest-django = "*"
 
 [scripts]
-test = "python manage.py test"
+test = "pytest"
 start = "python manage.py start"
 makemigrations = "python manage.py makemigrations"
 migrate = "python manage.py migrate"

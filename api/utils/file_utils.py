@@ -47,6 +47,7 @@ def upload_file(uploaded_file, labeled_filename):
         .create(
             body=file_metadata,  # where to upload and name to upload as
             media_body=file_path,  # picture or document to upload
+            fields="id, name",  # only return necessary fields
         )
         .execute()
     )

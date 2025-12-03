@@ -51,13 +51,16 @@ def get_orders_with_embedded_diagnoses(order_status):
 
 
 def create_order(order_data):
+    if not isinstance(order_data.get("quantity"), int):
+        raise ValueError("Invalid medicine quantity")
     quantity = int(order_data["quantity"])
     medicine = Medication.objects.get(pk=order_data["medicine"])
+    order_status = order_data.get("order_status", "PENDING").upper()
     medication_review_data = {
         "quantity_changed": -quantity,
         "quantity_remaining": medicine.quantity - quantity,
         "medicine": medicine,
-        "order_status": "PENDING",
+        "order_status": order_status,
     }
     medication_review = MedicationReview.objects.create(**medication_review_data)
 
