@@ -53,8 +53,9 @@ class FileView(APIView):
                 descriptions,
                 patient_pk if type(patient_pk) == int else int(patient_pk),
             )
+            newline = "\n"  # f-string expression part cannot include backslash. work-around by declaring temp variable
             return Response(
-                f"Uploaded {len(created_filenames)} files:\n{'\n'.join(created_filenames)}",
+                f"Uploaded {len(created_filenames)} files:\n{newline.join(created_filenames)}",
                 status=status.HTTP_201_CREATED,
             )
         except ValueError as e:
