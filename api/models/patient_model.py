@@ -23,6 +23,8 @@ class Patient(models.Model):
     offline_picture = models.ImageField(
         upload_to="offline_pictures", blank=True, null=True
     )
+    to_get_report = models.BooleanField(default=False)
+    
 
     def clean(self):
         # Ensure that at least one of picture or offline_picture is provided
