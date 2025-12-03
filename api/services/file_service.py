@@ -1,19 +1,36 @@
 # api/services/files.py
 
+from typing import NamedTuple
+
 from django.conf import settings
+from django.core.files import File as DjangoFileType
+from django.db.models.query import QuerySet
 
 from api.models import File
+from api.models.patient_model import Patient
+from django.shortcuts import get_object_or_404
 from api.serializers import FileSerializer
 from api.utils import file_utils
 
 
-def list_files(patient_pk=None, include_deleted=False):
-    files = File.objects.all()
-    # Filter out deleted files if the flag is set to false
-    if not include_deleted:
-        files = files.filter(is_deleted=include_deleted)
+def list_files(patient_pk: int = None, is_deleted: bool = None) -> QuerySet[File]:
+    """
+    List files with optional filtering by patient_pk and is_deleted status.
 
-    if patient_pk:
+    Args:
+        patient_pk (int | None, optional): Find files associated with patient's pk.
+            None matches all patient's pk. Defaults to None.
+        is_deleted (bool | None, optional): Filter by deletion status.
+            None will match all files. Defaults to None.
+    Returns:
+        QuerySet: Filtered list of File objects.
+    """
+    files = File.objects.all()
+
+    if is_deleted is not None:
+        files = files.filter(is_deleted=is_deleted)
+
+    if patient_pk is not None:
         files = files.filter(patient_id=patient_pk)
     return files
 
@@ -23,30 +40,101 @@ def get_file(pk):
     return FileSerializer(file).data
 
 
-def create_file(
-    uploaded_file, labeled_filename, patient_pk, description: str | None = None
+def list_patient_files(patient_pks: list[int] = None, is_deleted: bool = None):
+    """
+    Returns a list of PatientFiles objects (patient + their files).
+    If patient_pks is None, groups all files by their patient.
+    """
+    from collections import defaultdict
+
+    files = list_files(is_deleted=is_deleted)
+
+    # Filter by specific patients if provided
+    if patient_pks:
+        files = files.filter(patient_id__in=patient_pks)
+
+    # Group files by patient
+    patient_files_map = defaultdict(list)
+    patient_ids = set()
+
+    for file in files:
+        if file.patient_id:
+            patient_files_map[file.patient_id].append(file)
+            patient_ids.add(file.patient_id)
+
+    # Fetch all patients at once
+    patients = Patient.objects.filter(pk__in=patient_ids)
+    patient_map = {p.pk: p for p in patients}
+
+    # Build list of {patient, files} dicts
+    patient_files_list = []
+    for patient_id, file_list in patient_files_map.items():
+        if patient_id in patient_map:
+            patient_files_list.append(
+                {"patient": patient_map[patient_id], "files": file_list}
+            )
+
+    return patient_files_list
+
+
+def get_patient_files(patient_pk: int, is_deleted: bool = None):
+    """
+    Returns a dict with patient instance and filtered files queryset for that patient.
+    """
+    patient = get_object_or_404(Patient, pk=patient_pk)
+    files = list_files(patient_pk=patient_pk, is_deleted=is_deleted)
+    return {"patient": patient, "files": files}
+
+
+def create_files(
+    files: list[DjangoFileType],
+    descriptions: list[str],
+    patient_pk: int,
 ):
-    if not uploaded_file:
+    if not Patient.objects.filter(pk=patient_pk).exists():
+        raise ValueError(f"Invalid patient {patient_pk}")
+    invalid_files = validate_files(files)
+    if len(invalid_files) > 0:
+        raise ValueError(
+            "Invalid Files:\n"
+            + "\n".join(f"{item.file.name} - {item.error}" for item in invalid_files)
+        )
+    if len(files) != len(descriptions):
+        raise ValueError("Number of files and descriptions must match")
+    created_filenames = []
+    for file, description in zip(files, descriptions):
+        data = {
+            "patient_id": patient_pk,
+            "file_name": file.name,
+            "description": description,
+        }
+
+        if settings.OFFLINE:
+            data["offline_file"] = file
+        else:
+            data["file_path"] = file_utils.upload_file(file, file.name)
+
+        serializer = FileSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        created_filenames.append(serializer.save().file_name)
+    return created_filenames
+
+
+InvalidFileItem = NamedTuple(
+    "InvalidFileItem", [("file", DjangoFileType), ("error", str)]
+)
+
+
+def validate_files(files: list[DjangoFileType]) -> list[InvalidFileItem]:
+    if len(files) == 0:
         raise ValueError("No file was uploaded")
-    if not labeled_filename:
-        raise ValueError("No labeled filename provided")
-
-    data = {
-        "patient_id": patient_pk,
-        "file_name": labeled_filename,
-    }
-    if description is not None:
-        data["description"] = description
-
-    if settings.OFFLINE:
-        data["offline_file"] = uploaded_file
-    else:
-        data["file_path"] = file_utils.upload_file(uploaded_file, labeled_filename)
-
-    serializer = FileSerializer(data=data)
-    serializer.is_valid(raise_exception=True)
-    createdFile = serializer.save()
-    return createdFile
+    invalid_files: list[InvalidFileItem] = []
+    for file in files:
+        if file.name.strip() == "":
+            invalid_files.append(InvalidFileItem(file=file, error="No name provided"))
+        if file.size > 26214400:  # 25MB
+            invalid_files.append(InvalidFileItem(file=file, error="File is too large!"))
+    return invalid_files
 
 
 def update_file(pk, data):

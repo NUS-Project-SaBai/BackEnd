@@ -3,8 +3,8 @@ from api.views import FileView
 from api.views import PdfConsultView
 
 urlpatterns = [
-    path("upload/", FileView.as_view(), name="upload_file"),
+    path("", FileView.as_view(), name="files"),
     path(
         "<int:pk>/", FileView.as_view(), name="file_detail"
-    ),  # Route for individual file operations
+    ),  # Individual file operations
 ]

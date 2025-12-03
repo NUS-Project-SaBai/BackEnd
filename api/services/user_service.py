@@ -41,6 +41,9 @@ def create_user_with_auth0(user_data):
     # Validate required fields
     if not username or not email or not password:
         return None, "Username, email or password is missing"
+    
+    if User.objects.filter(username=username).exists():
+        return None, "Username already exists"
 
     # Create user in Auth0
     try:
