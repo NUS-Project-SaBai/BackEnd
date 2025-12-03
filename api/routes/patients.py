@@ -6,9 +6,6 @@ urlpatterns = [
     path("", PatientView.as_view(), name="patients_list"),
     path("<int:pk>/", PatientView.as_view(), name="patients_pk"),
     path("search_face/", PatientSearchView.as_view(), name="patients_list"),
-    path(
-        "reports/pdf/all/", PdfAllReportView.as_view(), name="all_patients_pdf_reports"
-    ),
     # report_type is either latest_consult or all_consults
     path(
         "<int:patient_id>/reports/pdf/<str:report_type>/",

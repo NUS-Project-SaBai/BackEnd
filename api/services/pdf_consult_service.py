@@ -1,3 +1,4 @@
+import datetime
 import io
 import zipfile
 from typing import Iterable, Tuple
@@ -6,11 +7,19 @@ from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import inch
-from reportlab.platypus import Frame, PageTemplate, Paragraph, SimpleDocTemplate, Spacer, HRFlowable
+from reportlab.platypus import (
+    Frame,
+    PageTemplate,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    HRFlowable,
+)
 from reportlab.pdfgen import canvas
 
 from api.models import Diagnosis, Consult
 from api.models.patient_model import Patient
+import csv
 
 
 def _build_styles():
@@ -19,9 +28,9 @@ def _build_styles():
     bold = "Helvetica-Bold"
     return {
         "title": ParagraphStyle(
-            name="Title", 
-            fontName=bold, 
-            fontSize=18, 
+            name="Title",
+            fontName=bold,
+            fontSize=18,
             alignment=TA_CENTER,
             spaceBefore=12,
             spaceAfter=20,
@@ -44,10 +53,10 @@ def _build_styles():
             spaceAfter=8,
         ),
         "h2": ParagraphStyle(
-            name="Heading2", 
-            fontName=bold, 
-            fontSize=11, 
-            spaceBefore=10, 
+            name="Heading2",
+            fontName=bold,
+            fontSize=11,
+            spaceBefore=10,
             spaceAfter=6,
             leading=14,
         ),
@@ -146,13 +155,25 @@ def generate_multiple_consults_pdf(
     _draw_section(flowables, "Patient Name:", patient.name or "N/A", style=styles["h1"])
 
     # Add separator after patient info
-    flowables.append(HRFlowable(width="100%", thickness=2, color="#1a4d8f", spaceBefore=10, spaceAfter=15))
+    flowables.append(
+        HRFlowable(
+            width="100%", thickness=2, color="#1a4d8f", spaceBefore=10, spaceAfter=15
+        )
+    )
 
     for idx, consult in enumerate(consults):
         # Add separator between consultations (not before the first one)
         if idx > 0:
             flowables.append(Spacer(1, 0.3))
-            flowables.append(HRFlowable(width="100%", thickness=1.5, color="#cccccc", spaceBefore=5, spaceAfter=10))
+            flowables.append(
+                HRFlowable(
+                    width="100%",
+                    thickness=1.5,
+                    color="#cccccc",
+                    spaceBefore=5,
+                    spaceAfter=10,
+                )
+            )
             flowables.append(Spacer(1, 0.2))
 
         diagnoses = Diagnosis.objects.filter(consult=consult)
@@ -237,11 +258,16 @@ def generate_all_patients_pdfs_zip() -> Tuple[io.BytesIO, str]:
     """
     # Get all patients who have consultations
     patients_with_consults = (
-        Patient.objects.filter(visit__consult__isnull=False).distinct().order_by("pk")
+        Patient.objects.filter(to_get_report=True, visit__consult__isnull=False)
+        .distinct()
+        .order_by("pk")
     )
 
     zip_buffer = io.BytesIO()
-    zip_filename = "all_patient_reports.zip"
+    zip_filename = (
+        f"all_patient_reports_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
+    )
+    print(f"Generating reports for {patients_with_consults.count()} patients.")
 
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
         for patient in patients_with_consults:
@@ -251,6 +277,7 @@ def generate_all_patients_pdfs_zip() -> Tuple[io.BytesIO, str]:
                 .select_related("visit")
                 .order_by("date")
             )
+            print(consults.values())
 
             if consults.exists():
                 # Generate PDF for this patient
@@ -268,6 +295,17 @@ def generate_all_patients_pdfs_zip() -> Tuple[io.BytesIO, str]:
                     # Log error but continue with other patients
                     print(f"Error generating PDF for patient {patient_id}: {str(e)}")
                     continue
+
+        # Generate a csv file for them to view the patient id and their contact number
+        csv_buffer = io.StringIO()
+        csv_writer = csv.writer(csv_buffer)
+        csv_writer.writerow(["Patient ID", "Contact Number"])
+        for patient in patients_with_consults:
+            patient_id = f"{patient.village_prefix}{patient.pk:04d}"
+            contact_number = patient.contact_no or "N/A"
+            csv_writer.writerow([patient_id, contact_number])
+        csv_filename = "patient_contact_numbers.csv"
+        zip_file.writestr(csv_filename, csv_buffer.getvalue())
 
     zip_buffer.seek(0)
     return zip_buffer, zip_filename
