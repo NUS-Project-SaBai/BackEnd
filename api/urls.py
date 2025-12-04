@@ -37,6 +37,7 @@ urlpatterns = [
         "patient_consult/", include(("api.routes.patient_consult", "patient_consult"))
     ),
     path("vision/", include(("api.routes.patient_vision", "patient_vision"))),
+    path("login/", include(("api.routes.login", "login"))),
 ]
 
 if OFFLINE:
