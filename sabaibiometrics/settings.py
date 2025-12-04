@@ -132,6 +132,30 @@ else:
         }
     }
 
+if os.getenv("OFFLINE", "").lower() == "true":
+    #print(repr(os.getenv("OFFLINE")))
+    #print(OFFLINE)
+
+    DATABASES = {
+        "remote": dj_database_url.config(
+            default=LIVE_POSTGRES_DATABASE_URL,
+            conn_max_age=600,
+        ),
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": os.getenv("POSTGRES_NAME"),
+            "USER": os.getenv("POSTGRES_USER"),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+            "HOST": os.getenv("POSTGRES_HOST"),
+            "PORT": os.getenv("POSTGRES_PORT"),
+            "TEST": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+            },
+        }
+    }
+    #print(DATABASES.keys())
+
 if "test" in sys.argv or os.getenv("TEMP_DB") == "True":
     DATABASES["default"] = {
         "ENGINE": "django.db.backends.sqlite3",
