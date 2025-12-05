@@ -81,15 +81,17 @@ def download_file(url, output_filename):
 
     # Google Drive download link format
     download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
-
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    dir_path = os.path.join(project_root, "media", "offline_files")
+    os.makedirs(dir_path, exist_ok=True)
     response = requests.get(download_url, stream=True)
     if response.status_code == 200:
-        file_path = os.path.join("media/offline_files", output_filename)
+        file_path = os.path.join(dir_path, output_filename)
         with open(file_path, "wb") as file:
             for chunk in response.iter_content(chunk_size=1024):
                 if chunk:  # filter out keep-alive chunks
                     file.write(chunk)
-        return file_path
+        return f"offline_files/{output_filename}"
     else:
         raise Exception(
             f"Failed to download file: {response.status_code}, {response.text}"
