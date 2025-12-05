@@ -14,12 +14,14 @@ class Command(BaseCommand):
         try:
             patients = Patient.objects.all()
             for patient in patients:
-                if patient.offline_picture & patient.is_image_edited:
+                if patient.offline_picture and patient.is_image_edited:
                     upload_result = cloudinary.uploader.upload(
                         patient.offline_picture.path
                     )
-                    patient.is_image_edited = False
+                    print("Upload complete")
                     patient.picture = upload_result["secure_url"].replace(CLOUDINARY_URL + "/image/upload/", "")
+                    patient.save()
+                    patient.is_image_edited = False
                     patient.save()
                     print(f"Patient image {patient.name} uploaded.")
             self.stdout.write("Pictures uploaded successfully")

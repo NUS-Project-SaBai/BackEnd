@@ -13,7 +13,7 @@ class Command(BaseCommand):
         try:
             patients = Patient.objects.all()
             for patient in patients:
-                if patient.picture & patient.is_image_edited: 
+                if patient.picture and patient.is_image_edited: 
                     response = requests.get(f"{CLOUDINARY_URL}/{patient.picture}")
                     if response.status_code == 200:
                         # Create a ContentFile from the response content
@@ -24,6 +24,8 @@ class Command(BaseCommand):
                         )
                         patient.save()
                         print(f"Patient image {patient.name} downloaded")
+                        patient.is_image_edited = False
+                        patient.save()
             self.stdout.write("Images Downloaded successfully")
         except IntegrityError as e:
             self.stdout.write(f"Something went wrong! Error: {e}")
