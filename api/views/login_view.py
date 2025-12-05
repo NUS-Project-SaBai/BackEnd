@@ -16,9 +16,12 @@ class LoginView(APIView):
             )
         emailOrUsername = request.data.get("emailOrUsername")
         try:
-            user = User.objects.get(username=emailOrUsername) or User.objects.get(
-                email=emailOrUsername
-            )
+            user = (
+                User.objects.filter(username=emailOrUsername)
+                | User.objects.filter(email=emailOrUsername)
+            ).first()
+            if user is None:
+                raise User.DoesNotExist
         except User.DoesNotExist:
             return Response(
                 {"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
