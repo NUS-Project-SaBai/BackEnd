@@ -21,6 +21,7 @@ class Command(BaseCommand):
                     patient.is_image_edited = False
                     patient.picture = upload_result["secure_url"].replace(CLOUDINARY_URL + "/image/upload/", "")
                     patient.save()
+                    print(f"Patient image {patient.name} uploaded.")
             self.stdout.write("Pictures uploaded successfully")
         except IntegrityError as e:
             self.stdout.write(f"Something went wrong! Error: {e}")
