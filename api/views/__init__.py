@@ -2,6 +2,7 @@ from .medication_review_view import MedicationReviewView
 from .medication_view import MedicationView
 from .consult_view import ConsultView
 from .pdf_consult_view import PdfConsultView
+from .pdf_all_report_view import PdfAllReportView
 from .patient_view import PatientView
 from .patient_search_view import PatientSearchView
 from .visit_view import VisitView
