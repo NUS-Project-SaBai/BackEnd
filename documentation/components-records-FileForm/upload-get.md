@@ -9,11 +9,11 @@
 
 ---
 
-## API Endpoint: `[Endpoint URL or Name]`
+## API Endpoint: `/files/`
 
 ### Overview
 - **Description**:  
-  Returns file information ssociated with the given patient ID to display 
+  Returns file information grouped by patient. Can filter by patient_pk and deleted status.
 - **HTTP Method**:  
   GET
 
@@ -22,7 +22,11 @@
 ### Request Details
 
 #### Query Parameters
-- **Parameter Name**: patient_pk (e.g. 1)
+- **patient_pk** (optional): Patient ID to filter files for a specific patient (e.g. 1)
+- **deleted** (optional): Filter by deletion status
+  - `"false"` (default): Only active/non-deleted files
+  - `"true"`: Only deleted files
+  - `"all"`: Both active and deleted files
 
 #### Request Body
 - **Structure**:  
@@ -37,11 +41,10 @@
     - 500: Internal Server Error: Uncaught error in system (VERY BAD)
     - 400: Bad Request: Request issues
     - 200: OK: All's good
-- **Sample Response**:  
+- **Sample Response** (with `?patient_pk=1`):  
   ```json
     [
         {
-            "id": 1,
             "patient": {
                 "model": "clinicmodels.patient",
                 "pk": 1,
@@ -57,55 +60,66 @@
                 "drug_allergy": "None",
                 "face_encodings": "",
                 "picture": "http://localhost:8080/media/offline_pictures/patient_screenshot_EzAGLoT.jpg",
-                "filter_string": "TT0001TT1  Noah Seethor",
+                "filter_string": "TT0001TT1  john doe",
                 "patient_id": "TT0001",
                 "confidence": ""
             },
-            "file_path": null,
-            "offline_file": "/media/offline_files/TT001-2025-02-17-README.txt",
-            "file_name": "TT001-2025-02-17-README.txt",
-            "created_at": "2025-02-17T11:13:56.216801Z"
+            "files": [
+                {
+                    "id": 1,
+                    "patient_id": 1,
+                    "file_path": null,
+                    "offline_file": "/media/offline_files/TT001-2025-02-17-README.txt",
+                    "file_name": "TT001-2025-02-17-README.txt",
+                    "description": "Medical report",
+                    "created_at": "2025-02-17T11:13:56.216801Z",
+                    "is_deleted": false
+                }
+            ]
+        }
+    ]
+  ```
+  
+- **Sample Response** (without `patient_pk` - returns all patients with files):  
+  ```json
+    [
+        {
+            "patient": { /* Patient 1 data */ },
+            "files": [ /* Patient 1's files */ ]
+        },
+        {
+            "patient": { /* Patient 2 data */ },
+            "files": [ /* Patient 2's files */ ]
         }
     ]
   ```
 
 #### Data Fetched by the Frontend
 - **Complete Data Set**:  
-  All File Fields
-  - file_path
-  - offline_file
-  - file_name
-  - created_at
-
-  + Patient Fields (for patient associated with File)
-  ```json
-  "patient": {
-      "model": "clinicmodels.patient",
-      "pk": 1,
-      "village_prefix": "TT",
-      "name": "john doe",
-      "identification_number": "",
-      "contact_no": "",
-      "gender": "Female",
-      "date_of_birth": "2025-02-14T00:00:00Z",
-      "poor": "No",
-      "bs2": "No",
-      "sabai": "No",
-      "drug_allergy": "None",
-      "face_encodings": "",
-      "picture": "http://localhost:8080/media/offline_pictures/patient_screenshot_EzAGLoT.jpg",
-      "filter_string": "TT0001TT1  john doe",
-      "patient_id": "TT0001",
-      "confidence": ""
-    }
-  ```
+  Returns an array of PatientFiles objects, each containing:
+  - **patient**: Complete patient object with all fields (pk, name, village_prefix, date_of_birth, etc.)
+  - **files**: Array of file objects, each with:
+    - id
+    - patient_id
+    - file_path (url if online)
+    - offline_file (local path if offline)
+    - file_name
+    - description
+    - created_at
+    - is_deleted
   
 #### Data Used by the Frontend
 - **Relevant Data Subset**:  
+  From each PatientFiles object:
+  - **patient.patient_id**: Patient identifier
+  - **files[]**: Array of files for that patient
+    - id
     - file_path
     - offline_file
     - file_name
+    - description
     - created_at
+    - is_deleted
 
 ---
 
@@ -120,11 +134,14 @@
 
 #### Processing on the Backend
 - **Where**:  
-  All processing is done in the file_view, with the help of file_serializer
+  Processing is done in file_view (view layer) and file_service (service layer), with PatientFilesSerializer and FileSerializer
 - **How**:  
-  - All file objects are pulled
-  - Patient PK is taken from Query Params and used to filter the files
-  - Serialiser serialises, then seriaised response is returned
+  - Query params `patient_pk` and `deleted` are parsed and validated
+  - `deleted` parameter is converted: "all" → None, "true" → True, "false" → False
+  - If `patient_pk` provided: `file_service.get_patient_files()` returns single PatientFiles dict in a list
+  - If no `patient_pk`: `file_service.list_patient_files()` groups all files by patient and returns list of PatientFiles dicts
+  - PatientFilesSerializer serializes the data with nested PatientSerializer and FileSerializer (many=True)
+  - Response always returns an array of PatientFiles objects for consistency
 
 
 ---

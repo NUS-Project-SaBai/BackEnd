@@ -24,6 +24,7 @@ class Patient(models.Model):
         upload_to="offline_pictures", blank=True, null=True
     )
     is_image_edited = models.BooleanField(default=False)
+    to_get_report = models.BooleanField(default=False)
 
     def clean(self):
         # Ensure that at least one of picture or offline_picture is provided
