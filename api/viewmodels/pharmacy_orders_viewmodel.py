@@ -1,3 +1,7 @@
+from api.serializers.patient_serializer import PatientSerializer
+from sabaibiometrics import settings
+
+
 class PharmacyOrderVM:
     def __init__(self, order):
         medicine = order.medication_review.medicine if order.medication_review else None
@@ -36,7 +40,7 @@ class PatientHeaderVM:
             patient, "patient_id", f"{patient.village_prefix}{patient.pk:04d}"
         )
         self.name = getattr(patient, "name", str(patient))
-        self.picture_url = getattr(getattr(patient, "picture", None), "url", None)
+        self.picture_url = PatientSerializer(patient).data.get("picture_url", "")
         self.village_prefix = str(getattr(patient, "village_prefix", "")) or ""
 
 

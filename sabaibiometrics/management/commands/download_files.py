@@ -14,11 +14,12 @@ class Command(BaseCommand):
         try:
             files = File.objects.all()
             for file in files:
-                if file.file_path:
+                if (file.file_path) and (not file.offline_file):
                     file_url = file_utils.download_file(file.file_path, file.file_name)
                     if file_url:
                         file.offline_file = file_url
                         file.save()
+                        print(f'Successfully downloaded {file.file_name}')
             self.stdout.write("Images Downloaded successfully")
         except IntegrityError as e:
             self.stdout.write(f"Something went wrong! Error: {e}")

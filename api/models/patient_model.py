@@ -23,6 +23,7 @@ class Patient(models.Model):
     offline_picture = models.ImageField(
         upload_to="offline_pictures", blank=True, null=True
     )
+    is_image_edited = models.BooleanField(default=False)
     to_get_report = models.BooleanField(default=False)
 
     def clean(self):
