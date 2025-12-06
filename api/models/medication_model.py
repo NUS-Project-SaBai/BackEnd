@@ -10,3 +10,4 @@ class Medication(models.Model):
     notes = models.TextField(blank=True, null=True)
     code = models.CharField(max_length=100, blank=True, null=True)
     warning_quantity = models.PositiveIntegerField(null=True, blank=True, default=None)
+    isCurrentStock = models.BooleanField(blank=False, default=True)
