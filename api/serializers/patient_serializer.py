@@ -39,6 +39,7 @@ class PatientSerializer(serializers.ModelSerializer):
             "confidence",
             "last_visit_date",
             "last_visit_id",
+            "to_get_report",
         ]
 
     def get_patient_id(self, obj):
