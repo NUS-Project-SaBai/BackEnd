@@ -8,7 +8,7 @@ from api.services.medication_review_service import create_medication_review
 
 def list_medications():
     return (
-        Medication.objects.all().filter(isCurrentStock=True).order_by("medicine_name")
+        Medication.objects.all().filter(is_current_stock=True).order_by("medicine_name")
     )
 
 
