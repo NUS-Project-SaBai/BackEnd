@@ -36,14 +36,12 @@ class ConsultView(APIView):
             return Response({"error": "Not found"}, status=404)
         serializer = ConsultSerializer(consult, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        created_at = serializer.data.get("created_at")
-        created_dt = dt.fromisoformat(created_at)
-        if created_dt - dt.now(timezone.utc) < timedelta(hours=24):
+        a = consult.created_at
+        if (
+            abs((consult.created_at - dt.now(timezone.utc)).total_seconds())
+            < timedelta(hours=24).total_seconds()
+        ):
             return Response({"error": "Cannot edit consult after 24 hours"}, status=405)
-
-        import pdb
-
-        pdb.set_trace()
         serializer.save()
         return Response(serializer.data)
 
