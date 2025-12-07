@@ -1,4 +1,6 @@
 import io
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
@@ -12,6 +14,7 @@ from reportlab.platypus import (
 from api.models import Diagnosis
 from reportlab.pdfgen import canvas
 
+pdfmetrics.registerFont(TTFont("KhmerFont", "./NotoSansKhmer-VariableFont.ttf"))
 
 def generate_consult_pdf(consult):
     patient = consult.visit.patient
@@ -24,8 +27,8 @@ def generate_consult_pdf(consult):
     flowables = []
 
     # --- Styles ---
-    _baseFontName = "Helvetica"
-    _baseFontNameB = "Helvetica-Bold"
+    _baseFontName = "KhmerFont"
+    _baseFontNameB = "KhmerFont"
     title_style = ParagraphStyle(
         name="Title", fontName=_baseFontNameB, fontSize=16, alignment=TA_CENTER
     )
