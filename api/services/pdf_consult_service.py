@@ -15,8 +15,10 @@ from api.models import Diagnosis
 from reportlab.pdfgen import canvas
 
 pdfmetrics.registerFont(TTFont("KhmerFont", "./NotoSansKhmer-VariableFont.ttf"))
+pdfmetrics.registerFont(TTFont("KhmerFont-Bold", "./NotoSansKhmer-Bold.ttf"))
 
 def generate_consult_pdf(consult):
+    doctor = consult.doctor
     patient = consult.visit.patient
     patient_id = f"{patient.village_prefix}{patient.pk:04d}"
     diagnosis = Diagnosis.objects.filter(consult=consult)
@@ -28,7 +30,7 @@ def generate_consult_pdf(consult):
 
     # --- Styles ---
     _baseFontName = "KhmerFont"
-    _baseFontNameB = "KhmerFont"
+    _baseFontNameB = "KhmerFont-Bold"
     title_style = ParagraphStyle(
         name="Title", fontName=_baseFontNameB, fontSize=16, alignment=TA_CENTER
     )
@@ -61,6 +63,7 @@ def generate_consult_pdf(consult):
 
     # --- Content ---
     draw_section("Consultation Report - " + patient_id, title_style=title_style)
+    draw_section("Doctor Name:", doctor.nickname or "N/A")
     draw_section("Patient Name:", patient.name or "N/A")
     draw_section("Past Medical History", consult.past_medical_history or "N/A")
     draw_section("Consultation", consult.consultation or "N/A")
