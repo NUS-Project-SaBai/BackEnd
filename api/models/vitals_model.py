@@ -41,6 +41,7 @@ class Vitals(models.Model):
     blood_glucose_fasting = models.DecimalField(
         decimal_places=2, max_digits=5, blank=True, null=True
     )
+    hbA1c = models.DecimalField(decimal_places=2, max_digits=5, blank=True, null=True)
 
     # Eye vitals
     left_eye_degree = models.TextField(blank=True, null=True)
