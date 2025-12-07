@@ -4,7 +4,8 @@ from rest_framework import status
 
 from api.serializers import ConsultSerializer
 from api.services import consult_service
-from datetime import datetime as dt, timedelta, timezone
+from datetime import timedelta, timezone
+from datetime import datetime as dt
 
 
 class ConsultView(APIView):
@@ -36,11 +37,8 @@ class ConsultView(APIView):
             return Response({"error": "Not found"}, status=404)
         serializer = ConsultSerializer(consult, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        a = consult.created_at
-        if (
-            abs((consult.created_at - dt.now(timezone.utc)).total_seconds())
-            < timedelta(hours=24).total_seconds()
-        ):
+        # Prevent editing if the consult was created more than 24 hours ago.
+        if dt.now(timezone.utc) - consult.created_at > timedelta(hours=24):
             return Response({"error": "Cannot edit consult after 24 hours"}, status=405)
         serializer.save()
         return Response(serializer.data)
