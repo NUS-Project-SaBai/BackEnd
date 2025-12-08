@@ -23,4 +23,3 @@ class Consult(models.Model):
     referred_for = models.TextField(blank=True, null=True)
     referral_notes = models.TextField(blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
