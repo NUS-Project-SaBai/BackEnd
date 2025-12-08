@@ -30,13 +30,8 @@ class ConsultView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def patch(self, request, pk):
-        consult = consult_service.get_consult(pk)
-        if not consult:
-            return Response({"error": "Not found"}, status=404)
-        serializer = ConsultSerializer(consult, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        serializer = consult_service.update_consult_service(pk, request.data)
+        return Response(serializer, status=status.HTTP_200_OK)
 
     def delete(self, request, pk):
         consult = consult_service.get_consult(pk)
@@ -46,3 +41,6 @@ class ConsultView(APIView):
         return Response(
             {"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT
         )
+
+
+    

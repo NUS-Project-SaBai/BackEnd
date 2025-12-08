@@ -3,6 +3,11 @@ from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import status
 
+from django.db import transaction
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.exceptions import NotFound, ValidationError
+from api.models import Consult, Diagnosis, Order, MedicationReview 
+
 from api.models import Order, MedicationReview, Medication, Diagnosis
 from api.serializers import (
     OrderSerializer,
@@ -65,6 +70,7 @@ def create_order(order_data):
     serializer = OrderSerializer(data=order_data)
     serializer.is_valid(raise_exception=True)
     return serializer.save()
+
 
 
 @transaction.atomic
