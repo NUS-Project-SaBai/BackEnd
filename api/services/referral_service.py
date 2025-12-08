@@ -2,10 +2,10 @@
 from api.models import Referrals
 from api.serializers.referrals_serializer import ReferralSerializer
 from api.serializers.patient_serializer import PatientSerializer
-
+from api.serializers.user_serializer import UserSerializer
 
 def get_referral(pk):
-    return Referrals.objects.get(pk=pk)
+    return Referrals.objects.select_related("consult__doctor").get(pk=pk)
 
 
 def list_referrals():
@@ -26,6 +26,10 @@ def create_referral(data):
 
 def serialize_patient_from_referral(referral):
     return PatientSerializer(referral.consult.visit.patient).data
+
+
+def serialize_doctor_from_referral(referral):
+    return UserSerializer(referral.consult.doctor).data
 
 
 def get_date_from_referral(referral):
