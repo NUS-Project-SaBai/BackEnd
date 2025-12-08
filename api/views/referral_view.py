@@ -32,6 +32,7 @@ class ReferralView(APIView):
                 "patient": referral_service.serialize_patient_from_referral(ref),
                 "referral": referral_service.ReferralSerializer(ref).data,
                 "date": referral_service.get_date_from_referral(ref),
+                "doctor": referral_service.serialize_doctor_from_referral(ref),
             }
         )
 

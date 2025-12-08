@@ -4,6 +4,8 @@ from rest_framework import status
 
 from api.serializers import ConsultSerializer
 from api.services import consult_service
+from datetime import timedelta, timezone
+from datetime import datetime as dt
 
 
 class ConsultView(APIView):
@@ -32,6 +34,7 @@ class ConsultView(APIView):
     def patch(self, request, pk):
         serializer = consult_service.update_consult_service(pk, request.data)
         return Response(serializer, status=status.HTTP_200_OK)
+
 
     def delete(self, request, pk):
         consult = consult_service.get_consult(pk)
