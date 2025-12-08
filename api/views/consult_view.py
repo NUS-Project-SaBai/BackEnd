@@ -35,7 +35,6 @@ class ConsultView(APIView):
         serializer = consult_service.update_consult_service(pk, request.data)
         return Response(serializer, status=status.HTTP_200_OK)
 
-
     def delete(self, request, pk):
         consult = consult_service.get_consult(pk)
         if not consult:
@@ -44,6 +43,3 @@ class ConsultView(APIView):
         return Response(
             {"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT
         )
-
-
-    
