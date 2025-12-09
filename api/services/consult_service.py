@@ -28,7 +28,9 @@ def get_consult(pk):
 
 @transaction.atomic
 def create_consult(data, user_headers):
-    consult_data = data.get("consult")
+    consult_data = data.copy()
+    del consult_data["diagnoses"]
+    del consult_data["orders"]
     consult_data["doctor_id"] = doctor_utils.get_doctor_id(user_headers)
     serializer = ConsultSerializer(data=consult_data)
     serializer.is_valid(raise_exception=True)
