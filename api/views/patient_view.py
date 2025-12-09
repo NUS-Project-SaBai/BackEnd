@@ -7,6 +7,7 @@ from api.serializers import PatientSerializer
 from api.services.patient_service import (
     extract_and_clean_picture,
     generate_face_encoding,
+    create_patient_with_temperature
 )
 from api.services.visit_service import (
     annotate_with_last_visit,
@@ -38,9 +39,7 @@ class PatientView(APIView):
         data = extract_and_clean_picture(request.data.copy())
         face_encoding = generate_face_encoding(data)
 
-        serializer = PatientSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(face_encodings=face_encoding)
+        serializer = create_patient_with_temperature(data=data, face_encoding=face_encoding)
         return Response(serializer.data)
 
     def patch(self, request, pk):
