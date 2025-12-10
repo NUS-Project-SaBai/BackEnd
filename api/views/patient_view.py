@@ -3,7 +3,7 @@ from requests import Request
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-
+from sabaibiometrics.settings import OFFLINE
 from api.types.vitals_types import VitalsRegistrationAPIData
 from api.types.patient_types import PatientAPIData, RegstriationAPIData
 from api.models import Patient
@@ -60,7 +60,12 @@ class PatientView(APIView):
 
     def patch(self, request, pk):
         patient = get_object_or_404(Patient, pk=pk)
-        data = extract_and_clean_picture(request.data.copy())
+        data = request.data.copy()
+        if OFFLINE:
+            picture = data.get("picture", None)
+            if picture:
+                data["offline_picture"] = picture
+            data.pop("picture", None)
         face_encoding = generate_face_encoding(data)
 
         serializer = PatientSerializer(patient, data=data, partial=True)
