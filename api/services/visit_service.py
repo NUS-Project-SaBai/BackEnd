@@ -1,3 +1,4 @@
+from api.serializers.visit_serializer import VisitSerializer
 from api.models import Visit
 from django.db.models import OuterRef, Subquery, DateField, IntegerField, QuerySet
 from django.shortcuts import get_object_or_404
@@ -15,8 +16,11 @@ def get_visit(pk):
     return get_object_or_404(Visit, pk=pk)
 
 
-def create_visit(validated_data):
-    return Visit.objects.create(**validated_data)
+def create_visit(data) -> VisitSerializer:
+    visit_serializer: VisitSerializer = VisitSerializer(data=data)
+    visit_serializer.is_valid(raise_exception=True)
+    visit_serializer.save()
+    return visit_serializer
 
 
 def update_visit(instance, validated_data):
