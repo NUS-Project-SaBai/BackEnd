@@ -1,3 +1,4 @@
+from api.serializers.vitals_serializer import VitalsSerializer
 from api.models import Vitals
 
 
@@ -17,8 +18,11 @@ def get_vitals(pk):
     return Vitals.objects.get(pk=pk)
 
 
-def create_vitals(data):
-    return Vitals.objects.create(**data)
+def create_vitals(data) -> VitalsSerializer:
+    vitals_serializer: VitalsSerializer = VitalsSerializer(data=data)
+    vitals_serializer.is_valid(raise_exception=True)
+    vitals_serializer.save()
+    return vitals_serializer
 
 
 def update_vitals(vital, data):

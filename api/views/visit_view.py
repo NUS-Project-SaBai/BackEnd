@@ -18,10 +18,10 @@ class VisitView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = VisitSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        visit = visit_service.create_visit(serializer.validated_data)
-        return Response(VisitSerializer(visit).data)
+        visit_serializer: VisitSerializer = visit_service.create_visit(
+            data=request.data
+        )
+        return Response(visit_serializer.data)
 
     def patch(self, request, pk):
         visit = visit_service.get_visit(pk)
