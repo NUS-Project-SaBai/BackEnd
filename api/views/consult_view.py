@@ -32,16 +32,8 @@ class ConsultView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def patch(self, request, pk):
-        consult = consult_service.get_consult(pk)
-        if not consult:
-            return Response({"error": "Not found"}, status=404)
-        serializer = ConsultSerializer(consult, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        # Prevent editing if the consult was created more than 24 hours ago.
-        if dt.now(timezone.utc) - consult.date > timedelta(hours=24):
-            return Response({"error": "Cannot edit consult after 24 hours"}, status=405)
-        serializer.save()
-        return Response(serializer.data)
+        serializer = consult_service.update_consult_service(pk, request.data)
+        return Response(serializer, status=status.HTTP_200_OK)
 
     def delete(self, request, pk):
         consult = consult_service.get_consult(pk)
