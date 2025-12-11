@@ -1,11 +1,11 @@
-# BackEnd
+# BackEnd setup
 
 1. Prerequisities
 
    Before proceeding with the setup, ensure that the following prerequisites are met:
 
-   - Python version 3.12 is available in your environment. (ONLY 3.12)
-      - For first timers, you may need to first install python, then a Python virtualenv management tool. Follow [documentation/basic-setup.md](documentation/basic-setup.md).
+   - Python version 3.12 is available in your environment (ONLY 3.12), as well as Pipenv
+      - For first timers, you may need to first install python, then Pipenv, a Python virtualenv management tool. Follow [documentation/basic-setup.md](documentation/basic-setup.md).
    - PostgreSQL 15 is installed on your system.
     - If you followed the basic setup above, you can simply use brew to install PostgreSQL 15:
       ```
@@ -40,35 +40,19 @@ Assuming that you have successfully cloned the repository into your system and a
 
 We will be using Pipenv. <https://pipenv.pypa.io/en/latest/>
 
-Note: **For Mac users**, in the following commands you may have to use `python3` instead of `python`, and `pip3` instead of `pip`.
-
-Run this command if you have yet to install it:
-
-```bash
-pip install pipenv
-```
-
-To initialise a new `pipenv` environment for python 3.12 (note you must already have this python version installed):
-
-```bash
-pipenv --python 3.12
-```
-
-To use the virtual environment, run:
-
-```bash
-pipenv shell
-```
-
-FYI, **Don't run it**. To exit from the virtual environment, run:
-
-```bash
-exit
-```
+Note: **For Mac users**, you may have to use `python3` instead of `python`, and `pip3` instead of `pip` in the following commands, depending on how you installed `python`.
 
 ### Install dependencies
 
 If you had exited from the virtual environment, run `pipenv shell` to use the virtual environment again.
+
+⚠️ To make sure your virtual environment is activated, you can do:
+
+```
+which python
+```
+
+It should show something like `xxx/virtualenvs/BackEnd-giGzjZ9V/bin/python`, which should be different from what you get if you ran `which python` in a new shell.
 
 To install the dependencies, run:
 
@@ -76,11 +60,9 @@ To install the dependencies, run:
 pipenv install
 ```
 
-\*Do this in the virtual environment
-
 ### Start the server
 
-This command will makemigrations, migrate the database, pull auth0 users, and start the server. The commands used are explained [here](#commands-used-when-running-the-following).
+This command will run the data schema migrations, pull auth0 users, and start the server. The commands used are explained [here](#commands-used-when-running-the-following).
 
 ```bash
 pipenv run start
@@ -101,7 +83,9 @@ Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 ```
 
-\*Make sure you set up both the Frontend AND Backend before logging into localhost.
+⚠️ Make sure you set up both the Frontend AND Backend before logging into localhost.
+
+# Other useful information
 
 ### Creating a superuser account in Django
 
