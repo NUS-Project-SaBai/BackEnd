@@ -8,6 +8,10 @@ def get_referral(pk):
     return Referrals.objects.select_related("consult__doctor").get(pk=pk)
 
 
+def get_referrals_by_consult(consult_id):
+    return Referrals.objects.filter(consult__id=consult_id)
+
+
 def list_referrals():
     return Referrals.objects.order_by("-pk")
 
