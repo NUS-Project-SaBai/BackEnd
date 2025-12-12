@@ -37,7 +37,11 @@ class ReferralView(APIView):
         )
 
     def patch(self, request, pk):
-        referral = referral_service.get_referral(pk)
+        consult_id = request.query_params.get("consult_id")
+        if consult_id:
+            referral = referral_service.get_referrals_by_consult(consult_id).first()
+        else:
+            referral = referral_service.get_referral(pk)
         filtered_data = {k: v for k, v in request.data.items() if v != ""}
         updated = referral_service.update_referral(referral, filtered_data)
         return Response(referral_service.ReferralSerializer(updated).data)
