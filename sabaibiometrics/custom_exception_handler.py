@@ -2,6 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import exception_handler as drf_exception_handler
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 
 
 def custom_exception_handler(exc, context):
@@ -11,7 +12,7 @@ def custom_exception_handler(exc, context):
     print(exc, context, flush=True)
 
     # Now add the HTTP status code to the response.
-    if isinstance(exc, ObjectDoesNotExist):
+    if isinstance(exc, ObjectDoesNotExist) or isinstance(exc, NotFound):
         return Response({"error": str(exc)}, status=status.HTTP_404_NOT_FOUND)
     elif isinstance(exc, ValueError):
         return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
